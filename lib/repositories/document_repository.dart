@@ -1,3 +1,5 @@
+import 'package:pdf/widgets.dart' hide Document;
+
 import '../core/database_helper.dart';
 import '../models/folder_model.dart';
 import '../models/document_model.dart';

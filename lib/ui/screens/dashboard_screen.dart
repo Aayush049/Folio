@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../blocs/dashboard/dashboard_bloc.dart';
 import '../../blocs/dashboard/dashboard_event.dart';
 import '../../blocs/dashboard/dashboard_state.dart';
+import '../../blocs/scanner/scanner_bloc.dart';
+import '../../blocs/scanner/scanner_event.dart';
+import '../../repositories/document_repository.dart';
 import '../widgets/document_list_tile.dart';
 import '../widgets/folder_list_tile.dart';
 import '../widgets/neu_widgets.dart';
 import '../../core/folio_theme.dart';
+import 'scanner_screen.dart';
+import 'document_detail_screen.dart';
+import 'documents_by_folder_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -87,6 +94,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           borderRadius: 20,
                           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                           onTap: () {
+                            context.read<ScannerBloc>().add(ResetScanner());
+                            Navigator.push(
+                              context,
+                              _neuRoute(const ScannerScreen()),
+                            );
                           },
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -240,7 +252,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             final folder = state.folders[index];
             return FolderListTile(
               folder: folder,
-              onTap: () {},
+              onTap: () => Navigator.push(context, _neuRoute(DocumentsByFolderScreen(folder: folder))),
               onDelete: () => context.read<DashboardBloc>().add(DeleteFolder(folder.id!)),
             );
           },
@@ -290,7 +302,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
             tag: 'doc_${doc.id}',
             child: DocumentListTile(
               doc: doc,
-              onTap: () {},
+              onTap: () => Navigator.push(
+                context,
+                _neuRoute(DocumentDetailScreen(
+                  document: doc,
+                  repository: context.read<DocumentRepository>(),
+                )),
+              ),
               onDelete: () => context.read<DashboardBloc>().add(DeleteDocument(doc.id!)),
             ),
           );
@@ -366,4 +384,22 @@ class _ThemeToggleButton extends StatelessWidget {
   }
 }
 
-
+// ─── Page Route Helper ────────────────────────────────────────────────────────
+PageRoute _neuRoute(Widget page) {
+  return PageRouteBuilder(
+    pageBuilder: (_, __, ___) => page,
+    transitionsBuilder: (_, anim, __, child) {
+      return FadeTransition(
+        opacity: anim,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0.04, 0),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
+          child: child,
+        ),
+      );
+    },
+    transitionDuration: const Duration(milliseconds: 280),
+  );
+}

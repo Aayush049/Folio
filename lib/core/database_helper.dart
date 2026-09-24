@@ -1,4 +1,5 @@
 import 'package:path/path.dart';
+import 'package:pdf/widgets.dart' hide Document;
 import 'package:sqflite/sqflite.dart';
 import '../models/folder_model.dart';
 import '../models/document_model.dart';

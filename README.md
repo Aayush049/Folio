@@ -1,290 +1,130 @@
+# Folio — The Offline Document Studio
+
 <div align="center">
 
-# 📄 Folio — The Offline Document Studio
-
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20App-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://folio-nine-omega-50.vercel.app)
-[![Deployment](https://img.shields.io/github/deployments/Aayush049/folio/production?label=Vercel&logo=vercel&style=for-the-badge)](https://folio-nine-omega-50.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://folio-nine-omega-50.vercel.app)
+[![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)](https://folio-nine-omega-50.vercel.app)
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![Author](https://img.shields.io/badge/Author-Aayush-blue?style=for-the-badge&logo=github)](https://github.com/Aayush049)
 
-<br/>
+**An offline-first document scanner, studio, and management application built with Flutter.**
 
-**A secure, offline-first document scanner and management studio.**  
-Capture, crop, extract text (OCR), sign digitally, and export high-resolution PDFs —  
-all without a backend or cloud subscription.
-
-<br/>
-
-[🌐 Live Web App](https://folio-nine-omega-50.vercel.app) &nbsp;•&nbsp; [✨ Features](#-features) &nbsp;•&nbsp; [🏗️ Architecture](#%EF%B8%8F-architecture) &nbsp;•&nbsp; [🚀 Quick Start](#-getting-started) &nbsp;•&nbsp; [🗺️ Roadmap](#%EF%B8%8F-roadmap)
+[Launch Web App](https://folio-nine-omega-50.vercel.app) • [Features](#features) • [Tech Stack](#tech-stack) • [Getting Started](#getting-started) • [Deployment](#deployment)
 
 </div>
 
 ---
 
-## 🌐 Live Deployment
+## Live Application
 
-> **🟢 Status: Live & Active**  
-> **URL:** **[https://folio-nine-omega-50.vercel.app](https://folio-nine-omega-50.vercel.app)**
+The production web build is hosted on Vercel:
 
-Hosted on **Vercel's Edge Network** with:
-- ⚡ Progressive Web App (PWA) support — installable from the browser
-- 🗄️ Client-side SQLite powered by **WebAssembly** — no server, no database calls
-- 🌍 Global CDN — fast load times worldwide
+> **URL:** [https://folio-nine-omega-50.vercel.app](https://folio-nine-omega-50.vercel.app)  
+> **Status:** Live & Operational  
+> **Platform:** Web (PWA-ready with client-side WebAssembly SQLite)
 
 ---
 
-## 📖 Overview
+## Overview
 
-**Folio** is built for anyone who needs to digitize, organize, and export paper documents quickly and securely — without handing personal files over to third-party cloud servers.
-
-Everything runs **locally on your device or browser**:
-
-| 🔒 Zero Cloud Dependency | ⚡ WASM-Powered SQLite | 📄 Instant PDF Export |
-|:---:|:---:|:---:|
-| Scanned documents, folders, and metadata never leave your device | High-performance local SQL engine running in native apps and web browsers | Compile multi-page scans into formatted, searchable PDF files ready to share |
+**Folio** is a cross-platform document studio designed to capture, process, sign, and organize documents without relying on external servers or cloud services. All processing, text extraction, and storage remain strictly on the user's local device, providing privacy and full offline capability across mobile, desktop, and web platforms.
 
 ---
 
-## ✨ Features
+## Features
 
-### 📸 Capture & Import
-- **Camera Scanning** — Capture pages on mobile or desktop via webcam with auto-focus and flash controls
-- **Multi-Page Sessions** — Scan or upload multiple pages sequentially into a single unified document
-- **Gallery & File Upload** — Import existing documents, receipts, or photos from local storage
-
-### ✂️ Document Studio & Editing
-- **Interactive Cropping** — Straighten edges, adjust aspect ratios, and remove messy backgrounds
-- **Visual Filters** — Contrast and colour optimisation presets for enhanced scanning clarity
-
-### 🔍 On-Device OCR (Text Recognition)
-- **Smart Naming** — Context-aware keyword detection that auto-suggests document names (e.g. *Amazon_Invoice*, *Passport_Scan*, *Contract*)
-- **Text Extraction** — On-device OCR powered by **Google ML Kit** with zero external API calls
-
-### ✍️ Digital Signatures
-- **Handwritten Signature Pad** — Draw and embed signatures directly onto documents before export
-- **Position & Scale** — Customise placement for signing agreements, contracts, and receipts
-
-### 📑 PDF Export & Sharing
-- **Multi-Page Compilation** — Combine scanned pages into a single, optimised PDF
-- **Direct Preview & Share** — Preview exported PDFs in-app and share via system share sheets or direct browser downloads
-
-### 💾 Local SQLite Database
-- **Offline Storage** — Document records, folder structures, and page references persisted via SQLite (`sqflite` / `sqflite_common_ffi_web` WebAssembly worker on web)
-- **Categorisation** — Create custom folders to organise personal, financial, and work documents
+- **Document Capture & Import:** Scan via device camera or import existing images and files. Supports multi-page document sessions.
+- **Editing Studio:** Crop, align, and apply contrast/color enhancement filters to optimize readability.
+- **On-Device OCR:** Client-side text recognition powered by Google ML Kit with automated smart document naming based on recognized keywords.
+- **Digital Signatures:** Draw handwritten signatures directly on the document canvas with customizable placement and sizing.
+- **Multi-Page PDF Export:** Compile and export clean, high-resolution PDFs directly to local storage or share sheets.
+- **Local Relational Storage:** Structured document and folder management backed by SQLite (`sqflite` natively, and `sqflite_common_ffi_web` with WebAssembly in browsers).
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-| Layer | Technology | Version | Purpose |
-|---|---|---|---|
-| **Framework** | [Flutter](https://flutter.dev) + [Dart](https://dart.dev) | `^3.x / SDK ^3.11.5` | Multi-platform declarative UI toolkit |
-| **Hosting** | [Vercel](https://vercel.com) | Edge Network | Global CDN deployment for the web app |
-| **State Management** | `flutter_bloc` + `provider` + `equatable` | `8.1.6 / 6.1.2 / 2.0.5` | Scalable BLoC pattern for predictable state flow |
-| **Database** | `sqflite` + `sqflite_common_ffi_web` | `2.3.0 / 1.2.0` | Local relational database with WebAssembly fallback |
-| **PDF Generation** | `pdf` | `3.10.10` | Pure Dart PDF creation and document layout engine |
-| **Image Processing** | `image_picker` + `image_cropper` | `1.1.2 / 8.0.2` | Multi-source image capture and crop matrix |
-| **Text Recognition** | `google_mlkit_text_recognition` | `0.13.0` | High-accuracy on-device OCR engine |
-| **Signature Pad** | `signature` | `5.5.0` | Responsive canvas signature capture |
-| **File Handling** | `file_picker` + `open_filex` + `share_plus` | `13.1.0 / 4.5.0 / 13.3.0` | Cross-platform file access, open, and share |
-| **Design** | `google_fonts` + `cupertino_icons` | `6.2.1 / 1.0.8` | Neumorphic dark/light adaptive design system |
-| **Internationalisation** | `intl` | `0.19.0` | Date/time formatting and locale support |
+| Layer | Technology | Purpose |
+|---|---|---|
+| **Framework** | Flutter (v3.x) & Dart | Cross-platform UI toolkit |
+| **Hosting** | Vercel | Global edge CDN hosting for the web app |
+| **State Management** | `flutter_bloc`, `provider`, `equatable` | Unidirectional reactive state management |
+| **Database** | `sqflite`, `sqflite_common_ffi_web` | Local SQLite with WebAssembly web worker |
+| **PDF Engine** | `pdf`, `open_filex` | Vector document generation and file handling |
+| **Processing** | `image_picker`, `image_cropper` | Image input, manipulation, and cropping |
+| **OCR** | `google_mlkit_text_recognition` | On-device text recognition |
+| **UI & Theming** | `google_fonts`, `signature` | Adaptive Neumorphic UI and signature pad |
 
 ---
 
-## 🏗️ Architecture
+## Project Structure
 
-Folio follows a clean, layered architecture that strictly separates UI, presentation state, and data management:
-
-```
-┌──────────────────────────────────────────────────────────┐
-│                   UI & Screen Layer                       │
-│   DashboardScreen  •  StudioScreen  •  ScannerScreen     │
-└────────────────────────▲─────────────────────────────────┘
-                         │  Events & States (BLoC)
-┌────────────────────────┴─────────────────────────────────┐
-│                  BLoC Presentation Layer                  │
-│          DashboardBloc          •       ScannerBloc       │
-└────────────────────────▲─────────────────────────────────┘
-                         │  Repository Ingestion
-┌────────────────────────┴─────────────────────────────────┐
-│               Domain & Service Layer                      │
-│  DocumentRepository  •  ScannerService  •  PdfService    │
-└────────────────────────▲─────────────────────────────────┘
-                         │  Local Persistence
-┌────────────────────────┴─────────────────────────────────┐
-│              Data Storage & WebAssembly Layer             │
-│     SQLite  (sqflite  /  sqflite_common_ffi_web WASM)    │
-└──────────────────────────────────────────────────────────┘
-```
-
-**Design principles applied:**
-- 📦 **BLoC Pattern** — Events in, States out; fully testable business logic
-- 🔄 **Repository Pattern** — Data sources swappable without touching UI
-- 🌐 **Platform Abstraction** — Same codebase runs on Web, Android, iOS, and Windows via platform-aware database initialisation
-
----
-
-## 📂 Project Structure
-
-```
+```text
 folio/
 ├── lib/
-│   ├── blocs/                        # Business Logic Components (BLoCs)
-│   │   ├── dashboard/                #   Dashboard events, states & bloc
-│   │   └── scanner/                  #   Scanning, OCR & processing flow
-│   ├── core/                         # App-wide constants, themes & DB setup
-│   │   ├── color_filters.dart        #   Image filter presets
-│   │   ├── database_helper.dart      #   Cross-platform SQLite initialisation
-│   │   └── folio_theme.dart          #   Day/Night theme notifier & styles
-│   ├── models/                       # Data entities — Document, Folder, Page
-│   ├── repositories/                 # Document & folder database abstraction
-│   ├── services/                     # PDF compilation & OCR orchestration
-│   ├── ui/
-│   │   ├── screens/                  #   Dashboard, Detail, Studio, Scanner
-│   │   └── widgets/                  #   Neumorphic controls, tiles, badges
-│   └── main.dart                     # App entry point & multi-platform bootstrap
-├── web/                              # Web-specific assets
-│   ├── index.html                    #   PWA shell
-│   ├── sqflite_sw.js                 #   SQLite Web Worker script
-│   └── sqlite3.wasm                  #   SQLite WebAssembly binary
-├── android/                          # Android native project
-├── ios/                              # iOS native project
-├── windows/                          # Windows desktop native project
-├── pubspec.yaml                      # Dependencies & project metadata
-└── README.md
+│   ├── blocs/           # BLoC state management (Dashboard, Scanner)
+│   ├── core/            # Themes, color filters, and database helper
+│   ├── models/          # Entity models (Document, Folder, Page)
+│   ├── repositories/    # Database query abstraction layer
+│   ├── services/        # PDF compilation, scanning, and OCR services
+│   ├── ui/              # Screens and reusable Neumorphic UI widgets
+│   └── main.dart        # Application entry point & web SQLite bootstrap
+├── web/                 # Web manifest, icons, and SQLite WASM binaries
+├── android/             # Android native platform files
+├── ios/                 # iOS native platform files
+└── windows/             # Windows native desktop files
 ```
 
 ---
 
-## 📱 Supported Platforms
-
-| Platform | Status | Minimum Version |
-|---|:---:|---|
-| 🌐 **Web** (Chrome, Edge, Safari, Firefox) | ✅ Live | Modern browsers with WASM support |
-| 🤖 **Android** | ✅ Supported | API 21+ (Android 5.0+) |
-| 🍎 **iOS** | ✅ Supported | iOS 12.0+ |
-| 🪟 **Windows** | ✅ Supported | Windows 10 / 11 |
-
-> The web build is installable as a **Progressive Web App (PWA)** — click *"Add to Home Screen"* or *"Install"* in your browser's address bar.
-
----
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) — version `^3.11.5` or compatible
-- [Dart SDK](https://dart.dev/get-dart) — bundled with Flutter
-- **Chrome** for web testing, or **Android Studio / Xcode** for mobile targets
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (`^3.11.5` or higher)
+- [Dart SDK](https://dart.dev/get-dart)
+- Google Chrome (for web development) or Android Studio / Xcode
 
-### 1. Clone the Repository
+### Setup & Local Execution
 
-```bash
-git clone https://github.com/Aayush049/folio.git
-cd folio
-```
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Aayush049/Folio.git
+   cd Folio
+   ```
 
-### 2. Install Dependencies
+2. **Install dependencies:**
+   ```bash
+   flutter pub get
+   ```
 
-```bash
-flutter pub get
-```
-
-### 3. Run Locally
-
-```bash
-# Web (Chrome)
-flutter run -d chrome
-
-# Windows Desktop
-flutter run -d windows
-
-# Android device or emulator
-flutter run -d android
-
-# iOS simulator or device
-flutter run -d ios
-```
+3. **Run on your target platform:**
+   ```bash
+   flutter run -d chrome     # Web
+   flutter run -d windows    # Windows Desktop
+   flutter run -d android    # Android Device / Emulator
+   flutter run -d ios        # iOS Simulator / Device
+   ```
 
 ---
 
-## 📦 Building for Production
+## Deployment
 
-### Web Release
-
+### Web Build
+To compile the production web bundle:
 ```bash
 flutter build web --release
-# Output: build/web/
 ```
 
 ### Deploy to Vercel
-
+Deploy the generated `build/web` directory directly:
 ```bash
 npx vercel build/web --prod
 ```
 
-### Mobile & Desktop Releases
-
-```bash
-flutter build apk --release         # Android APK
-flutter build appbundle --release   # Google Play App Bundle
-flutter build ipa --release         # iOS Archive (requires Xcode)
-flutter build windows --release     # Windows Desktop Executable
-```
-
 ---
 
-## 🧪 Testing
+## Author
 
-Run the automated test suite:
-
-```bash
-flutter test
-```
-
----
-
-## 🗺️ Roadmap
-
-| Status | Feature |
-|:---:|---|
-| ✅ | Client-side SQLite with WebAssembly support |
-| ✅ | Production web deployment to Vercel |
-| ✅ | Multi-page PDF compilation & export |
-| ✅ | On-device OCR with smart document naming |
-| ✅ | Digital signature pad |
-| 🔲 | Batch document export as bundled ZIP archives |
-| 🔲 | Document tagging, search indexing & colour labelling |
-| 🔲 | Encrypted PDF export with password protection |
-| 🔲 | Cloud backup / sync integration (opt-in, end-to-end encrypted) |
-
----
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!  
-Feel free to open an [issue](https://github.com/Aayush049/folio/issues) or submit a pull request.
-
-1. Fork the repository
-2. Create your feature branch: `git checkout -b feat/amazing-feature`
-3. Commit your changes: `git commit -m 'feat: add amazing feature'`
-4. Push to the branch: `git push origin feat/amazing-feature`
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
-
----
-
-<div align="center">
-
-Built with ❤️ by [Aayush](https://github.com/Aayush049) &nbsp;•&nbsp; Powered by **Flutter** & **Vercel**
-
-⭐ If you find this project useful, please consider giving it a star!
-
-</div>
+Developed by **Aayush** ([@Aayush049](https://github.com/Aayush049)).

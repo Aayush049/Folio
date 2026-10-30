@@ -2,6 +2,10 @@
 
 <div align="center">
 
+<img src="assets/images/logo.png" width="110" alt="Folio Brand Logo" style="border-radius: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);" />
+
+### The Offline Document Studio
+
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://folio-nine-omega-50.vercel.app)
 [![Android Release](https://img.shields.io/badge/Android-Download_APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Aayush049/Folio/releases/download/v1.0.0/folio.apk)
 [![GitHub Release](https://img.shields.io/badge/Release-v1.0.0-blue?style=for-the-badge&logo=github)](https://github.com/Aayush049/Folio/releases/tag/v1.0.0)
@@ -29,8 +33,9 @@ The production web bundle is live and hosted on Vercel:
 A standalone release APK is published on GitHub Releases and ready for direct on-device download & installation:
 > **Direct Download:** [**folio.apk (v1.0.0)**](https://github.com/Aayush049/Folio/releases/download/v1.0.0/folio.apk)  
 > **GitHub Release Page:** [Folio v1.0.0 Release](https://github.com/Aayush049/Folio/releases/tag/v1.0.0)  
-> **Architecture:** Universal Release Binary (ARM64, ARMv7, x86_64) with R8 / ProGuard optimization  
-> **File Size:** ~90.5 MB
+> **Architecture:** Universal Release Binary (ARM64, ARMv7, x86_64) with ProGuard & R8 minification  
+> **File Size:** ~90.8 MB  
+> **Mobile Optimization:** Full adaptive launcher icon support and zero-flicker native Android 12+ splash integration
 
 ---
 
@@ -48,6 +53,7 @@ A standalone release APK is published on GitHub Releases and ready for direct on
 - **Digital Signatures:** Draw handwritten signatures directly on the document canvas with customizable placement and sizing.
 - **Multi-Page PDF Export:** Compile and export clean, high-resolution PDFs directly to local storage or share sheets.
 - **Local Relational Storage:** Structured document and folder management backed by SQLite (`sqflite` natively, and `sqflite_common_ffi_web` with WebAssembly in browsers).
+- **Adaptive Neumorphic Design:** Custom soft-UI design system with ambient time-based Day/Night automatic lighting switch and tactile micro-interactions.
 
 ---
 

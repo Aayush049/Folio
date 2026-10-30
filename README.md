@@ -3,15 +3,15 @@
 <div align="center">
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://folio-nine-omega-50.vercel.app)
-[![Android Release](https://img.shields.io/badge/Android-APK_Release-3DDC84?style=for-the-badge&logo=android&logoColor=white)](#android-release-apk)
-[![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)](https://folio-nine-omega-50.vercel.app)
+[![Android Release](https://img.shields.io/badge/Android-Download_APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Aayush049/Folio/releases/download/v1.0.0/folio.apk)
+[![GitHub Release](https://img.shields.io/badge/Release-v1.0.0-blue?style=for-the-badge&logo=github)](https://github.com/Aayush049/Folio/releases/tag/v1.0.0)
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
 [![Author](https://img.shields.io/badge/Author-Aayush-blue?style=for-the-badge&logo=github)](https://github.com/Aayush049)
 
 **An offline-first document scanner, studio, and management application built with Flutter.**
 
-[Launch Web App](https://folio-nine-omega-50.vercel.app) • [Download Android APK](#android-release-apk) • [Features](#features) • [Tech Stack](#tech-stack) • [Getting Started](#getting-started) • [Deployment](#deployment)
+[Launch Web App](https://folio-nine-omega-50.vercel.app) • [Download Android APK](https://github.com/Aayush049/Folio/releases/download/v1.0.0/folio.apk) • [Features](#features) • [Tech Stack](#tech-stack) • [Getting Started](#getting-started) • [Deployment](#deployment)
 
 </div>
 
@@ -26,10 +26,11 @@ The production web bundle is live and hosted on Vercel:
 > **Platform:** Web (PWA-ready with client-side WebAssembly SQLite)
 
 ### 📱 Android Release (APK)
-A standalone release APK is built and ready for on-device installation:
-> **File:** `folio.apk`  
-> **Location:** Root directory (`folio.apk`) and `build/app/outputs/flutter-apk/folio.apk`  
-> **Architecture:** Universal Release Binary (ARM64, ARMv7, x86_64) with R8 / ProGuard optimization
+A standalone release APK is published on GitHub Releases and ready for direct on-device download & installation:
+> **Direct Download:** [**folio.apk (v1.0.0)**](https://github.com/Aayush049/Folio/releases/download/v1.0.0/folio.apk)  
+> **GitHub Release Page:** [Folio v1.0.0 Release](https://github.com/Aayush049/Folio/releases/tag/v1.0.0)  
+> **Architecture:** Universal Release Binary (ARM64, ARMv7, x86_64) with R8 / ProGuard optimization  
+> **File Size:** ~90.5 MB
 
 ---
 

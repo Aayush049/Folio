@@ -9,7 +9,7 @@ import 'blocs/dashboard/dashboard_event.dart';
 import 'blocs/scanner/scanner_bloc.dart';
 import 'repositories/document_repository.dart';
 import 'services/scanner_service.dart';
-import 'ui/screens/dashboard_screen.dart';
+import 'ui/screens/splash_screen.dart';
 import 'core/folio_theme.dart';
 
 void main() {
@@ -54,7 +54,7 @@ class FolioApp extends StatelessWidget {
             title: 'Folio',
             debugShowCheckedModeBanner: false,
             theme: theme.themeData,          // auto-switches day ↔ night
-            home: const DashboardScreen(),
+            home: const SplashScreen(),
           ),
         ),
       ),

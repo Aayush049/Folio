@@ -1,30 +1,21 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:folio/main.dart';
+import 'package:folio/ui/widgets/folio_logo.dart';
+import 'package:folio/ui/screens/splash_screen.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  testWidgets('FolioApp launches with SplashScreen and FolioLogo smoke test',
+      (WidgetTester tester) async {
     await tester.pumpWidget(const FolioApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify SplashScreen is rendered
+    expect(find.byType(SplashScreen), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Verify FolioLogo is present
+    expect(find.byType(FolioLogo), findsWidgets);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify Title text is present
+    expect(find.text('FOLIO'), findsOneWidget);
+    expect(find.text('The Offline Document Studio'), findsOneWidget);
   });
 }

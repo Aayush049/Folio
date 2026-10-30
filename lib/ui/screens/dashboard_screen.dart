@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../blocs/dashboard/dashboard_bloc.dart';
 import '../../blocs/dashboard/dashboard_event.dart';
@@ -11,6 +10,7 @@ import '../../repositories/document_repository.dart';
 import '../widgets/document_list_tile.dart';
 import '../widgets/folder_list_tile.dart';
 import '../widgets/neu_widgets.dart';
+import '../widgets/folio_logo.dart';
 import '../../core/folio_theme.dart';
 import 'scanner_screen.dart';
 import 'document_detail_screen.dart';
@@ -72,15 +72,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   letterSpacing: 0.3,
                                 ),
                               ),
-                              const SizedBox(height: 2),
-                              Text(
-                                'Folio',
-                                style: GoogleFonts.nunito(
-                                  color: theme.text,
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: -1.5,
-                                ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  const FolioLogo(
+                                    size: 34,
+                                    showShadow: true,
+                                    borderRadius: 10,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    'Folio',
+                                    style: GoogleFonts.nunito(
+                                      color: theme.text,
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: -1.5,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),

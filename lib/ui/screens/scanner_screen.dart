@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../blocs/scanner/scanner_bloc.dart';
 import '../../blocs/scanner/scanner_event.dart';

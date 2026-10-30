@@ -16,9 +16,6 @@ import 'studio_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 
-bool _isSharing = false;
-bool _isOpeningPdf = false;
-
 class DocumentDetailScreen extends StatefulWidget {
   final Document document;
   final DocumentRepository repository;
@@ -186,7 +183,6 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
 
   Future<void> _exportAndShare() async {
     if (_pages == null || _pages!.isEmpty) return;
-    setState(() => _isSharing = true);
     try {
       final images = _pages!.map((p) => File(p.imagePath)).toList();
       final pdfFile = await _pdfService.generatePdf(images, widget.document.name);
@@ -194,22 +190,17 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
       await Share.shareXFiles([XFile(pdfFile.path)], text: 'Document from Folio');
     } catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-    } finally {
-      if (mounted) setState(() => _isSharing = false);
     }
   }
 
   Future<void> _openPdf() async {
     if (_pages == null || _pages!.isEmpty) return;
-    setState(() => _isOpeningPdf = true);
     try {
       final images = _pages!.map((p) => File(p.imagePath)).toList();
       final pdfFile = await _pdfService.generatePdf(images, widget.document.name);
       await OpenFilex.open(pdfFile.path);
     } catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-    } finally {
-      if (mounted) setState(() => _isOpeningPdf = false);
     }
   }
 
@@ -272,12 +263,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                   const SizedBox(width: 10),
                   NeuIconButton(
                     icon: Icons.picture_as_pdf_outlined,
-                    onTap: () async {
-                      if (_pages == null) return;
-                      final images = _pages!.map((p) => File(p.imagePath)).toList();
-                      final pdfFile = await _pdfService.generatePdf(images, widget.document.name);
-                      await OpenFilex.open(pdfFile.path);
-                    },
+                    onTap: _openPdf,
                     size: 44,
                     tooltip: 'Open PDF',
                   ),

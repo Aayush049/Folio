@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_launcher_background">#E0E5EC</color>
+    <color name="folio_day_bg">#E0E5EC</color>
+    <color name="folio_night_bg">#1A1D2E</color>
 </resources>

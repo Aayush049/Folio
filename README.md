@@ -3,6 +3,7 @@
 <div align="center">
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://folio-nine-omega-50.vercel.app)
+[![Android Release](https://img.shields.io/badge/Android-APK_Release-3DDC84?style=for-the-badge&logo=android&logoColor=white)](#android-release-apk)
 [![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)](https://folio-nine-omega-50.vercel.app)
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
@@ -10,19 +11,25 @@
 
 **An offline-first document scanner, studio, and management application built with Flutter.**
 
-[Launch Web App](https://folio-nine-omega-50.vercel.app) • [Features](#features) • [Tech Stack](#tech-stack) • [Getting Started](#getting-started) • [Deployment](#deployment)
+[Launch Web App](https://folio-nine-omega-50.vercel.app) • [Download Android APK](#android-release-apk) • [Features](#features) • [Tech Stack](#tech-stack) • [Getting Started](#getting-started) • [Deployment](#deployment)
 
 </div>
 
 ---
 
-## Live Application
+## Live Application & Releases
 
-The production web build is hosted on Vercel:
-
+### 🌐 Web Production Build
+The production web bundle is live and hosted on Vercel:
 > **URL:** [https://folio-nine-omega-50.vercel.app](https://folio-nine-omega-50.vercel.app)  
 > **Status:** Live & Operational  
 > **Platform:** Web (PWA-ready with client-side WebAssembly SQLite)
+
+### 📱 Android Release (APK)
+A standalone release APK is built and ready for on-device installation:
+> **File:** `folio.apk`  
+> **Location:** Root directory (`folio.apk`) and `build/app/outputs/flutter-apk/folio.apk`  
+> **Architecture:** Universal Release Binary (ARM64, ARMv7, x86_64) with R8 / ProGuard optimization
 
 ---
 
@@ -35,7 +42,7 @@ The production web build is hosted on Vercel:
 ## Features
 
 - **Document Capture & Import:** Scan via device camera or import existing images and files. Supports multi-page document sessions.
-- **Editing Studio:** Crop, align, and apply contrast/color enhancement filters to optimize readability.
+- **Editing Studio:** Crop, align, and apply contrast/color enhancement filters (`Original`, `Magic`, `B&W`, `Grey`) to optimize readability.
 - **On-Device OCR:** Client-side text recognition powered by Google ML Kit with automated smart document naming based on recognized keywords.
 - **Digital Signatures:** Draw handwritten signatures directly on the document canvas with customizable placement and sizing.
 - **Multi-Page PDF Export:** Compile and export clean, high-resolution PDFs directly to local storage or share sheets.
@@ -62,6 +69,7 @@ The production web build is hosted on Vercel:
 
 ```text
 folio/
+├── folio.apk            # Compiled production Android APK binary
 ├── lib/
 │   ├── blocs/           # BLoC state management (Dashboard, Scanner)
 │   ├── core/            # Themes, color filters, and database helper
@@ -71,7 +79,7 @@ folio/
 │   ├── ui/              # Screens and reusable Neumorphic UI widgets
 │   └── main.dart        # Application entry point & web SQLite bootstrap
 ├── web/                 # Web manifest, icons, and SQLite WASM binaries
-├── android/             # Android native platform files
+├── android/             # Android native platform files & ProGuard rules
 ├── ios/                 # iOS native platform files
 └── windows/             # Windows native desktop files
 ```
@@ -84,7 +92,8 @@ folio/
 
 - [Flutter SDK](https://docs.flutter.dev/get-started/install) (`^3.11.5` or higher)
 - [Dart SDK](https://dart.dev/get-dart)
-- Google Chrome (for web development) or Android Studio / Xcode
+- Android SDK / Android Studio (for Android build)
+- Google Chrome (for web development)
 
 ### Setup & Local Execution
 
@@ -109,19 +118,21 @@ folio/
 
 ---
 
-## Deployment
+## Deployment & Building
 
-### Web Build
-To compile the production web bundle:
+### 1. Web Release & Vercel Deployment
+To compile the production web bundle and deploy to Vercel:
 ```bash
 flutter build web --release
-```
-
-### Deploy to Vercel
-Deploy the generated `build/web` directory directly:
-```bash
 npx vercel build/web --prod
 ```
+
+### 2. Android APK Release
+To generate the standalone optimized release APK:
+```bash
+flutter build apk --release
+```
+The output file is generated at `build/app/outputs/flutter-apk/app-release.apk` (renamed as `folio.apk`).
 
 ---
 

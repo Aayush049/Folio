@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -6,7 +7,9 @@ import 'package:path/path.dart' as p;
 
 class ScannerService {
   final ImagePicker _picker = ImagePicker();
-  final TextRecognizer _textRecognizer = TextRecognizer();
+  TextRecognizer? _textRecognizer;
+
+  TextRecognizer get _recognizer => _textRecognizer ??= TextRecognizer();
 
   Future<List<File>> pickImages() async {
     final List<XFile> images = await _picker.pickMultiImage();
@@ -34,33 +37,41 @@ class ScannerService {
 
   /// Smart document name based on detected content keywords.
   Future<String> getSmartName(File image) async {
-    final inputImage = InputImage.fromFile(image);
-    final RecognizedText recognizedText =
-    await _textRecognizer.processImage(inputImage);
+    if (kIsWeb) return 'New_Document';
 
-    final text = recognizedText.text.toLowerCase();
+    try {
+      final inputImage = InputImage.fromFile(image);
+      final RecognizedText recognizedText =
+          await _recognizer.processImage(inputImage);
 
-    if (text.contains('invoice') || text.contains('bill')) {
-      if (text.contains('amazon')) return 'Amazon_Invoice';
-      if (text.contains('google')) return 'Google_Bill';
-      return 'Invoice';
+      final text = recognizedText.text.toLowerCase();
+
+      if (text.contains('invoice') || text.contains('bill')) {
+        if (text.contains('amazon')) return 'Amazon_Invoice';
+        if (text.contains('google')) return 'Google_Bill';
+        return 'Invoice';
+      }
+      if (text.contains('passport')) return 'Passport_Scan';
+      if (text.contains('id card') || text.contains('identification')) return 'ID_Card';
+      if (text.contains('receipt')) return 'Receipt';
+      if (text.contains('contract') || text.contains('agreement')) return 'Contract';
+      if (text.contains('certificate')) return 'Certificate';
+
+      return 'New_Document';
+    } catch (e) {
+      return 'New_Document';
     }
-    if (text.contains('passport')) return 'Passport_Scan';
-    if (text.contains('id card') || text.contains('identification')) return 'ID_Card';
-    if (text.contains('receipt')) return 'Receipt';
-    if (text.contains('contract') || text.contains('agreement')) return 'Contract';
-    if (text.contains('certificate')) return 'Certificate';
-
-    return 'New_Document';
   }
 
   /// Full OCR text extraction from a single image file.
   /// Returns recognized text, or empty string if nothing found.
   Future<String> extractTextFromImage(File image) async {
+    if (kIsWeb) return '';
+
     try {
       final inputImage = InputImage.fromFile(image);
       final RecognizedText recognizedText =
-      await _textRecognizer.processImage(inputImage);
+          await _recognizer.processImage(inputImage);
       return recognizedText.text.trim();
     } catch (e) {
       return '';
@@ -68,6 +79,8 @@ class ScannerService {
   }
 
   void dispose() {
-    _textRecognizer.close();
+    if (!kIsWeb) {
+      _textRecognizer?.close();
+    }
   }
 }

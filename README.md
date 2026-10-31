@@ -34,7 +34,7 @@ A standalone release APK is published on GitHub Releases and ready for direct on
 > **Direct Download:** [**folio.apk (v1.0.0)**](https://github.com/Aayush049/Folio/releases/download/v1.0.0/folio.apk)  
 > **GitHub Release Page:** [Folio v1.0.0 Release](https://github.com/Aayush049/Folio/releases/tag/v1.0.0)  
 > **Architecture:** Universal Release Binary (ARM64, ARMv7, x86_64) with ProGuard & R8 minification  
-> **File Size:** ~90.8 MB  
+> **File Size:** ~91.1 MB  
 > **Mobile Optimization:** Full adaptive launcher icon support and zero-flicker native Android 12+ splash integration
 
 ---

@@ -9,6 +9,7 @@ import 'package:signature/signature.dart';
 import '../../core/color_filters.dart';
 import '../../core/folio_theme.dart';
 import '../widgets/neu_widgets.dart';
+import '../widgets/folio_image.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 class StudioScreen extends StatefulWidget {
@@ -165,7 +166,7 @@ class _StudioScreenState extends State<StudioScreen> {
                         children: [
                           ColorFiltered(
                             colorFilter: ColorFilter.matrix(_selectedFilter),
-                            child: Image.file(
+                            child: FolioImage.file(
                               _currentImage,
                               fit: BoxFit.contain,
                               width: double.infinity,
@@ -243,7 +244,7 @@ class _StudioScreenState extends State<StudioScreen> {
                         borderRadius: BorderRadius.circular(10),
                         child: ColorFiltered(
                           colorFilter: ColorFilter.matrix(filter),
-                          child: Image.file(_currentImage, fit: BoxFit.cover),
+                          child: FolioImage.file(_currentImage, fit: BoxFit.cover),
                         ),
                       ),
                     ),

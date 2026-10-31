@@ -12,6 +12,7 @@ import '../../services/pdf_service.dart';
 import '../../services/scanner_service.dart';
 import '../../core/folio_theme.dart';
 import '../widgets/neu_widgets.dart';
+import '../widgets/folio_image.dart';
 import 'studio_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -211,7 +212,10 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
     return Scaffold(
       backgroundColor: theme.bg,
       body: SafeArea(
-        child: Column(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 960),
+            child: Column(
           children: [
             // ─── Header ────────────────────────────────────────────────────
             Padding(
@@ -325,18 +329,20 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
           ],
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 
   Widget _buildGrid(FolioThemeNotifier theme) {
     return GridView.builder(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
       physics: const BouncingScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 220,
         crossAxisSpacing: 14,
         mainAxisSpacing: 14,
-        childAspectRatio: 0.7,
+        childAspectRatio: 0.72,
       ),
       itemCount: _pages!.length,
       itemBuilder: (context, index) {
@@ -353,8 +359,8 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(20),
-                  child: Image.file(
-                    File(page.imagePath),
+                  child: FolioImage(
+                    path: page.imagePath,
                     fit: BoxFit.cover,
                     width: double.infinity,
                     height: double.infinity,
@@ -445,7 +451,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               leading: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.file(File(page.imagePath), width: 52, height: 52, fit: BoxFit.cover),
+                child: FolioImage(path: page.imagePath, width: 52, height: 52, fit: BoxFit.cover),
               ),
               title: Text(
                 'Page ${index + 1}',

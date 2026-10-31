@@ -12,12 +12,21 @@ class ScannerService {
   TextRecognizer get _recognizer => _textRecognizer ??= TextRecognizer();
 
   Future<List<File>> pickImages() async {
-    final List<XFile> images = await _picker.pickMultiImage();
+    final List<XFile> images = await _picker.pickMultiImage(
+      maxWidth: 1920,
+      maxHeight: 1920,
+      imageQuality: 85,
+    );
     return images.map((xFile) => File(xFile.path)).toList();
   }
 
   Future<File?> pickImageFromCamera() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+    final XFile? image = await _picker.pickImage(
+      source: ImageSource.camera,
+      maxWidth: 1920,
+      maxHeight: 1920,
+      imageQuality: 85,
+    );
     return image != null ? File(image.path) : null;
   }
 

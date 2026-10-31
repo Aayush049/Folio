@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
@@ -31,6 +32,19 @@ class ScannerService {
   }
 
   Future<File> saveImageToPermanentStorage(File image) async {
+    if (kIsWeb) {
+      if (image.path.startsWith('data:')) {
+        return image;
+      }
+      try {
+        final bytes = await XFile(image.path).readAsBytes();
+        final base64String = base64Encode(bytes);
+        return File('data:image/png;base64,$base64String');
+      } catch (_) {
+        return image;
+      }
+    }
+
     final directory = await getApplicationDocumentsDirectory();
     final folioDir = Directory(p.join(directory.path, 'scans'));
 

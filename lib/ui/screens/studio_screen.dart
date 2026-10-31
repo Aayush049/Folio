@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/rendering.dart';
@@ -58,6 +60,7 @@ class _StudioScreenState extends State<StudioScreen> {
           lockAspectRatio: false,
         ),
         IOSUiSettings(title: 'Crop'),
+        WebUiSettings(context: context),
       ],
     );
     if (croppedFile != null) {
@@ -72,6 +75,16 @@ class _StudioScreenState extends State<StudioScreen> {
       final image = await boundary.toImage(pixelRatio: 3.0);
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       final bytes = byteData!.buffer.asUint8List();
+
+      if (kIsWeb) {
+        final xfile = XFile.fromData(
+          bytes,
+          mimeType: 'image/png',
+          name: 'edited_${DateTime.now().millisecondsSinceEpoch}.png',
+        );
+        if (mounted) Navigator.pop(context, File(xfile.path));
+        return;
+      }
 
       final dir = await getApplicationDocumentsDirectory();
       final path = '${dir.path}/edited_${DateTime.now().millisecondsSinceEpoch}.png';

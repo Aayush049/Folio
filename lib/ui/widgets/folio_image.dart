@@ -36,6 +36,26 @@ class FolioImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (path.startsWith('data:')) {
+      try {
+        final uriData = UriData.fromUri(Uri.parse(path));
+        return Image.memory(
+          uriData.contentAsBytes(),
+          fit: fit,
+          width: width,
+          height: height,
+          errorBuilder: (context, error, stackTrace) => Container(
+            width: width,
+            height: height,
+            color: Colors.grey.withValues(alpha: 0.12),
+            child: const Center(
+              child: Icon(Icons.broken_image_rounded, color: Colors.grey, size: 28),
+            ),
+          ),
+        );
+      } catch (_) {}
+    }
+
     final isWebOrUrl = kIsWeb ||
         path.startsWith('blob:') ||
         path.startsWith('http://') ||

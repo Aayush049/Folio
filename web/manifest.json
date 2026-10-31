@@ -1,11 +1,11 @@
 {
-    "name": "folio",
-    "short_name": "folio",
+    "name": "Folio — The Offline Document Studio",
+    "short_name": "Folio",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A Document Scanner.",
+    "background_color": "#181829",
+    "theme_color": "#6C63FF",
+    "description": "An offline-first document scanner and management studio.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

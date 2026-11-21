@@ -4,20 +4,22 @@ import 'package:provider/provider.dart';
 import '../../core/folio_theme.dart';
 
 /// A custom-crafted, theme-reactive vector logo for Folio.
-/// Features a layered neumorphic canvas, stacked document pages,
-/// a folded corner (dog-ear), and an optional scanning beam animation.
+/// Features stacked document pages, a folded corner (dog-ear),
+/// an optional scanning beam animation, and an optional neumorphic card container.
 class FolioLogo extends StatefulWidget {
   final double size;
   final bool animate;
   final bool showShadow;
   final double borderRadius;
+  final bool showBackgroundCard;
 
   const FolioLogo({
     super.key,
     this.size = 100,
     this.animate = false,
-    this.showShadow = true,
+    this.showShadow = false,
     this.borderRadius = 24,
+    this.showBackgroundCard = false,
   });
 
   @override
@@ -55,8 +57,35 @@ class _FolioLogoState extends State<FolioLogo>
     final theme = context.watch<FolioThemeNotifier>();
     final isDark = theme.isDark;
     final size = widget.size;
-    final r = widget.borderRadius * (size / 100);
 
+    final logoContent = SizedBox(
+      width: size,
+      height: size,
+      child: AnimatedBuilder(
+        animation: _animController ?? const AlwaysStoppedAnimation(0.5),
+        builder: (context, _) {
+          final scanProgress = _scanAnimation?.value ?? 0.5;
+          return CustomPaint(
+            size: Size(size, size),
+            painter: _FolioLogoPainter(
+              accentColor: theme.accent,
+              accentSoft: theme.accentSoft,
+              textColor: theme.text,
+              textSubColor: theme.textSub,
+              cardBg: theme.cardBg,
+              isDark: isDark,
+              scanProgress: widget.animate ? scanProgress : null,
+            ),
+          );
+        },
+      ),
+    );
+
+    if (!widget.showBackgroundCard) {
+      return logoContent;
+    }
+
+    final r = widget.borderRadius * (size / 100);
     return Container(
       width: size,
       height: size,
@@ -67,24 +96,7 @@ class _FolioLogoState extends State<FolioLogo>
       ),
       child: Padding(
         padding: EdgeInsets.all(size * 0.14),
-        child: AnimatedBuilder(
-          animation: _animController ?? const AlwaysStoppedAnimation(0.5),
-          builder: (context, _) {
-            final scanProgress = _scanAnimation?.value ?? 0.5;
-            return CustomPaint(
-              size: Size(size * 0.72, size * 0.72),
-              painter: _FolioLogoPainter(
-                accentColor: theme.accent,
-                accentSoft: theme.accentSoft,
-                textColor: theme.text,
-                textSubColor: theme.textSub,
-                cardBg: theme.cardBg,
-                isDark: isDark,
-                scanProgress: widget.animate ? scanProgress : null,
-              ),
-            );
-          },
-        ),
+        child: logoContent,
       ),
     );
   }

@@ -166,10 +166,8 @@ class _SplashScreenState extends State<SplashScreen>
                           child: Transform.scale(
                             scale: _logoScale.value,
                             child: const FolioLogo(
-                              size: 130,
+                              size: 136,
                               animate: true,
-                              showShadow: true,
-                              borderRadius: 34,
                             ),
                           ),
                         ),

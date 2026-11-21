@@ -50,7 +50,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void _navigateToScanner() {
     HapticFeedback.lightImpact();
     context.read<ScannerBloc>().add(ResetScanner());
-    Navigator.push(context, neuRoute(const ScannerScreen()));
+    Navigator.push(
+      context,
+      neuRoute(const ScannerScreen()),
+    );
   }
 
   String _greeting() {
@@ -70,6 +73,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       onNewScan: _navigateToScanner,
       child: Scaffold(
         backgroundColor: theme.bg,
+        floatingActionButton: _FolioFloatingScanButton(
+          onTap: _navigateToScanner,
+          isCompact: isCompact,
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         body: SafeArea(
           child: ResponsiveContainer(
             maxWidth: FolioBreakpoints.maxContentWidth,
@@ -85,7 +93,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       // Header Row
                       SliverToBoxAdapter(
                         child: Padding(
-                          padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                          padding: const EdgeInsets.fromLTRB(24, 16, 20, 0),
                           child: Row(
                             children: [
                               Expanded(
@@ -132,36 +140,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               const SizedBox(width: 8),
                               // Theme toggle
                               _ThemeToggleButton(),
-                              const SizedBox(width: 10),
-                              // Scan button
-                              NeuButton(
-                                filled: true,
-                                borderRadius: 20,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 18,
-                                  vertical: 12,
-                                ),
-                                onTap: _navigateToScanner,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      Icons.document_scanner_rounded,
-                                      color: Colors.white,
-                                      size: 18,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      isCompact ? 'Scan' : 'New Scan (Ctrl+N)',
-                                      style: GoogleFonts.nunito(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
                             ],
                           ),
                         ),
@@ -244,8 +222,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       const SliverToBoxAdapter(child: SizedBox(height: 12)),
 
                       // ─── Body ─────────────────────────────────────────────────────
-                      if (state is DashboardInitial ||
-                          state is DashboardLoading)
+                      if (state is DashboardInitial || state is DashboardLoading)
                         const SliverFillRemaining(
                           child: Center(child: CircularProgressIndicator()),
                         )
@@ -266,7 +243,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           count: state.recentDocuments.length,
                         ),
                         _buildRecentSection(context, state, isCompact),
-                        const SliverToBoxAdapter(child: SizedBox(height: 36)),
+                        // Bottom clearance so the floating scan button doesn't obscure cards
+                        const SliverToBoxAdapter(child: SizedBox(height: 88)),
                       ],
                     ],
                   );
@@ -408,8 +386,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   context,
                   neuRoute(DocumentsByFolderScreen(folder: folder)),
                 ),
-                onDelete: () =>
-                    context.read<DashboardBloc>().add(DeleteFolder(folder.id!)),
+                onDelete: () => context.read<DashboardBloc>().add(
+                  DeleteFolder(folder.id!),
+                ),
               );
             },
           ),
@@ -434,8 +413,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               context,
               neuRoute(DocumentsByFolderScreen(folder: folder)),
             ),
-            onDelete: () =>
-                context.read<DashboardBloc>().add(DeleteFolder(folder.id!)),
+            onDelete: () => context.read<DashboardBloc>().add(
+              DeleteFolder(folder.id!),
+            ),
           );
         }, childCount: state.folders.length),
       ),
@@ -594,6 +574,66 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 }
 
+// ─── Floating Neumorphic Scan Action Button ──────────────────────────────────
+class _FolioFloatingScanButton extends StatelessWidget {
+  final VoidCallback onTap;
+  final bool isCompact;
+
+  const _FolioFloatingScanButton({
+    required this.onTap,
+    required this.isCompact,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.watch<FolioThemeNotifier>();
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: theme.accent.withValues(alpha: 0.35),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: NeuButton(
+        filled: true,
+        borderRadius: 28,
+        padding: EdgeInsets.symmetric(
+          horizontal: isCompact ? 20 : 26,
+          vertical: 14,
+        ),
+        onTap: () {
+          HapticFeedback.mediumImpact();
+          onTap();
+        },
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.document_scanner_rounded,
+              color: Colors.white,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              isCompact ? 'Scan' : 'New Scan (Ctrl+N)',
+              style: GoogleFonts.nunito(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                fontSize: 15,
+                letterSpacing: 0.2,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 // ─── Trash & Recovery Button ──────────────────────────────────────────────────
 class _TrashButton extends StatelessWidget {
   @override
@@ -660,7 +700,7 @@ class _SecurityVaultButton extends StatelessWidget {
             HapticFeedback.lightImpact();
             showVaultSecuritySheet(context);
           },
-          size: 44,
+          size: 40,
         );
       },
     );
@@ -688,7 +728,7 @@ class _CloudSyncButton extends StatelessWidget {
             HapticFeedback.lightImpact();
             showCloudSyncModal(context);
           },
-          size: 44,
+          size: 40,
         );
       },
     );
@@ -714,7 +754,7 @@ class _ThemeToggleButton extends StatelessWidget {
             ? 'Auto (long-press to reset)'
             : 'Manual override',
         onTap: () => theme.isDark ? theme.setDark(false) : theme.setDark(true),
-        size: 44,
+        size: 40,
       ),
     );
   }

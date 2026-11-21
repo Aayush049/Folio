@@ -49,7 +49,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
           }
         }
         if (state is ScannerSaved) {
-          context.read<DashboardBloc>().add(LoadDashboard());
+          context.read<DashboardBloc>().add(const LoadDashboard());
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Document saved successfully ✓')),

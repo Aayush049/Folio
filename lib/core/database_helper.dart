@@ -97,6 +97,15 @@ class DatabaseHelper {
     return await db.insert('folders', folder.toMap());
   }
 
+  Future<int> insertOrUpdateFolder(Folder folder) async {
+    final db = await instance.database;
+    return await db.insert(
+      'folders',
+      folder.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
   Future<List<Folder>> getAllFolders() async {
     final db = await instance.database;
     final result = await db.query('folders', orderBy: 'createdAt DESC');
@@ -107,6 +116,21 @@ class DatabaseHelper {
   Future<int> insertDocument(Document doc) async {
     final db = await instance.database;
     return await db.insert('documents', doc.toMap());
+  }
+
+  Future<int> insertOrUpdateDocument(Document doc) async {
+    final db = await instance.database;
+    return await db.insert(
+      'documents',
+      doc.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<List<Document>> getAllDocuments() async {
+    final db = await instance.database;
+    final result = await db.query('documents', orderBy: 'createdAt DESC');
+    return result.map((json) => Document.fromMap(json)).toList();
   }
 
   Future<List<Document>> getDocumentsByFolder(int folderId) async {
@@ -152,6 +176,21 @@ class DatabaseHelper {
   Future<int> insertPage(PageModel page) async {
     final db = await instance.database;
     return await db.insert('pages', page.toMap());
+  }
+
+  Future<int> insertOrUpdatePage(PageModel page) async {
+    final db = await instance.database;
+    return await db.insert(
+      'pages',
+      page.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<List<PageModel>> getAllPages() async {
+    final db = await instance.database;
+    final result = await db.query('pages', orderBy: 'pageOrder ASC');
+    return result.map((json) => PageModel.fromMap(json)).toList();
   }
 
   Future<List<PageModel>> getPagesByDocument(int documentId) async {

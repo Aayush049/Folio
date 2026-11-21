@@ -8,13 +8,20 @@ import '../models/page_model.dart';
 abstract class IDocumentRepository {
   Future<List<Folder>> getFolders();
   Future<int> createFolder(String name);
+  Future<int> insertOrUpdateFolder(Folder folder);
+
+  Future<List<Document>> getAllDocuments();
   Future<List<Document>> getRecentDocuments();
   Future<List<Document>> getDocumentsInFolder(int folderId);
   Future<int> createDocument(int folderId, String name);
-  Future<int> addPage(PageModel page);
-  Future<List<PageModel>> getPages(int documentId);
+  Future<int> insertOrUpdateDocument(Document doc);
   Future<int> deleteDocument(int id);
   Future<int> deleteFolder(int id);
+
+  Future<List<PageModel>> getAllPages();
+  Future<List<PageModel>> getPages(int documentId);
+  Future<int> addPage(PageModel page);
+  Future<int> insertOrUpdatePage(PageModel page);
   Future<int> updatePage(PageModel page);
   Future<int> deletePage(int id);
 }
@@ -36,6 +43,13 @@ class DocumentRepository implements IDocumentRepository {
   }
 
   @override
+  Future<int> insertOrUpdateFolder(Folder folder) =>
+      _dbHelper.insertOrUpdateFolder(folder);
+
+  @override
+  Future<List<Document>> getAllDocuments() => _dbHelper.getAllDocuments();
+
+  @override
   Future<List<Document>> getRecentDocuments() => _dbHelper.getRecentDocuments();
 
   @override
@@ -53,11 +67,22 @@ class DocumentRepository implements IDocumentRepository {
   }
 
   @override
-  Future<int> addPage(PageModel page) => _dbHelper.insertPage(page);
+  Future<int> insertOrUpdateDocument(Document doc) =>
+      _dbHelper.insertOrUpdateDocument(doc);
+
+  @override
+  Future<List<PageModel>> getAllPages() => _dbHelper.getAllPages();
 
   @override
   Future<List<PageModel>> getPages(int documentId) =>
       _dbHelper.getPagesByDocument(documentId);
+
+  @override
+  Future<int> addPage(PageModel page) => _dbHelper.insertPage(page);
+
+  @override
+  Future<int> insertOrUpdatePage(PageModel page) =>
+      _dbHelper.insertOrUpdatePage(page);
 
   @override
   Future<int> deleteDocument(int id) => _dbHelper.deleteDocument(id);

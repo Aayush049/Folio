@@ -23,6 +23,17 @@ class FakeDocumentRepository implements IDocumentRepository {
   }
 
   @override
+  Future<int> insertOrUpdatePage(PageModel page) async {
+    final idx = pages.indexWhere((p) => p.id == page.id);
+    if (idx != -1) {
+      pages[idx] = page;
+    } else {
+      pages.add(page);
+    }
+    return page.id ?? pages.length;
+  }
+
+  @override
   Future<int> createDocument(int folderId, String name) async {
     final doc = Document(id: documents.length + 1, folderId: folderId, name: name, createdAt: DateTime.now());
     documents.add(doc);
@@ -30,10 +41,32 @@ class FakeDocumentRepository implements IDocumentRepository {
   }
 
   @override
+  Future<int> insertOrUpdateDocument(Document doc) async {
+    final idx = documents.indexWhere((d) => d.id == doc.id);
+    if (idx != -1) {
+      documents[idx] = doc;
+    } else {
+      documents.add(doc);
+    }
+    return doc.id ?? documents.length;
+  }
+
+  @override
   Future<int> createFolder(String name) async {
     final folder = Folder(id: folders.length + 1, name: name, createdAt: DateTime.now());
     folders.add(folder);
     return folder.id!;
+  }
+
+  @override
+  Future<int> insertOrUpdateFolder(Folder folder) async {
+    final idx = folders.indexWhere((f) => f.id == folder.id);
+    if (idx != -1) {
+      folders[idx] = folder;
+    } else {
+      folders.add(folder);
+    }
+    return folder.id ?? folders.length;
   }
 
   @override
@@ -53,6 +86,12 @@ class FakeDocumentRepository implements IDocumentRepository {
     pages.removeWhere((p) => p.id == id);
     return 1;
   }
+
+  @override
+  Future<List<Document>> getAllDocuments() async => List.from(documents);
+
+  @override
+  Future<List<PageModel>> getAllPages() async => List.from(pages);
 
   @override
   Future<List<Document>> getDocumentsInFolder(int folderId) async {

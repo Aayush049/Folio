@@ -23,6 +23,9 @@ class FolioColors {
   static const Color nightAccent = Color(0xFFAB82F0);
   static const Color nightAccentSoft = Color(0xFF2A1F45);
   static const Color nightCard = Color(0xFF1E2136);
+
+  // Semantic
+  static const Color danger = Color(0xFFE53935);
 }
 
 // ─── Shadow Presets ──────────────────────────────────────────────────────────
@@ -96,6 +99,7 @@ class FolioThemeNotifier extends ChangeNotifier {
   Color get accentSoft => isDark ? FolioColors.nightAccentSoft : FolioColors.dayAccentSoft;
   Color get darkShadow => isDark ? FolioColors.nightDarkShadow : FolioColors.dayDarkShadow;
   Color get lightShadow => isDark ? FolioColors.nightLightShadow : FolioColors.dayLightShadow;
+  Color get danger => FolioColors.danger;
 
   // ─── Shadow shortcuts ─────────────────────────────────────────────────────
 

@@ -6,11 +6,14 @@ import '../../blocs/dashboard/dashboard_event.dart';
 import '../../blocs/dashboard/dashboard_state.dart';
 import '../../blocs/scanner/scanner_bloc.dart';
 import '../../blocs/scanner/scanner_event.dart';
+import '../../blocs/auth_sync/auth_sync_bloc.dart';
+import '../../blocs/auth_sync/auth_sync_state.dart';
 import '../../repositories/document_repository.dart';
 import '../widgets/document_list_tile.dart';
 import '../widgets/folder_list_tile.dart';
 import '../widgets/neu_widgets.dart';
 import '../widgets/folio_logo.dart';
+import '../widgets/cloud_sync_modal.dart';
 import '../../core/folio_theme.dart';
 import '../../core/folio_breakpoints.dart';
 import '../../core/folio_shortcuts.dart';
@@ -113,6 +116,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   ],
                                 ),
                               ),
+                              // Cloud Sync Vault Button
+                              _CloudSyncButton(),
+                              const SizedBox(width: 10),
                               // Theme toggle
                               _ThemeToggleButton(),
                               const SizedBox(width: 10),
@@ -190,7 +196,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Text(state.message, style: TextStyle(color: theme.text, fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         NeuButton(
-          onTap: () => context.read<DashboardBloc>().add(LoadDashboard()),
+          onTap: () => context.read<DashboardBloc>().add(const LoadDashboard()),
           child: Text('Retry', style: TextStyle(color: context.watch<FolioThemeNotifier>().accent, fontWeight: FontWeight.w800)),
         ),
       ],
@@ -424,6 +430,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+// ─── Cloud Sync Vault Button ──────────────────────────────────────────────────
+class _CloudSyncButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AuthSyncBloc, AuthSyncState>(
+      builder: (context, state) {
+        final isAuth = state.isAuthenticated;
+        final isBusy = state.isBusy;
+
+        return NeuIconButton(
+          icon: isBusy
+              ? Icons.sync_rounded
+              : (isAuth ? Icons.cloud_done_rounded : Icons.cloud_queue_rounded),
+          active: isAuth,
+          tooltip: isAuth
+              ? (isBusy ? 'Sync in progress...' : 'Cloud Backup (Connected)')
+              : 'Cloud Backup & Sync (Offline)',
+          onTap: () => showCloudSyncModal(context),
+          size: 44,
+        );
+      },
     );
   }
 }

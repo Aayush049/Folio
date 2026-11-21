@@ -24,3 +24,11 @@ class FileSystemFailure extends Failure {
 class DocumentNotFoundFailure extends Failure {
   const DocumentNotFoundFailure([super.message = 'Document not found']);
 }
+
+class AuthFailure extends Failure {
+  const AuthFailure(super.message);
+}
+
+class SyncFailure extends Failure {
+  const SyncFailure(super.message);
+}

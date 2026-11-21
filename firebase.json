@@ -1,0 +1,30 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "folio-doc-studio",
+          "appId": "1:392762109338:android:d54e8ca33c75bed3c59e23",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "folio-doc-studio",
+          "configurations": {
+            "android": "1:392762109338:android:d54e8ca33c75bed3c59e23",
+            "ios": "1:392762109338:ios:413a11367f12b928c59e23",
+            "web": "1:392762109338:web:3f3da221d2b12663c59e23",
+            "windows": "1:392762109338:web:9324ca2461e05736c59e23"
+          }
+        }
+      }
+    }
+  }
+}

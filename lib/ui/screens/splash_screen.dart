@@ -78,7 +78,7 @@ class _SplashScreenState extends State<SplashScreen>
     _entranceController.forward();
 
     // Trigger dashboard data preload
-    context.read<DashboardBloc>().add(LoadDashboard());
+    context.read<DashboardBloc>().add(const LoadDashboard());
 
     // Navigate to dashboard after animation completes (tap to skip enabled)
     _navigationTimer = Timer(const Duration(milliseconds: 2300), _proceedToDashboard);

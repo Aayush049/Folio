@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../repositories/document_repository.dart';
 import 'dashboard_event.dart';
 import 'dashboard_state.dart';
-import '../../repositories/document_repository.dart';
 
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   final IDocumentRepository repository;
@@ -11,6 +11,8 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     on<AddFolder>(_onAddFolder);
     on<DeleteDocument>(_onDeleteDocument);
     on<DeleteFolder>(_onDeleteFolder);
+
+    add(const LoadDashboard());
   }
 
   Future<void> _onLoadDashboard(
@@ -21,11 +23,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     try {
       final folders = await repository.getFolders();
       final recentDocs = await repository.getRecentDocuments();
-
-      emit(DashboardLoaded(
-        folders: folders,
-        recentDocuments: recentDocs,
-      ));
+      emit(DashboardLoaded(folders: folders, recentDocuments: recentDocs));
     } catch (e) {
       emit(DashboardError(e.toString()));
     }
@@ -37,7 +35,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   ) async {
     try {
       await repository.createFolder(event.name);
-      add(LoadDashboard());
+      add(const LoadDashboard());
     } catch (e) {
       emit(DashboardError(e.toString()));
     }
@@ -49,7 +47,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   ) async {
     try {
       await repository.deleteDocument(event.id);
-      add(LoadDashboard());
+      add(const LoadDashboard());
     } catch (e) {
       emit(DashboardError(e.toString()));
     }
@@ -61,7 +59,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   ) async {
     try {
       await repository.deleteFolder(event.id);
-      add(LoadDashboard());
+      add(const LoadDashboard());
     } catch (e) {
       emit(DashboardError(e.toString()));
     }

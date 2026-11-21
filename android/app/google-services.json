@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "392762109338",
+    "project_id": "folio-doc-studio",
+    "storage_bucket": "folio-doc-studio.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:392762109338:android:d54e8ca33c75bed3c59e23",
+        "android_client_info": {
+          "package_name": "com.example.folio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "392762109338-opviigvkbvpamgh4filckh14t43gtavc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5wP_IJeHJHaf6lxf1Jc4aJEnWNXiJkz8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "392762109338-opviigvkbvpamgh4filckh14t43gtavc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -4,6 +4,8 @@ import 'folio_theme.dart';
 import '../repositories/document_repository.dart';
 import '../services/scanner_service.dart';
 import '../services/pdf_service.dart';
+import '../services/auth_service.dart';
+import '../services/sync_service.dart';
 
 final sl = GetIt.instance;
 
@@ -33,6 +35,17 @@ Future<void> initServiceLocator() async {
   if (!sl.isRegistered<DocumentRepository>()) {
     sl.registerLazySingleton<DocumentRepository>(
       () => sl<IDocumentRepository>() as DocumentRepository,
+    );
+  }
+
+  // Cloud & Auth Services
+  if (!sl.isRegistered<AuthService>()) {
+    sl.registerLazySingleton<AuthService>(() => AuthService());
+  }
+
+  if (!sl.isRegistered<SyncService>()) {
+    sl.registerLazySingleton<SyncService>(
+      () => SyncService(repository: sl<IDocumentRepository>()),
     );
   }
 

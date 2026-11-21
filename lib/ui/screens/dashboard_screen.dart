@@ -7,20 +7,13 @@ import '../../blocs/dashboard/dashboard_event.dart';
 import '../../blocs/dashboard/dashboard_state.dart';
 import '../../blocs/scanner/scanner_bloc.dart';
 import '../../blocs/scanner/scanner_event.dart';
-import '../../blocs/auth_sync/auth_sync_bloc.dart';
-import '../../blocs/auth_sync/auth_sync_state.dart';
 import '../../blocs/trash/trash_bloc.dart';
 import '../../blocs/trash/trash_event.dart';
-import '../../blocs/trash/trash_state.dart';
-import '../../blocs/security/security_bloc.dart';
-import '../../blocs/security/security_state.dart';
 import '../../repositories/document_repository.dart';
 import '../widgets/document_list_tile.dart';
 import '../widgets/folder_list_tile.dart';
 import '../widgets/neu_widgets.dart';
-import '../widgets/folio_logo.dart';
-import '../widgets/cloud_sync_modal.dart';
-import '../widgets/vault_lock_overlay.dart';
+import '../widgets/folio_bottom_nav_bar.dart';
 import '../../core/folio_theme.dart';
 import '../../core/folio_breakpoints.dart';
 import '../../core/folio_shortcuts.dart';
@@ -29,7 +22,7 @@ import 'scanner_screen.dart';
 import 'document_detail_screen.dart';
 import 'documents_by_folder_screen.dart';
 import 'search_screen.dart';
-import 'trash_screen.dart';
+import 'settings_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -40,6 +33,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   final ScrollController _scrollController = ScrollController();
+  int _currentTab = 0;
 
   @override
   void dispose() {
@@ -73,184 +67,201 @@ class _DashboardScreenState extends State<DashboardScreen> {
       onNewScan: _navigateToScanner,
       child: Scaffold(
         backgroundColor: theme.bg,
-        floatingActionButton: _FolioFloatingScanButton(
-          onTap: _navigateToScanner,
-          isCompact: isCompact,
+        bottomNavigationBar: FolioBottomNavBar(
+          currentIndex: _currentTab,
+          onTap: (index) {
+            setState(() => _currentTab = index);
+          },
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        body: SafeArea(
-          child: ResponsiveContainer(
-            maxWidth: FolioBreakpoints.maxContentWidth,
-            child: Scrollbar(
-              controller: _scrollController,
-              thumbVisibility: !isCompact,
-              child: BlocBuilder<DashboardBloc, DashboardState>(
-                builder: (context, state) {
-                  return CustomScrollView(
-                    controller: _scrollController,
-                    physics: const BouncingScrollPhysics(),
-                    slivers: [
-                      // Header Row
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(24, 16, 20, 0),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      _greeting(),
-                                      style: GoogleFonts.nunito(
-                                        color: theme.textSub,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w700,
-                                        letterSpacing: 0.3,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Row(
-                                      children: [
-                                        const FolioLogo(
-                                          size: 34,
-                                          showShadow: true,
-                                          borderRadius: 10,
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Text(
-                                          'Folio',
-                                          style: GoogleFonts.nunito(
-                                            color: theme.text,
-                                            fontSize: 32,
-                                            fontWeight: FontWeight.w900,
-                                            letterSpacing: -1.5,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              // Vault Lock Button
-                              _SecurityVaultButton(),
-                              const SizedBox(width: 8),
-                              // Cloud Sync Vault Button
-                              _CloudSyncButton(),
-                              const SizedBox(width: 8),
-                              // Theme toggle
-                              _ThemeToggleButton(),
-                            ],
-                          ),
-                        ),
-                      ),
+        body: IndexedStack(
+          index: _currentTab,
+          children: [
+            _buildHomeTab(context, theme, isCompact),
+            const SettingsScreen(),
+          ],
+        ),
+      ),
+    );
+  }
 
-                      // Full-Text OCR Search Bar & Trash Action Row
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: NeuBox(
-                                  borderRadius: 18,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
-                                  onTap: () {
-                                    HapticFeedback.lightImpact();
-                                    Navigator.push(
-                                      context,
-                                      neuRoute(const SearchScreen()),
-                                    );
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.search_rounded,
-                                        color: theme.accent,
-                                        size: 20,
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: Text(
-                                          'Search scans & OCR text contents...',
-                                          style: GoogleFonts.nunito(
-                                            color: theme.textSub.withValues(
-                                              alpha: 0.8,
-                                            ),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 6,
-                                          vertical: 2,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: theme.accentSoft,
-                                          borderRadius: BorderRadius.circular(
-                                            6,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          'FTS5',
-                                          style: TextStyle(
-                                            color: theme.accent,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w900,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+  Widget _buildHomeTab(
+    BuildContext context,
+    FolioThemeNotifier theme,
+    bool isCompact,
+  ) {
+    return SafeArea(
+      child: ResponsiveContainer(
+        maxWidth: FolioBreakpoints.maxContentWidth,
+        child: Scrollbar(
+          controller: _scrollController,
+          thumbVisibility: !isCompact,
+          child: BlocBuilder<DashboardBloc, DashboardState>(
+            builder: (context, state) {
+              return CustomScrollView(
+                controller: _scrollController,
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  // Header Row: Greeting & Folio title on left, Scan button on right
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _greeting(),
+                                  style: GoogleFonts.nunito(
+                                    color: theme.textSub,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.3,
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              _TrashButton(),
-                            ],
+                                const SizedBox(height: 2),
+                                Text(
+                                  'Folio',
+                                  style: GoogleFonts.nunito(
+                                    color: theme.text,
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: -1.5,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
+                          // Scan button restored to top app bar
+                          NeuButton(
+                            filled: true,
+                            borderRadius: 20,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 18,
+                              vertical: 12,
+                            ),
+                            onTap: _navigateToScanner,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.document_scanner_rounded,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  isCompact ? 'Scan' : 'New Scan (Ctrl+N)',
+                                  style: GoogleFonts.nunito(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Full-Text OCR Search Bar (now full width without trash icon)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
+                      child: NeuBox(
+                        borderRadius: 18,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          Navigator.push(
+                            context,
+                            neuRoute(const SearchScreen()),
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.search_rounded,
+                              color: theme.accent,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                'Search scans & OCR text contents...',
+                                style: GoogleFonts.nunito(
+                                  color: theme.textSub.withValues(
+                                    alpha: 0.8,
+                                  ),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: theme.accentSoft,
+                                borderRadius: BorderRadius.circular(
+                                  6,
+                                ),
+                              ),
+                              child: Text(
+                                'FTS5',
+                                style: TextStyle(
+                                  color: theme.accent,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                    ),
+                  ),
 
-                      const SliverToBoxAdapter(child: SizedBox(height: 12)),
+                  const SliverToBoxAdapter(child: SizedBox(height: 12)),
 
-                      // ─── Body ─────────────────────────────────────────────────────
-                      if (state is DashboardInitial || state is DashboardLoading)
-                        const SliverFillRemaining(
-                          child: Center(child: CircularProgressIndicator()),
-                        )
-                      else if (state is DashboardError)
-                        SliverFillRemaining(child: _buildError(context, state))
-                      else if (state is DashboardLoaded) ...[
-                        _buildSectionHeader(
-                          context,
-                          'Folders',
-                          count: state.folders.length,
-                          onAdd: () => _showAddFolderDialog(context),
-                        ),
-                        _buildFolderSection(context, state, isCompact),
-                        const SliverToBoxAdapter(child: SizedBox(height: 12)),
-                        _buildSectionHeader(
-                          context,
-                          'Recent Scans',
-                          count: state.recentDocuments.length,
-                        ),
-                        _buildRecentSection(context, state, isCompact),
-                        // Bottom clearance so the floating scan button doesn't obscure cards
-                        const SliverToBoxAdapter(child: SizedBox(height: 88)),
-                      ],
-                    ],
-                  );
-                },
-              ),
-            ),
+                  // ─── Body ─────────────────────────────────────────────────────
+                  if (state is DashboardInitial || state is DashboardLoading)
+                    const SliverFillRemaining(
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  else if (state is DashboardError)
+                    SliverFillRemaining(child: _buildError(context, state))
+                  else if (state is DashboardLoaded) ...[
+                    _buildSectionHeader(
+                      context,
+                      'Folders',
+                      count: state.folders.length,
+                      onAdd: () => _showAddFolderDialog(context),
+                    ),
+                    _buildFolderSection(context, state, isCompact),
+                    const SliverToBoxAdapter(child: SizedBox(height: 12)),
+                    _buildSectionHeader(
+                      context,
+                      'Recent Scans',
+                      count: state.recentDocuments.length,
+                    ),
+                    _buildRecentSection(context, state, isCompact),
+                    const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                  ],
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -569,192 +580,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ─── Floating Neumorphic Scan Action Button ──────────────────────────────────
-class _FolioFloatingScanButton extends StatelessWidget {
-  final VoidCallback onTap;
-  final bool isCompact;
-
-  const _FolioFloatingScanButton({
-    required this.onTap,
-    required this.isCompact,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = context.watch<FolioThemeNotifier>();
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: theme.accent.withValues(alpha: 0.35),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: NeuButton(
-        filled: true,
-        borderRadius: 28,
-        padding: EdgeInsets.symmetric(
-          horizontal: isCompact ? 20 : 26,
-          vertical: 14,
-        ),
-        onTap: () {
-          HapticFeedback.mediumImpact();
-          onTap();
-        },
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.document_scanner_rounded,
-              color: Colors.white,
-              size: 20,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              isCompact ? 'Scan' : 'New Scan (Ctrl+N)',
-              style: GoogleFonts.nunito(
-                color: Colors.white,
-                fontWeight: FontWeight.w900,
-                fontSize: 15,
-                letterSpacing: 0.2,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Trash & Recovery Button ──────────────────────────────────────────────────
-class _TrashButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final theme = context.watch<FolioThemeNotifier>();
-    return BlocBuilder<TrashBloc, TrashState>(
-      builder: (context, state) {
-        final count = (state is TrashLoaded) ? state.documents.length : 0;
-
-        return Stack(
-          clipBehavior: Clip.none,
-          children: [
-            NeuIconButton(
-              icon: Icons.delete_outline_rounded,
-              size: 46,
-              tooltip: 'Trash & Recovery',
-              onTap: () {
-                HapticFeedback.lightImpact();
-                Navigator.push(context, neuRoute(const TrashScreen()));
-              },
-            ),
-            if (count > 0)
-              Positioned(
-                top: -3,
-                right: -3,
-                child: Container(
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    color: theme.danger,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    '$count',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-// ─── Security Vault Button ────────────────────────────────────────────────────
-class _SecurityVaultButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SecurityBloc, SecurityState>(
-      builder: (context, state) {
-        return NeuIconButton(
-          icon: state.isAppLockEnabled
-              ? Icons.lock_outline_rounded
-              : Icons.lock_open_rounded,
-          active: state.isAppLockEnabled,
-          tooltip: state.isAppLockEnabled
-              ? 'Security Vault: Protected'
-              : 'Security Vault: Open',
-          onTap: () {
-            HapticFeedback.lightImpact();
-            showVaultSecuritySheet(context);
-          },
-          size: 40,
-        );
-      },
-    );
-  }
-}
-
-// ─── Cloud Sync Vault Button ──────────────────────────────────────────────────
-class _CloudSyncButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<AuthSyncBloc, AuthSyncState>(
-      builder: (context, state) {
-        final isAuth = state.isAuthenticated;
-        final isBusy = state.isBusy;
-
-        return NeuIconButton(
-          icon: isBusy
-              ? Icons.sync_rounded
-              : (isAuth ? Icons.cloud_done_rounded : Icons.cloud_queue_rounded),
-          active: isAuth,
-          tooltip: isAuth
-              ? (isBusy ? 'Sync in progress...' : 'Cloud Backup (Connected)')
-              : 'Cloud Backup & Sync (Offline)',
-          onTap: () {
-            HapticFeedback.lightImpact();
-            showCloudSyncModal(context);
-          },
-          size: 40,
-        );
-      },
-    );
-  }
-}
-
-// ─── Theme Toggle ─────────────────────────────────────────────────────────────
-class _ThemeToggleButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final theme = context.watch<FolioThemeNotifier>();
-    return GestureDetector(
-      onLongPress: () {
-        theme.setAuto();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Theme set to Auto (time-based)')),
-        );
-      },
-      child: NeuIconButton(
-        icon: theme.isDark ? Icons.nightlight_round : Icons.wb_sunny_rounded,
-        active: !theme.isAuto,
-        tooltip: theme.isAuto
-            ? 'Auto (long-press to reset)'
-            : 'Manual override',
-        onTap: () => theme.isDark ? theme.setDark(false) : theme.setDark(true),
-        size: 40,
       ),
     );
   }

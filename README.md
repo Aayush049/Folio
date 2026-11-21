@@ -7,7 +7,8 @@
 ### Universal Offline Document Studio, Scanner & Vault
 
 [![Flutter CI](https://github.com/Aayush049/Folio/actions/workflows/ci.yml/badge.svg)](https://github.com/Aayush049/Folio/actions/workflows/ci.yml)
-[![Live Web Demo](https://img.shields.io/badge/Live_Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://folio-nine-omega-50.vercel.app)
+[![Live Web Demo](https://img.shields.io/badge/Live_Demo-Firebase_Hosting-FFA611?style=for-the-badge&logo=firebase&logoColor=white)](https://folio-doc-studio.web.app)
+[![Vercel Mirror](https://img.shields.io/badge/Mirror-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://folio-nine-omega-50.vercel.app)
 [![Android APK](https://img.shields.io/badge/Android-Release_APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Aayush049/Folio/releases/download/v1.0.0/folio.apk)
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
@@ -15,7 +16,7 @@
 
 **An offline-first document studio, on-device OCR engine, biometric privacy vault, and cross-platform scanner built with Flutter & Clean Architecture.**
 
-[Live Web Demo](https://folio-nine-omega-50.vercel.app) • [Download Android APK](https://github.com/Aayush049/Folio/releases/download/v1.0.0/folio.apk) • [Architecture](#architecture--system-design) • [Key Features](#key-features) • [Tech Stack](#tech-stack) • [Getting Started](#getting-started)
+[Live Web Demo](https://folio-doc-studio.web.app) • [Vercel Mirror](https://folio-nine-omega-50.vercel.app) • [Download Android APK](https://github.com/Aayush049/Folio/releases/download/v1.0.0/folio.apk) • [Architecture](#architecture--system-design) • [Key Features](#key-features) • [Tech Stack](#tech-stack) • [Getting Started](#getting-started)
 
 </div>
 

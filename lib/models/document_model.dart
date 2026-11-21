@@ -5,12 +5,16 @@ class Document extends Equatable {
   final int folderId;
   final String name;
   final DateTime createdAt;
+  final bool isDeleted;
+  final DateTime? deletedAt;
 
   const Document({
     this.id,
     required this.folderId,
     required this.name,
     required this.createdAt,
+    this.isDeleted = false,
+    this.deletedAt,
   });
 
   Document copyWith({
@@ -18,12 +22,16 @@ class Document extends Equatable {
     int? folderId,
     String? name,
     DateTime? createdAt,
+    bool? isDeleted,
+    DateTime? deletedAt,
   }) {
     return Document(
       id: id ?? this.id,
       folderId: folderId ?? this.folderId,
       name: name ?? this.name,
       createdAt: createdAt ?? this.createdAt,
+      isDeleted: isDeleted ?? this.isDeleted,
+      deletedAt: deletedAt ?? this.deletedAt,
     );
   }
 
@@ -33,6 +41,8 @@ class Document extends Equatable {
       'folderId': folderId,
       'name': name,
       'createdAt': createdAt.toIso8601String(),
+      'isDeleted': isDeleted ? 1 : 0,
+      'deletedAt': deletedAt?.toIso8601String(),
     };
   }
 
@@ -42,9 +52,20 @@ class Document extends Equatable {
       folderId: map['folderId'] as int,
       name: map['name'] as String,
       createdAt: DateTime.parse(map['createdAt'] as String),
+      isDeleted: (map['isDeleted'] as int? ?? 0) == 1,
+      deletedAt: map['deletedAt'] != null
+          ? DateTime.tryParse(map['deletedAt'] as String)
+          : null,
     );
   }
 
   @override
-  List<Object?> get props => [id, folderId, name, createdAt];
+  List<Object?> get props => [
+        id,
+        folderId,
+        name,
+        createdAt,
+        isDeleted,
+        deletedAt,
+      ];
 }

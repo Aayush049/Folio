@@ -5,6 +5,7 @@ import 'package:folio/core/errors/failures.dart';
 import 'package:folio/models/folder_model.dart';
 import 'package:folio/models/document_model.dart';
 import 'package:folio/models/page_model.dart';
+import 'package:folio/models/search_result_model.dart';
 import 'package:folio/repositories/document_repository.dart';
 import 'package:folio/services/scanner_service.dart';
 import 'package:folio/blocs/document_detail/document_detail_bloc.dart';
@@ -88,14 +89,15 @@ class FakeDocumentRepository implements IDocumentRepository {
   }
 
   @override
-  Future<List<Document>> getAllDocuments() async => List.from(documents);
+  Future<List<Document>> getAllDocuments() async =>
+      documents.where((d) => !d.isDeleted).toList();
 
   @override
   Future<List<PageModel>> getAllPages() async => List.from(pages);
 
   @override
   Future<List<Document>> getDocumentsInFolder(int folderId) async {
-    return documents.where((d) => d.folderId == folderId).toList();
+    return documents.where((d) => d.folderId == folderId && !d.isDeleted).toList();
   }
 
   @override
@@ -107,7 +109,8 @@ class FakeDocumentRepository implements IDocumentRepository {
   }
 
   @override
-  Future<List<Document>> getRecentDocuments() async => List.from(documents);
+  Future<List<Document>> getRecentDocuments() async =>
+      documents.where((d) => !d.isDeleted).toList();
 
   @override
   Future<int> updatePage(PageModel page) async {
@@ -115,6 +118,58 @@ class FakeDocumentRepository implements IDocumentRepository {
     if (idx != -1) pages[idx] = page;
     return 1;
   }
+
+  @override
+  Future<int> softDeleteDocument(int id) async {
+    final idx = documents.indexWhere((d) => d.id == id);
+    if (idx != -1) {
+      documents[idx] = documents[idx].copyWith(isDeleted: true, deletedAt: DateTime.now());
+    }
+    return 1;
+  }
+
+  @override
+  Future<int> restoreDocument(int id) async {
+    final idx = documents.indexWhere((d) => d.id == id);
+    if (idx != -1) {
+      documents[idx] = documents[idx].copyWith(isDeleted: false, deletedAt: null);
+    }
+    return 1;
+  }
+
+  @override
+  Future<List<Document>> getTrashDocuments() async {
+    return documents.where((d) => d.isDeleted).toList();
+  }
+
+  @override
+  Future<int> permanentDeleteDocument(int id) async {
+    documents.removeWhere((d) => d.id == id);
+    return 1;
+  }
+
+  @override
+  Future<int> emptyTrash() async {
+    final count = documents.where((d) => d.isDeleted).length;
+    documents.removeWhere((d) => d.isDeleted);
+    return count;
+  }
+
+  @override
+  Future<List<SearchResult>> searchDocuments(String query) async {
+    return documents
+        .where((d) => !d.isDeleted && d.name.toLowerCase().contains(query.toLowerCase()))
+        .map((d) => SearchResult(
+              document: d,
+              folderName: 'Uncategorized',
+              snippet: 'Matched name',
+              isTitleMatch: true,
+            ))
+        .toList();
+  }
+
+  @override
+  Future<void> indexDocumentText(int documentId, String docName, String ocrContent) async {}
 }
 
 class FakeScannerService extends ScannerService {

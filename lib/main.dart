@@ -10,11 +10,18 @@ import 'blocs/dashboard/dashboard_bloc.dart';
 import 'blocs/scanner/scanner_bloc.dart';
 import 'blocs/auth_sync/auth_sync_bloc.dart';
 import 'blocs/auth_sync/auth_sync_event.dart';
+import 'blocs/search/search_bloc.dart';
+import 'blocs/trash/trash_bloc.dart';
+import 'blocs/trash/trash_event.dart';
+import 'blocs/security/security_bloc.dart';
+import 'blocs/security/security_event.dart';
 import 'repositories/document_repository.dart';
 import 'services/scanner_service.dart';
 import 'services/auth_service.dart';
 import 'services/sync_service.dart';
+import 'services/security_service.dart';
 import 'ui/screens/splash_screen.dart';
+import 'ui/widgets/vault_lock_overlay.dart';
 import 'core/folio_theme.dart';
 import 'core/service_locator.dart';
 
@@ -37,8 +44,36 @@ void main() async {
   runApp(const FolioApp());
 }
 
-class FolioApp extends StatelessWidget {
+class FolioApp extends StatefulWidget {
   const FolioApp({super.key});
+
+  @override
+  State<FolioApp> createState() => _FolioAppState();
+}
+
+class _FolioAppState extends State<FolioApp> with WidgetsBindingObserver {
+  late final SecurityBloc _securityBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _securityBloc = SecurityBloc(
+      securityService: sl<SecurityService>(),
+    )..add(const CheckSecurityStatus());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _securityBloc.close();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _securityBloc.add(AppLifecycleChanged(state));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +97,9 @@ class FolioApp extends StatelessWidget {
         Provider<SyncService>.value(
           value: sl<SyncService>(),
         ),
+        Provider<SecurityService>.value(
+          value: sl<SecurityService>(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -82,13 +120,31 @@ class FolioApp extends StatelessWidget {
               syncService: sl<SyncService>(),
             )..add(const CheckAuthSyncStatus()),
           ),
+          BlocProvider<SearchBloc>(
+            create: (_) => SearchBloc(
+              repository: sl<IDocumentRepository>(),
+            ),
+          ),
+          BlocProvider<TrashBloc>(
+            create: (_) => TrashBloc(
+              repository: sl<IDocumentRepository>(),
+            )..add(const LoadTrash()),
+          ),
+          BlocProvider<SecurityBloc>.value(
+            value: _securityBloc,
+          ),
         ],
         child: Consumer<FolioThemeNotifier>(
           builder: (context, theme, _) => MaterialApp(
             title: 'Folio',
             debugShowCheckedModeBanner: false,
-            theme: theme.themeData, // auto-switches day ↔ night
+            theme: theme.themeData,
             home: const SplashScreen(),
+            builder: (context, child) {
+              return VaultLockOverlay(
+                child: child ?? const SizedBox.shrink(),
+              );
+            },
           ),
         ),
       ),

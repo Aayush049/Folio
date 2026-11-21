@@ -46,7 +46,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     Emitter<DashboardState> emit,
   ) async {
     try {
-      await repository.deleteDocument(event.id);
+      await repository.softDeleteDocument(event.id);
       add(const LoadDashboard());
     } catch (e) {
       emit(DashboardError(e.toString()));

@@ -6,6 +6,7 @@ import '../services/scanner_service.dart';
 import '../services/pdf_service.dart';
 import '../services/auth_service.dart';
 import '../services/sync_service.dart';
+import '../services/security_service.dart';
 
 final sl = GetIt.instance;
 
@@ -47,6 +48,11 @@ Future<void> initServiceLocator() async {
     sl.registerLazySingleton<SyncService>(
       () => SyncService(repository: sl<IDocumentRepository>()),
     );
+  }
+
+  // Security & Biometric Vault Service
+  if (!sl.isRegistered<SecurityService>()) {
+    sl.registerLazySingleton<SecurityService>(() => SecurityService());
   }
 
   // Theme Notifier

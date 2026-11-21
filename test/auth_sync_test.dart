@@ -7,6 +7,7 @@ import 'package:folio/blocs/auth_sync/auth_sync_state.dart';
 import 'package:folio/models/document_model.dart';
 import 'package:folio/models/folder_model.dart';
 import 'package:folio/models/page_model.dart';
+import 'package:folio/models/search_result_model.dart';
 import 'package:folio/repositories/document_repository.dart';
 import 'package:folio/services/auth_service.dart';
 import 'package:folio/services/sync_service.dart';
@@ -44,6 +45,21 @@ class _FakeRepo implements IDocumentRepository {
   Future<int> insertOrUpdatePage(PageModel page) async => 1;
   @override
   Future<int> updatePage(PageModel page) async => 1;
+
+  @override
+  Future<int> softDeleteDocument(int id) async => 1;
+  @override
+  Future<int> restoreDocument(int id) async => 1;
+  @override
+  Future<List<Document>> getTrashDocuments() async => [];
+  @override
+  Future<int> permanentDeleteDocument(int id) async => 1;
+  @override
+  Future<int> emptyTrash() async => 0;
+  @override
+  Future<List<SearchResult>> searchDocuments(String query) async => [];
+  @override
+  Future<void> indexDocumentText(int documentId, String docName, String ocrContent) async {}
 }
 
 class FakeAuthService extends AuthService {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../blocs/dashboard/dashboard_bloc.dart';
@@ -8,12 +9,18 @@ import '../../blocs/scanner/scanner_bloc.dart';
 import '../../blocs/scanner/scanner_event.dart';
 import '../../blocs/auth_sync/auth_sync_bloc.dart';
 import '../../blocs/auth_sync/auth_sync_state.dart';
+import '../../blocs/trash/trash_bloc.dart';
+import '../../blocs/trash/trash_event.dart';
+import '../../blocs/trash/trash_state.dart';
+import '../../blocs/security/security_bloc.dart';
+import '../../blocs/security/security_state.dart';
 import '../../repositories/document_repository.dart';
 import '../widgets/document_list_tile.dart';
 import '../widgets/folder_list_tile.dart';
 import '../widgets/neu_widgets.dart';
 import '../widgets/folio_logo.dart';
 import '../widgets/cloud_sync_modal.dart';
+import '../widgets/vault_lock_overlay.dart';
 import '../../core/folio_theme.dart';
 import '../../core/folio_breakpoints.dart';
 import '../../core/folio_shortcuts.dart';
@@ -21,6 +28,8 @@ import '../../core/navigation_utils.dart';
 import 'scanner_screen.dart';
 import 'document_detail_screen.dart';
 import 'documents_by_folder_screen.dart';
+import 'search_screen.dart';
+import 'trash_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -39,6 +48,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _navigateToScanner() {
+    HapticFeedback.lightImpact();
     context.read<ScannerBloc>().add(ResetScanner());
     Navigator.push(
       context,
@@ -75,6 +85,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     controller: _scrollController,
                     physics: const BouncingScrollPhysics(),
                     slivers: [
+                      // Header Row
                       SliverToBoxAdapter(
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
@@ -116,9 +127,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   ],
                                 ),
                               ),
+                              // Vault Lock Button
+                              _SecurityVaultButton(),
+                              const SizedBox(width: 8),
                               // Cloud Sync Vault Button
                               _CloudSyncButton(),
-                              const SizedBox(width: 10),
+                              const SizedBox(width: 8),
                               // Theme toggle
                               _ThemeToggleButton(),
                               const SizedBox(width: 10),
@@ -149,7 +163,64 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                       ),
 
-                      const SliverToBoxAdapter(child: SizedBox(height: 28)),
+                      // Full-Text OCR Search Bar & Trash Action Row
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: NeuBox(
+                                  borderRadius: 18,
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                  onTap: () {
+                                    HapticFeedback.lightImpact();
+                                    Navigator.push(context, neuRoute(const SearchScreen()));
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.search_rounded, color: theme.accent, size: 20),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Text(
+                                          'Search scans & OCR text contents...',
+                                          style: GoogleFonts.nunito(
+                                            color: theme.textSub.withValues(alpha: 0.8),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: theme.accentSoft,
+                                          borderRadius: BorderRadius.circular(6),
+                                        ),
+                                        child: Text(
+                                          'FTS5',
+                                          style: TextStyle(
+                                            color: theme.accent,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              _TrashButton(),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SliverToBoxAdapter(child: SizedBox(height: 12)),
 
                       // ─── Body ─────────────────────────────────────────────────────
                       if (state is DashboardInitial || state is DashboardLoading)
@@ -280,7 +351,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       );
     }
 
-    // On compact screens, use smooth horizontal carousel
     if (isCompact) {
       return SliverToBoxAdapter(
         child: SizedBox(
@@ -305,7 +375,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       );
     }
 
-    // On tablets and desktops, display folders as an adaptive grid
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       sliver: SliverGrid(
@@ -359,7 +428,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       );
     }
 
-    // Adaptive multi-column grid for tablets and desktops (1 column on phones, 2-3 on wider screens)
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       sliver: SliverGrid(
@@ -383,7 +451,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     repository: context.read<DocumentRepository>(),
                   )),
                 ),
-                onDelete: () => context.read<DashboardBloc>().add(DeleteDocument(doc.id!)),
+                onDelete: () {
+                  HapticFeedback.lightImpact();
+                  context.read<DashboardBloc>().add(DeleteDocument(doc.id!));
+                  context.read<TrashBloc>().add(const LoadTrash());
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Moved "${doc.name}" to Trash'),
+                      action: SnackBarAction(
+                        label: 'Undo',
+                        textColor: theme.accent,
+                        onPressed: () {
+                          context.read<TrashBloc>().add(RestoreDocumentFromTrash(doc.id!));
+                          context.read<DashboardBloc>().add(const LoadDashboard());
+                        },
+                      ),
+                    ),
+                  );
+                },
               ),
             );
           },
@@ -422,6 +507,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             onTap: () {
               if (controller.text.isNotEmpty) {
+                HapticFeedback.lightImpact();
                 context.read<DashboardBloc>().add(AddFolder(controller.text));
                 Navigator.pop(ctx);
               }
@@ -430,6 +516,79 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+// ─── Trash & Recovery Button ──────────────────────────────────────────────────
+class _TrashButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.watch<FolioThemeNotifier>();
+    return BlocBuilder<TrashBloc, TrashState>(
+      builder: (context, state) {
+        final count = (state is TrashLoaded) ? state.documents.length : 0;
+
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            NeuIconButton(
+              icon: Icons.delete_outline_rounded,
+              size: 46,
+              tooltip: 'Trash & Recovery',
+              onTap: () {
+                HapticFeedback.lightImpact();
+                Navigator.push(context, neuRoute(const TrashScreen()));
+              },
+            ),
+            if (count > 0)
+              Positioned(
+                top: -3,
+                right: -3,
+                child: Container(
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    color: theme.danger,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    '$count',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+// ─── Security Vault Button ────────────────────────────────────────────────────
+class _SecurityVaultButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SecurityBloc, SecurityState>(
+      builder: (context, state) {
+        return NeuIconButton(
+          icon: state.isAppLockEnabled
+              ? Icons.lock_outline_rounded
+              : Icons.lock_open_rounded,
+          active: state.isAppLockEnabled,
+          tooltip: state.isAppLockEnabled
+              ? 'Security Vault: Protected'
+              : 'Security Vault: Open',
+          onTap: () {
+            HapticFeedback.lightImpact();
+            showVaultSecuritySheet(context);
+          },
+          size: 44,
+        );
+      },
     );
   }
 }
@@ -451,7 +610,10 @@ class _CloudSyncButton extends StatelessWidget {
           tooltip: isAuth
               ? (isBusy ? 'Sync in progress...' : 'Cloud Backup (Connected)')
               : 'Cloud Backup & Sync (Offline)',
-          onTap: () => showCloudSyncModal(context),
+          onTap: () {
+            HapticFeedback.lightImpact();
+            showCloudSyncModal(context);
+          },
           size: 44,
         );
       },

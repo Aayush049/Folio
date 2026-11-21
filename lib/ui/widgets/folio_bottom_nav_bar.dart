@@ -82,11 +82,7 @@ class FolioBottomNavBar extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              activeIcon,
-              color: theme.accent,
-              size: 20,
-            ),
+            Icon(activeIcon, color: theme.accent, size: 20),
             const SizedBox(width: 8),
             Text(
               label,
@@ -113,11 +109,7 @@ class FolioBottomNavBar extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              color: theme.textSub,
-              size: 20,
-            ),
+            Icon(icon, color: theme.textSub, size: 20),
             const SizedBox(width: 8),
             Text(
               label,

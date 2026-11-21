@@ -152,7 +152,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ? Image.network(
                             user!.photoURL!,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => _buildAvatarFallback(user, theme),
+                            errorBuilder: (_, __, ___) =>
+                                _buildAvatarFallback(user, theme),
                           )
                         : _buildAvatarFallback(user, theme),
                   ),
@@ -261,9 +262,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     onTap: () {
                       HapticFeedback.mediumImpact();
-                      context
-                          .read<AuthSyncBloc>()
-                          .add(const SignInWithGoogleRequested());
+                      context.read<AuthSyncBloc>().add(
+                        const SignInWithGoogleRequested(),
+                      );
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -358,7 +359,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   // ── Cloud Backup & Sync ─────────────────────────────────────────────────────
-  Widget _buildCloudSyncSection(BuildContext context, FolioThemeNotifier theme) {
+  Widget _buildCloudSyncSection(
+    BuildContext context,
+    FolioThemeNotifier theme,
+  ) {
     return BlocBuilder<AuthSyncBloc, AuthSyncState>(
       builder: (context, state) {
         final isAuth = state.isAuthenticated;
@@ -401,7 +405,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ),
                         Text(
-                          isAuth ? 'Firestore & Storage: $lastSyncStr' : 'Requires Google sign-in',
+                          isAuth
+                              ? 'Firestore & Storage: $lastSyncStr'
+                              : 'Requires Google sign-in',
                           style: GoogleFonts.nunito(
                             color: theme.textSub,
                             fontSize: 12,
@@ -423,9 +429,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       onTap: isAuth && !isBusy
                           ? () {
                               HapticFeedback.lightImpact();
-                              context
-                                  .read<AuthSyncBloc>()
-                                  .add(const BackupToCloudRequested());
+                              context.read<AuthSyncBloc>().add(
+                                const BackupToCloudRequested(),
+                              );
                             }
                           : null,
                       child: Row(
@@ -434,13 +440,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Icon(
                             Icons.cloud_upload_outlined,
                             size: 16,
-                            color: isAuth ? theme.text : theme.textSub.withValues(alpha: 0.5),
+                            color: isAuth
+                                ? theme.text
+                                : theme.textSub.withValues(alpha: 0.5),
                           ),
                           const SizedBox(width: 6),
                           Text(
                             state.isSyncing ? 'Backing up...' : 'Backup',
                             style: GoogleFonts.nunito(
-                              color: isAuth ? theme.text : theme.textSub.withValues(alpha: 0.5),
+                              color: isAuth
+                                  ? theme.text
+                                  : theme.textSub.withValues(alpha: 0.5),
                               fontWeight: FontWeight.w800,
                               fontSize: 13,
                             ),
@@ -457,9 +467,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       onTap: isAuth && !isBusy
                           ? () {
                               HapticFeedback.lightImpact();
-                              context
-                                  .read<AuthSyncBloc>()
-                                  .add(const RestoreFromCloudRequested());
+                              context.read<AuthSyncBloc>().add(
+                                const RestoreFromCloudRequested(),
+                              );
                             }
                           : null,
                       child: Row(
@@ -468,13 +478,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Icon(
                             Icons.cloud_download_outlined,
                             size: 16,
-                            color: isAuth ? theme.text : theme.textSub.withValues(alpha: 0.5),
+                            color: isAuth
+                                ? theme.text
+                                : theme.textSub.withValues(alpha: 0.5),
                           ),
                           const SizedBox(width: 6),
                           Text(
                             state.isRestoring ? 'Restoring...' : 'Restore',
                             style: GoogleFonts.nunito(
-                              color: isAuth ? theme.text : theme.textSub.withValues(alpha: 0.5),
+                              color: isAuth
+                                  ? theme.text
+                                  : theme.textSub.withValues(alpha: 0.5),
                               fontWeight: FontWeight.w800,
                               fontSize: 13,
                             ),
@@ -523,7 +537,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   // ── Privacy & Security Vault ────────────────────────────────────────────────
   Widget _buildSecurityVaultSection(
-      BuildContext context, FolioThemeNotifier theme) {
+    BuildContext context,
+    FolioThemeNotifier theme,
+  ) {
     return BlocBuilder<SecurityBloc, SecurityState>(
       builder: (context, state) {
         final isLocked = state.isAppLockEnabled;
@@ -640,7 +656,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(
-                  theme.isDark ? Icons.nightlight_round : Icons.wb_sunny_rounded,
+                  theme.isDark
+                      ? Icons.nightlight_round
+                      : Icons.wb_sunny_rounded,
                   color: theme.accent,
                   size: 22,
                 ),

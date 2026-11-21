@@ -44,10 +44,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void _navigateToScanner() {
     HapticFeedback.lightImpact();
     context.read<ScannerBloc>().add(ResetScanner());
-    Navigator.push(
-      context,
-      neuRoute(const ScannerScreen()),
-    );
+    Navigator.push(context, neuRoute(const ScannerScreen()));
   }
 
   String _greeting() {
@@ -196,9 +193,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               child: Text(
                                 'Search scans & OCR text contents...',
                                 style: GoogleFonts.nunito(
-                                  color: theme.textSub.withValues(
-                                    alpha: 0.8,
-                                  ),
+                                  color: theme.textSub.withValues(alpha: 0.8),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -214,9 +209,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               ),
                               decoration: BoxDecoration(
                                 color: theme.accentSoft,
-                                borderRadius: BorderRadius.circular(
-                                  6,
-                                ),
+                                borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
                                 'FTS5',
@@ -397,9 +390,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   context,
                   neuRoute(DocumentsByFolderScreen(folder: folder)),
                 ),
-                onDelete: () => context.read<DashboardBloc>().add(
-                  DeleteFolder(folder.id!),
-                ),
+                onDelete: () =>
+                    context.read<DashboardBloc>().add(DeleteFolder(folder.id!)),
               );
             },
           ),
@@ -424,9 +416,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               context,
               neuRoute(DocumentsByFolderScreen(folder: folder)),
             ),
-            onDelete: () => context.read<DashboardBloc>().add(
-              DeleteFolder(folder.id!),
-            ),
+            onDelete: () =>
+                context.read<DashboardBloc>().add(DeleteFolder(folder.id!)),
           );
         }, childCount: state.folders.length),
       ),

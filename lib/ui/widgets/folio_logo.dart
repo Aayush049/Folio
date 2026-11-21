@@ -94,10 +94,7 @@ class _FolioLogoState extends State<FolioLogo>
         borderRadius: BorderRadius.circular(r),
         boxShadow: widget.showShadow ? theme.raisedShadow : null,
       ),
-      child: Padding(
-        padding: EdgeInsets.all(size * 0.14),
-        child: logoContent,
-      ),
+      child: Padding(padding: EdgeInsets.all(size * 0.14), child: logoContent),
     );
   }
 }

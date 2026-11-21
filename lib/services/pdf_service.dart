@@ -7,17 +7,20 @@ class PdfService {
   Future<File> generatePdf(List<File> images, String fileName) async {
     final pdf = pw.Document();
 
-    for (var imageFile in images) {
-      final image = pw.MemoryImage(imageFile.readAsBytesSync());
-      pdf.addPage(
-        pw.Page(
-          build: (pw.Context context) {
-            return pw.Center(
-              child: pw.Image(image, fit: pw.BoxFit.contain),
-            );
-          },
-        ),
-      );
+    for (final imageFile in images) {
+      if (await imageFile.exists()) {
+        final bytes = await imageFile.readAsBytes();
+        final image = pw.MemoryImage(bytes);
+        pdf.addPage(
+          pw.Page(
+            build: (pw.Context context) {
+              return pw.Center(
+                child: pw.Image(image, fit: pw.BoxFit.contain),
+              );
+            },
+          ),
+        );
+      }
     }
 
     final output = await getExternalStorageDirectory() ?? await getApplicationDocumentsDirectory();
@@ -27,7 +30,8 @@ class PdfService {
       await folioDir.create(recursive: true);
     }
 
-    final file = File(p.join(folioDir.path, '$fileName.pdf'));
+    final sanitizedName = fileName.trim().isEmpty ? 'Document' : fileName.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_');
+    final file = File(p.join(folioDir.path, '$sanitizedName.pdf'));
     await file.writeAsBytes(await pdf.save());
     return file;
   }

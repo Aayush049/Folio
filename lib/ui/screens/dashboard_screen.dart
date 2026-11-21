@@ -12,6 +12,9 @@ import '../widgets/folder_list_tile.dart';
 import '../widgets/neu_widgets.dart';
 import '../widgets/folio_logo.dart';
 import '../../core/folio_theme.dart';
+import '../../core/folio_breakpoints.dart';
+import '../../core/folio_shortcuts.dart';
+import '../../core/navigation_utils.dart';
 import 'scanner_screen.dart';
 import 'document_detail_screen.dart';
 import 'documents_by_folder_screen.dart';
@@ -32,6 +35,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.dispose();
   }
 
+  void _navigateToScanner() {
+    context.read<ScannerBloc>().add(ResetScanner());
+    Navigator.push(
+      context,
+      neuRoute(const ScannerScreen()),
+    );
+  }
+
   String _greeting() {
     final h = DateTime.now().hour;
     if (h < 12) return 'Good Morning ☀️';
@@ -43,115 +54,128 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = context.watch<FolioThemeNotifier>();
+    final isCompact = context.isCompact;
 
-    return Scaffold(
-      backgroundColor: theme.bg,
-      body: BlocBuilder<DashboardBloc, DashboardState>(
-        builder: (context, state) {
-          return CustomScrollView(
-            controller: _scrollController,
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              SliverToBoxAdapter(
-                child: SafeArea(
-                  bottom: false,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                _greeting(),
-                                style: GoogleFonts.nunito(
-                                  color: theme.textSub,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 0.3,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  const FolioLogo(
-                                    size: 34,
-                                    showShadow: true,
-                                    borderRadius: 10,
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    'Folio',
-                                    style: GoogleFonts.nunito(
-                                      color: theme.text,
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.w900,
-                                      letterSpacing: -1.5,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        // Theme toggle
-                        _ThemeToggleButton(),
-                        const SizedBox(width: 10),
-                        // Scan FAB (top-right shortcut)
-                        NeuButton(
-                          filled: true,
-                          borderRadius: 20,
-                          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-                          onTap: () {
-                            context.read<ScannerBloc>().add(ResetScanner());
-                            Navigator.push(
-                              context,
-                              _neuRoute(const ScannerScreen()),
-                            );
-                          },
+    return FolioShortcuts(
+      onNewScan: _navigateToScanner,
+      child: Scaffold(
+        backgroundColor: theme.bg,
+        body: SafeArea(
+          child: ResponsiveContainer(
+            maxWidth: FolioBreakpoints.maxContentWidth,
+            child: Scrollbar(
+              controller: _scrollController,
+              thumbVisibility: !isCompact,
+              child: BlocBuilder<DashboardBloc, DashboardState>(
+                builder: (context, state) {
+                  return CustomScrollView(
+                    controller: _scrollController,
+                    physics: const BouncingScrollPhysics(),
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
                           child: Row(
-                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.document_scanner_rounded, color: Colors.white, size: 18),
-                              const SizedBox(width: 6),
-                              Text(
-                                'Scan',
-                                style: GoogleFonts.nunito(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 14,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      _greeting(),
+                                      style: GoogleFonts.nunito(
+                                        color: theme.textSub,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 0.3,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      children: [
+                                        const FolioLogo(
+                                          size: 34,
+                                          showShadow: true,
+                                          borderRadius: 10,
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Text(
+                                          'Folio',
+                                          style: GoogleFonts.nunito(
+                                            color: theme.text,
+                                            fontSize: 32,
+                                            fontWeight: FontWeight.w900,
+                                            letterSpacing: -1.5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Theme toggle
+                              _ThemeToggleButton(),
+                              const SizedBox(width: 10),
+                              // Scan button
+                              NeuButton(
+                                filled: true,
+                                borderRadius: 20,
+                                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                                onTap: _navigateToScanner,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.document_scanner_rounded, color: Colors.white, size: 18),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      isCompact ? 'Scan' : 'New Scan (Ctrl+N)',
+                                      style: GoogleFonts.nunito(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
+                      ),
+
+                      const SliverToBoxAdapter(child: SizedBox(height: 28)),
+
+                      // ─── Body ─────────────────────────────────────────────────────
+                      if (state is DashboardInitial || state is DashboardLoading)
+                        const SliverFillRemaining(
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      else if (state is DashboardError)
+                        SliverFillRemaining(child: _buildError(context, state))
+                      else if (state is DashboardLoaded) ...[
+                          _buildSectionHeader(
+                            context,
+                            'Folders',
+                            count: state.folders.length,
+                            onAdd: () => _showAddFolderDialog(context),
+                          ),
+                          _buildFolderSection(context, state, isCompact),
+                          const SliverToBoxAdapter(child: SizedBox(height: 12)),
+                          _buildSectionHeader(
+                            context,
+                            'Recent Scans',
+                            count: state.recentDocuments.length,
+                          ),
+                          _buildRecentSection(context, state, isCompact),
+                          const SliverToBoxAdapter(child: SizedBox(height: 36)),
+                        ],
+                    ],
+                  );
+                },
               ),
-
-              const SliverToBoxAdapter(child: SizedBox(height: 28)),
-
-              // ─── Body ─────────────────────────────────────────────────────
-              if (state is DashboardInitial || state is DashboardLoading)
-                const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              else if (state is DashboardError)
-                SliverFillRemaining(child: _buildError(context, state))
-              else if (state is DashboardLoaded) ...[
-                  _buildSectionHeader(context, 'Folders', count: state.folders.length, onAdd: () => _showAddFolderDialog(context)),
-                  _buildFolderList(context, state),
-                  const SliverToBoxAdapter(child: SizedBox(height: 8)),
-                  _buildSectionHeader(context, 'Recent Scans', count: state.recentDocuments.length),
-                  _buildRecentList(context, state),
-                  const SliverToBoxAdapter(child: SizedBox(height: 32)),
-                ],
-            ],
-          );
-        },
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -174,11 +198,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   SliverToBoxAdapter _buildSectionHeader(
-      BuildContext context,
-      String title, {
-        int? count,
-        VoidCallback? onAdd,
-      }) {
+    BuildContext context,
+    String title, {
+    int? count,
+    VoidCallback? onAdd,
+  }) {
     final theme = context.watch<FolioThemeNotifier>();
     return SliverToBoxAdapter(
       child: Padding(
@@ -226,7 +250,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  SliverToBoxAdapter _buildFolderList(BuildContext context, DashboardLoaded state) {
+  Widget _buildFolderSection(BuildContext context, DashboardLoaded state, bool isCompact) {
     final theme = context.watch<FolioThemeNotifier>();
     if (state.folders.isEmpty) {
       return SliverToBoxAdapter(
@@ -249,29 +273,58 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       );
     }
-    return SliverToBoxAdapter(
-      child: SizedBox(
-        height: 120,
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          physics: const BouncingScrollPhysics(),
-          itemCount: state.folders.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 12),
-          itemBuilder: (context, index) {
+
+    // On compact screens, use smooth horizontal carousel
+    if (isCompact) {
+      return SliverToBoxAdapter(
+        child: SizedBox(
+          height: 120,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            physics: const BouncingScrollPhysics(),
+            itemCount: state.folders.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              final folder = state.folders[index];
+              return FolderListTile(
+                folder: folder,
+                width: 124,
+                onTap: () => Navigator.push(context, neuRoute(DocumentsByFolderScreen(folder: folder))),
+                onDelete: () => context.read<DashboardBloc>().add(DeleteFolder(folder.id!)),
+              );
+            },
+          ),
+        ),
+      );
+    }
+
+    // On tablets and desktops, display folders as an adaptive grid
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      sliver: SliverGrid(
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 220,
+          mainAxisExtent: 115,
+          crossAxisSpacing: 14,
+          mainAxisSpacing: 14,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
             final folder = state.folders[index];
             return FolderListTile(
               folder: folder,
-              onTap: () => Navigator.push(context, _neuRoute(DocumentsByFolderScreen(folder: folder))),
+              onTap: () => Navigator.push(context, neuRoute(DocumentsByFolderScreen(folder: folder))),
               onDelete: () => context.read<DashboardBloc>().add(DeleteFolder(folder.id!)),
             );
           },
+          childCount: state.folders.length,
         ),
       ),
     );
   }
 
-  SliverToBoxAdapter _buildRecentList(BuildContext context, DashboardLoaded state) {
+  Widget _buildRecentSection(BuildContext context, DashboardLoaded state, bool isCompact) {
     final theme = context.watch<FolioThemeNotifier>();
     if (state.recentDocuments.isEmpty) {
       return SliverToBoxAdapter(
@@ -290,7 +343,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Tap Scan to get started',
+                  'Tap Scan (or press Ctrl+N) to get started',
                   style: TextStyle(color: theme.textSub, fontWeight: FontWeight.w600, fontSize: 13),
                 ),
               ],
@@ -299,30 +352,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       );
     }
-    return SliverToBoxAdapter(
-      child: ListView.separated(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        itemCount: state.recentDocuments.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 14),
-        itemBuilder: (context, index) {
-          final doc = state.recentDocuments[index];
-          return Hero(
-            tag: 'doc_${doc.id}',
-            child: DocumentListTile(
-              doc: doc,
-              onTap: () => Navigator.push(
-                context,
-                _neuRoute(DocumentDetailScreen(
-                  document: doc,
-                  repository: context.read<DocumentRepository>(),
-                )),
+
+    // Adaptive multi-column grid for tablets and desktops (1 column on phones, 2-3 on wider screens)
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      sliver: SliverGrid(
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: isCompact ? 800 : 560,
+          mainAxisExtent: 88,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 14,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            final doc = state.recentDocuments[index];
+            return Hero(
+              tag: 'doc_${doc.id}',
+              child: DocumentListTile(
+                doc: doc,
+                onTap: () => Navigator.push(
+                  context,
+                  neuRoute(DocumentDetailScreen(
+                    document: doc,
+                    repository: context.read<DocumentRepository>(),
+                  )),
+                ),
+                onDelete: () => context.read<DashboardBloc>().add(DeleteDocument(doc.id!)),
               ),
-              onDelete: () => context.read<DashboardBloc>().add(DeleteDocument(doc.id!)),
-            ),
-          );
-        },
+            );
+          },
+          childCount: state.recentDocuments.length,
+        ),
       ),
     );
   }
@@ -375,16 +435,13 @@ class _ThemeToggleButton extends StatelessWidget {
     final theme = context.watch<FolioThemeNotifier>();
     return GestureDetector(
       onLongPress: () {
-        // Long press = reset to auto
         theme.setAuto();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Theme set to Auto (time-based)')),
         );
       },
       child: NeuIconButton(
-        icon: theme.isDark
-            ? Icons.nightlight_round
-            : Icons.wb_sunny_rounded,
+        icon: theme.isDark ? Icons.nightlight_round : Icons.wb_sunny_rounded,
         active: !theme.isAuto,
         tooltip: theme.isAuto ? 'Auto (long-press to reset)' : 'Manual override',
         onTap: () => theme.isDark ? theme.setDark(false) : theme.setDark(true),
@@ -392,24 +449,4 @@ class _ThemeToggleButton extends StatelessWidget {
       ),
     );
   }
-}
-
-// ─── Page Route Helper ────────────────────────────────────────────────────────
-PageRoute _neuRoute(Widget page) {
-  return PageRouteBuilder(
-    pageBuilder: (_, __, ___) => page,
-    transitionsBuilder: (_, anim, __, child) {
-      return FadeTransition(
-        opacity: anim,
-        child: SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(0.04, 0),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
-          child: child,
-        ),
-      );
-    },
-    transitionDuration: const Duration(milliseconds: 280),
-  );
 }

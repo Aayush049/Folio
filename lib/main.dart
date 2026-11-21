@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'blocs/dashboard/dashboard_bloc.dart';
-import 'blocs/dashboard/dashboard_event.dart';
 import 'blocs/scanner/scanner_bloc.dart';
 import 'repositories/document_repository.dart';
 import 'services/scanner_service.dart';
@@ -25,27 +24,30 @@ class FolioApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final repository   = DocumentRepository();
-    final scannerSvc   = ScannerService();
-    final themeNotifier = FolioThemeNotifier();   // ← NEW
-
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<FolioThemeNotifier>.value(value: themeNotifier),
-
-        Provider<ScannerService>.value(value: scannerSvc),
-        Provider<DocumentRepository>.value(value: repository),
+        ChangeNotifierProvider<FolioThemeNotifier>(
+          create: (_) => FolioThemeNotifier(),
+        ),
+        Provider<ScannerService>(
+          create: (_) => ScannerService(),
+          dispose: (_, svc) => svc.dispose(),
+        ),
+        Provider<DocumentRepository>(
+          create: (_) => DocumentRepository(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(
-            create: (_) => DashboardBloc(repository: repository)
-              ..add(LoadDashboard()),
+          BlocProvider<DashboardBloc>(
+            create: (ctx) => DashboardBloc(
+              repository: ctx.read<DocumentRepository>(),
+            ),
           ),
-          BlocProvider(
-            create: (_) => ScannerBloc(
-              scannerService: scannerSvc,
-              repository: repository,
+          BlocProvider<ScannerBloc>(
+            create: (ctx) => ScannerBloc(
+              scannerService: ctx.read<ScannerService>(),
+              repository: ctx.read<DocumentRepository>(),
             ),
           ),
         ],
@@ -53,7 +55,7 @@ class FolioApp extends StatelessWidget {
           builder: (context, theme, _) => MaterialApp(
             title: 'Folio',
             debugShowCheckedModeBanner: false,
-            theme: theme.themeData,          // auto-switches day ↔ night
+            theme: theme.themeData, // auto-switches day ↔ night
             home: const SplashScreen(),
           ),
         ),

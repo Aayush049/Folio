@@ -8,6 +8,9 @@ import '../../repositories/document_repository.dart';
 import '../../blocs/dashboard/dashboard_bloc.dart';
 import '../../blocs/dashboard/dashboard_event.dart';
 import '../../core/folio_theme.dart';
+import '../../core/folio_breakpoints.dart';
+import '../../core/folio_shortcuts.dart';
+import '../../core/navigation_utils.dart';
 import '../widgets/document_list_tile.dart';
 import '../widgets/neu_widgets.dart';
 import 'document_detail_screen.dart';
@@ -26,153 +29,150 @@ class _DocumentsByFolderScreenState extends State<DocumentsByFolderScreen> {
   Widget build(BuildContext context) {
     final theme = context.watch<FolioThemeNotifier>();
     final repository = context.read<DocumentRepository>();
+    final isCompact = context.isCompact;
 
-    return Scaffold(
-      backgroundColor: theme.bg,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // ─── Custom Header ──────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-              child: Row(
-                children: [
-                  NeuIconButton(
-                    icon: Icons.arrow_back_ios_new_rounded,
-                    onTap: () => Navigator.pop(context),
-                    size: 44,
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Folder',
-                          style: GoogleFonts.nunito(
-                            color: theme.textSub,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        Text(
-                          widget.folder.name,
-                          style: GoogleFonts.nunito(
-                            color: theme.text,
-                            fontSize: 22,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: -0.5,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: theme.accentSoft,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Icon(Icons.folder_rounded, color: theme.accent, size: 24),
-                  ),
-                ],
-              ),
-            ),
-
-            // ─── Document List ──────────────────────────────────────────────
-            Expanded(
-              child: FutureBuilder<List<Document>>(
-                future: repository.getDocumentsInFolder(widget.folder.id!),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(
-                      child: NeuBox(
-                        margin: const EdgeInsets.symmetric(horizontal: 32),
-                        borderRadius: 24,
-                        padding: const EdgeInsets.all(32),
+    return FolioShortcuts(
+      onEscape: () => Navigator.pop(context),
+      child: Scaffold(
+        backgroundColor: theme.bg,
+        body: SafeArea(
+          child: ResponsiveContainer(
+            maxWidth: 1080,
+            child: Column(
+              children: [
+                // ─── Custom Header ──────────────────────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                  child: Row(
+                    children: [
+                      NeuIconButton(
+                        icon: Icons.arrow_back_ios_new_rounded,
+                        onTap: () => Navigator.pop(context),
+                        size: 44,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
                         child: Column(
-                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.insert_drive_file_outlined, size: 52, color: theme.textSub.withValues(alpha: 0.4)),
-                            const SizedBox(height: 12),
                             Text(
-                              'Folder is empty',
-                              style: GoogleFonts.nunito(
-                                color: theme.text,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 16,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Scan a document and save it here',
+                              'Folder',
                               style: GoogleFonts.nunito(
                                 color: theme.textSub,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
                               ),
-                              textAlign: TextAlign.center,
+                            ),
+                            Text(
+                              widget.folder.name,
+                              style: GoogleFonts.nunito(
+                                color: theme.text,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: -0.5,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
                       ),
-                    );
-                  }
-
-                  final docs = snapshot.data!;
-                  return ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: docs.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 14),
-                    itemBuilder: (context, index) {
-                      final doc = docs[index];
-                      return Hero(
-                        tag: 'doc_${doc.id}',
-                        child: DocumentListTile(
-                          doc: doc,
-                          onTap: () => Navigator.push(
-                            context,
-                            _neuRoute(DocumentDetailScreen(
-                              document: doc,
-                              repository: repository,
-                            )),
-                          ),
-                          onDelete: () {
-                            context.read<DashboardBloc>().add(DeleteDocument(doc.id!));
-                            setState(() {});
-                          },
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: theme.accentSoft,
+                          borderRadius: BorderRadius.circular(14),
                         ),
+                        child: Icon(Icons.folder_rounded, color: theme.accent, size: 24),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // ─── Document List ──────────────────────────────────────────────
+                Expanded(
+                  child: FutureBuilder<List<Document>>(
+                    future: repository.getDocumentsInFolder(widget.folder.id!),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(
+                          child: NeuBox(
+                            margin: const EdgeInsets.symmetric(horizontal: 32),
+                            borderRadius: 24,
+                            padding: const EdgeInsets.all(32),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.insert_drive_file_outlined, size: 52, color: theme.textSub.withValues(alpha: 0.4)),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'Folder is empty',
+                                  style: GoogleFonts.nunito(
+                                    color: theme.text,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Scan a document and save it here',
+                                  style: GoogleFonts.nunito(
+                                    color: theme.textSub,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
+                      final docs = snapshot.data!;
+                      return GridView.builder(
+                        padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                        physics: const BouncingScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: isCompact ? 800 : 540,
+                          mainAxisExtent: 88,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 14,
+                        ),
+                        itemCount: docs.length,
+                        itemBuilder: (context, index) {
+                          final doc = docs[index];
+                          return Hero(
+                            tag: 'doc_${doc.id}',
+                            child: DocumentListTile(
+                              doc: doc,
+                              onTap: () => Navigator.push(
+                                context,
+                                neuRoute(DocumentDetailScreen(
+                                  document: doc,
+                                  repository: repository,
+                                )),
+                              ),
+                              onDelete: () {
+                                context.read<DashboardBloc>().add(DeleteDocument(doc.id!));
+                                setState(() {});
+                              },
+                            ),
+                          );
+                        },
                       );
                     },
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
-}
-
-PageRoute _neuRoute(Widget page) {
-  return PageRouteBuilder(
-    pageBuilder: (_, __, ___) => page,
-    transitionsBuilder: (_, anim, __, child) => FadeTransition(
-      opacity: anim,
-      child: SlideTransition(
-        position: Tween<Offset>(begin: const Offset(0.04, 0), end: Offset.zero)
-            .animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
-        child: child,
-      ),
-    ),
-    transitionDuration: const Duration(milliseconds: 280),
-  );
 }

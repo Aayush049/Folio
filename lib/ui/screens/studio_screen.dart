@@ -10,6 +10,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:signature/signature.dart';
 import '../../core/color_filters.dart';
 import '../../core/folio_theme.dart';
+import '../../core/folio_breakpoints.dart';
+import '../../core/folio_shortcuts.dart';
 import '../widgets/neu_widgets.dart';
 import '../widgets/folio_image.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -69,6 +71,7 @@ class _StudioScreenState extends State<StudioScreen> {
   }
 
   Future<void> _saveAndReturn() async {
+    if (_isSaving) return;
     setState(() => _isSaving = true);
     try {
       final boundary = _renderKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
@@ -103,115 +106,130 @@ class _StudioScreenState extends State<StudioScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = context.watch<FolioThemeNotifier>();
+    final isCompact = context.isCompact;
 
-    return Scaffold(
-      backgroundColor: theme.bg,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // ─── Header ────────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-              child: Row(
-                children: [
-                  NeuIconButton(
-                    icon: Icons.arrow_back_ios_new_rounded,
-                    onTap: () => Navigator.pop(context),
-                    size: 44,
-                  ),
-                  const SizedBox(width: 16),
-                  Text(
-                    'Edit Studio',
-                    style: GoogleFonts.nunito(
-                      color: theme.text,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                  const Spacer(),
-                  _isSaving
-                      ? SizedBox(
-                    width: 44,
-                    height: 44,
-                    child: Center(
-                      child: SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: theme.accent),
+    return FolioShortcuts(
+      onSave: _saveAndReturn,
+      onEscape: () => Navigator.pop(context),
+      child: Scaffold(
+        backgroundColor: theme.bg,
+        body: SafeArea(
+          child: ResponsiveContainer(
+            maxWidth: 1080,
+            child: Column(
+              children: [
+                // ─── Header ────────────────────────────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                  child: Row(
+                    children: [
+                      NeuIconButton(
+                        icon: Icons.arrow_back_ios_new_rounded,
+                        onTap: () => Navigator.pop(context),
+                        size: 44,
                       ),
-                    ),
-                  )
-                      : NeuButton(
-                    filled: true,
-                    borderRadius: 14,
-                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                    onTap: _saveAndReturn,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.check_rounded, color: Colors.white, size: 16),
-                        const SizedBox(width: 6),
-                        Text('Done', style: GoogleFonts.nunito(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13)),
-                      ],
-                    ),
+                      const SizedBox(width: 16),
+                      Text(
+                        'Edit Studio',
+                        style: GoogleFonts.nunito(
+                          color: theme.text,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      const Spacer(),
+                      _isSaving
+                          ? SizedBox(
+                              width: 44,
+                              height: 44,
+                              child: Center(
+                                child: SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: theme.accent),
+                                ),
+                              ),
+                            )
+                          : NeuButton(
+                              filled: true,
+                              borderRadius: 14,
+                              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                              onTap: _saveAndReturn,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.check_rounded, color: Colors.white, size: 16),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    isCompact ? 'Done' : 'Done (Ctrl+S)',
+                                    style: GoogleFonts.nunito(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
 
-            const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-            // ─── Image Preview ─────────────────────────────────────────────
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: NeuBox(
-                  pressed: true,
-                  borderRadius: 24,
-                  padding: EdgeInsets.zero,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(24),
-                    child: RepaintBoundary(
-                      key: _renderKey,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          ColorFiltered(
-                            colorFilter: ColorFilter.matrix(_selectedFilter),
-                            child: FolioImage.file(
-                              _currentImage,
-                              fit: BoxFit.contain,
-                              width: double.infinity,
-                            ),
+                // ─── Image Preview ─────────────────────────────────────────────
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: NeuBox(
+                      pressed: true,
+                      borderRadius: 24,
+                      padding: EdgeInsets.zero,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(24),
+                        child: RepaintBoundary(
+                          key: _renderKey,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              ColorFiltered(
+                                colorFilter: ColorFilter.matrix(_selectedFilter),
+                                child: FolioImage.file(
+                                  _currentImage,
+                                  fit: BoxFit.contain,
+                                  width: double.infinity,
+                                ),
+                              ),
+                              if (_isDrawing)
+                                Signature(
+                                  controller: _signatureController,
+                                  height: double.infinity,
+                                  width: double.infinity,
+                                  backgroundColor: Colors.transparent,
+                                ),
+                            ],
                           ),
-                          if (_isDrawing)
-                            Signature(
-                              controller: _signatureController,
-                              height: double.infinity,
-                              width: double.infinity,
-                              backgroundColor: Colors.transparent,
-                            ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
+
+                const SizedBox(height: 16),
+
+                // ─── Filter Bar ────────────────────────────────────────────────
+                _buildFilterBar(theme),
+
+                const SizedBox(height: 12),
+
+                // ─── Toolbar ───────────────────────────────────────────────────
+                _buildToolbar(theme),
+
+                const SizedBox(height: 12),
+              ],
             ),
-
-            const SizedBox(height: 16),
-
-            // ─── Filter Bar ────────────────────────────────────────────────
-            _buildFilterBar(theme),
-
-            const SizedBox(height: 12),
-
-            // ─── Toolbar ───────────────────────────────────────────────────
-            _buildToolbar(theme),
-
-            const SizedBox(height: 8),
-          ],
+          ),
         ),
       ),
     );
@@ -231,46 +249,47 @@ class _StudioScreenState extends State<StudioScreen> {
           final filter = FolioFilters.all.values.elementAt(index);
           final isSelected = _selectedFilterName == name;
 
-          return GestureDetector(
-            onTap: () => setState(() {
-              _selectedFilter = filter;
-              _selectedFilterName = name;
-            }),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 72,
-              decoration: BoxDecoration(
-                color: theme.bg,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: isSelected ? theme.pressedShadow : theme.subtleShadow,
-                border: isSelected
-                    ? Border.all(color: theme.accent, width: 2)
-                    : null,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(4, 6, 4, 6),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: ColorFiltered(
-                          colorFilter: ColorFilter.matrix(filter),
-                          child: FolioImage.file(_currentImage, fit: BoxFit.cover),
+          return MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: () => setState(() {
+                _selectedFilter = filter;
+                _selectedFilterName = name;
+              }),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: 72,
+                decoration: BoxDecoration(
+                  color: theme.bg,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: isSelected ? theme.pressedShadow : theme.subtleShadow,
+                  border: isSelected ? Border.all(color: theme.accent, width: 2) : null,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 6, 4, 6),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: ColorFiltered(
+                            colorFilter: ColorFilter.matrix(filter),
+                            child: FolioImage.file(_currentImage, fit: BoxFit.cover),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      name,
-                      style: GoogleFonts.nunito(
-                        color: isSelected ? theme.accent : theme.textSub,
-                        fontSize: 10,
-                        fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                      const SizedBox(height: 4),
+                      Text(
+                        name,
+                        style: GoogleFonts.nunito(
+                          color: isSelected ? theme.accent : theme.textSub,
+                          fontSize: 10,
+                          fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -282,56 +301,81 @@ class _StudioScreenState extends State<StudioScreen> {
 
   Widget _buildToolbar(FolioThemeNotifier theme) {
     final tools = [
-      _ToolItem(icon: _isDrawing ? Icons.gesture : Icons.gesture_outlined, label: 'Sign', active: _isDrawing, onTap: () => setState(() => _isDrawing = !_isDrawing)),
-      _ToolItem(icon: Icons.undo_rounded, label: 'Undo', onTap: () => _signatureController.undo()),
-      _ToolItem(icon: Icons.clear_rounded, label: 'Clear', onTap: () => _signatureController.clear()),
-      _ToolItem(icon: Icons.crop_rounded, label: 'Crop', onTap: _cropImage),
+      _ToolItem(
+        icon: _isDrawing ? Icons.gesture : Icons.gesture_outlined,
+        label: 'Sign',
+        active: _isDrawing,
+        onTap: () => setState(() => _isDrawing = !_isDrawing),
+      ),
+      _ToolItem(
+        icon: Icons.undo_rounded,
+        label: 'Undo',
+        onTap: () => _signatureController.undo(),
+      ),
+      _ToolItem(
+        icon: Icons.clear_rounded,
+        label: 'Clear',
+        onTap: () => _signatureController.clear(),
+      ),
+      _ToolItem(
+        icon: Icons.crop_rounded,
+        label: 'Crop',
+        onTap: _cropImage,
+      ),
     ];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: NeuBox(
-        borderRadius: 24,
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: tools.map((t) => _buildToolItem(t, theme)).toList(),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: NeuBox(
+            borderRadius: 24,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: tools.map((t) => _buildToolItem(t, theme)).toList(),
+            ),
+          ),
         ),
       ),
     );
   }
 
   Widget _buildToolItem(_ToolItem item, FolioThemeNotifier theme) {
-    return GestureDetector(
-      onTap: item.onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: item.active ? theme.accentSoft : theme.bg,
-              shape: BoxShape.circle,
-              boxShadow: item.active ? theme.pressedShadow : theme.subtleShadow,
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: item.onTap,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: item.active ? theme.accentSoft : theme.bg,
+                shape: BoxShape.circle,
+                boxShadow: item.active ? theme.pressedShadow : theme.subtleShadow,
+              ),
+              child: Icon(
+                item.icon,
+                color: item.active ? theme.accent : theme.textSub,
+                size: 20,
+              ),
             ),
-            child: Icon(
-              item.icon,
-              color: item.active ? theme.accent : theme.textSub,
-              size: 20,
+            const SizedBox(height: 5),
+            Text(
+              item.label,
+              style: GoogleFonts.nunito(
+                color: item.active ? theme.accent : theme.textSub,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            item.label,
-            style: GoogleFonts.nunito(
-              color: item.active ? theme.accent : theme.textSub,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

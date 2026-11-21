@@ -11,11 +11,12 @@ import '../../repositories/document_repository.dart';
 import '../../services/pdf_service.dart';
 import '../../services/scanner_service.dart';
 import '../../core/folio_theme.dart';
+import '../../core/folio_breakpoints.dart';
+import '../../core/folio_shortcuts.dart';
+import '../../core/navigation_utils.dart';
 import '../widgets/neu_widgets.dart';
 import '../widgets/folio_image.dart';
 import 'studio_screen.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
 
 class DocumentDetailScreen extends StatefulWidget {
   final Document document;
@@ -85,97 +86,102 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => DraggableScrollableSheet(
-        initialChildSize: 0.65,
-        maxChildSize: 0.95,
-        minChildSize: 0.4,
-        builder: (_, controller) => Container(
-          decoration: BoxDecoration(
-            color: theme.bg,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-            boxShadow: [
-              BoxShadow(
-                color: theme.darkShadow.withValues(alpha: 0.4),
-                blurRadius: 24,
-                offset: const Offset(0, -6),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              // Handle
-              Center(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 12, bottom: 16),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: theme.textSub.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(2),
+      builder: (ctx) => Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 700),
+          child: DraggableScrollableSheet(
+            initialChildSize: 0.65,
+            maxChildSize: 0.95,
+            minChildSize: 0.4,
+            builder: (_, controller) => Container(
+              decoration: BoxDecoration(
+                color: theme.bg,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+                boxShadow: [
+                  BoxShadow(
+                    color: theme.darkShadow.withValues(alpha: 0.4),
+                    blurRadius: 24,
+                    offset: const Offset(0, -6),
                   ),
-                ),
+                ],
               ),
-              // Title row
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Row(
-                  children: [
-                    Icon(Icons.text_fields_rounded, color: theme.accent, size: 22),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Extracted Text',
-                      style: GoogleFonts.nunito(
-                        color: theme.text,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 18,
-                      ),
-                    ),
-                    const Spacer(),
-                    // Copy button
-                    NeuButton(
-                      borderRadius: 12,
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                      onTap: () {
-                        Clipboard.setData(ClipboardData(text: text));
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Copied to clipboard')),
-                        );
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.copy_rounded, color: theme.accent, size: 16),
-                          const SizedBox(width: 6),
-                          Text('Copy', style: GoogleFonts.nunito(color: theme.accent, fontWeight: FontWeight.w800, fontSize: 13)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Text content
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: controller,
-                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-                  child: NeuBox(
-                    pressed: true,
-                    borderRadius: 16,
-                    padding: const EdgeInsets.all(16),
-                    child: SelectableText(
-                      text,
-                      style: GoogleFonts.nunito(
-                        color: theme.text,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        height: 1.7,
+              child: Column(
+                children: [
+                  // Handle
+                  Center(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 12, bottom: 16),
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: theme.textSub.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(2),
                       ),
                     ),
                   ),
-                ),
+                  // Title row
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Row(
+                      children: [
+                        Icon(Icons.text_fields_rounded, color: theme.accent, size: 22),
+                        const SizedBox(width: 10),
+                        Text(
+                          'Extracted Text',
+                          style: GoogleFonts.nunito(
+                            color: theme.text,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 18,
+                          ),
+                        ),
+                        const Spacer(),
+                        // Copy button
+                        NeuButton(
+                          borderRadius: 12,
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: text));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Copied to clipboard')),
+                            );
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.copy_rounded, color: theme.accent, size: 16),
+                              const SizedBox(width: 6),
+                              Text('Copy', style: GoogleFonts.nunito(color: theme.accent, fontWeight: FontWeight.w800, fontSize: 13)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Text content
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: controller,
+                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                      child: NeuBox(
+                        pressed: true,
+                        borderRadius: 16,
+                        padding: const EdgeInsets.all(16),
+                        child: SelectableText(
+                          text,
+                          style: GoogleFonts.nunito(
+                            color: theme.text,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            height: 1.7,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -188,7 +194,12 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
       final images = _pages!.map((p) => File(p.imagePath)).toList();
       final pdfFile = await _pdfService.generatePdf(images, widget.document.name);
       if (!mounted) return;
-      await Share.shareXFiles([XFile(pdfFile.path)], text: 'Document from Folio');
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(pdfFile.path)],
+          text: 'Document from Folio',
+        ),
+      );
     } catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
@@ -209,129 +220,130 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
   Widget build(BuildContext context) {
     final theme = context.watch<FolioThemeNotifier>();
 
-    return Scaffold(
-      backgroundColor: theme.bg,
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 960),
+    return FolioShortcuts(
+      onEscape: () => Navigator.pop(context),
+      child: Scaffold(
+        backgroundColor: theme.bg,
+        body: SafeArea(
+          child: ResponsiveContainer(
+            maxWidth: 1080,
             child: Column(
-          children: [
-            // ─── Header ────────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-              child: Row(
-                children: [
-                  NeuIconButton(
-                    icon: Icons.arrow_back_ios_new_rounded,
-                    onTap: () => Navigator.pop(context),
-                    size: 44,
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      widget.document.name,
-                      style: GoogleFonts.nunito(
-                        color: theme.text,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -0.5,
+              children: [
+                // ─── Header ────────────────────────────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                  child: Row(
+                    children: [
+                      NeuIconButton(
+                        icon: Icons.arrow_back_ios_new_rounded,
+                        onTap: () => Navigator.pop(context),
+                        size: 44,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // ─── Action Row ────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-              child: Row(
-                children: [
-                  NeuIconButton(
-                    icon: _isReorderMode ? Icons.grid_view_rounded : Icons.reorder_rounded,
-                    onTap: () => setState(() => _isReorderMode = !_isReorderMode),
-                    active: _isReorderMode,
-                    tooltip: _isReorderMode ? 'Grid View' : 'Reorder',
-                    size: 44,
-                  ),
-                  const SizedBox(width: 10),
-                  NeuIconButton(
-                    icon: Icons.share_outlined,
-                    onTap: _exportAndShare,
-                    size: 44,
-                    tooltip: 'Share PDF',
-                  ),
-                  const SizedBox(width: 10),
-                  NeuIconButton(
-                    icon: Icons.picture_as_pdf_outlined,
-                    onTap: _openPdf,
-                    size: 44,
-                    tooltip: 'Open PDF',
-                  ),
-                  const SizedBox(width: 10),
-                  // OCR button
-                  _isExtracting
-                      ? SizedBox(
-                    width: 44,
-                    height: 44,
-                    child: Center(
-                      child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: theme.accent),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          widget.document.name,
+                          style: GoogleFonts.nunito(
+                            color: theme.text,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -0.5,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                  )
-                      : NeuIconButton(
-                    icon: Icons.text_fields_rounded,
-                    onTap: _extractText,
-                    size: 44,
-                    tooltip: 'Extract Text (OCR)',
+                    ],
                   ),
-                  const Spacer(),
-                  // Add pages button
-                  NeuButton(
-                    filled: true,
-                    borderRadius: 14,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    onTap: () => _addPages(context),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.add_a_photo_outlined, color: Colors.white, size: 16),
-                        const SizedBox(width: 6),
-                        Text('Add', style: GoogleFonts.nunito(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // ─── Pages ────────────────────────────────────────────────────
-            Expanded(
-              child: _pages == null
-                  ? const Center(child: CircularProgressIndicator())
-                  : _pages!.isEmpty
-                  ? Center(
-                child: Text(
-                  'No pages found.',
-                  style: TextStyle(color: theme.textSub, fontWeight: FontWeight.w700),
                 ),
-              )
-                  : _isReorderMode
-                  ? _buildReorderableList(theme)
-                  : _buildGrid(theme),
+
+                // ─── Action Row ────────────────────────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+                  child: Row(
+                    children: [
+                      NeuIconButton(
+                        icon: _isReorderMode ? Icons.grid_view_rounded : Icons.reorder_rounded,
+                        onTap: () => setState(() => _isReorderMode = !_isReorderMode),
+                        active: _isReorderMode,
+                        tooltip: _isReorderMode ? 'Grid View' : 'Reorder',
+                        size: 44,
+                      ),
+                      const SizedBox(width: 10),
+                      NeuIconButton(
+                        icon: Icons.share_outlined,
+                        onTap: _exportAndShare,
+                        size: 44,
+                        tooltip: 'Share PDF',
+                      ),
+                      const SizedBox(width: 10),
+                      NeuIconButton(
+                        icon: Icons.picture_as_pdf_outlined,
+                        onTap: _openPdf,
+                        size: 44,
+                        tooltip: 'Open PDF',
+                      ),
+                      const SizedBox(width: 10),
+                      // OCR button
+                      _isExtracting
+                          ? SizedBox(
+                              width: 44,
+                              height: 44,
+                              child: Center(
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: theme.accent),
+                                ),
+                              ),
+                            )
+                          : NeuIconButton(
+                              icon: Icons.text_fields_rounded,
+                              onTap: _extractText,
+                              size: 44,
+                              tooltip: 'Extract Text (OCR)',
+                            ),
+                      const Spacer(),
+                      // Add pages button
+                      NeuButton(
+                        filled: true,
+                        borderRadius: 14,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        onTap: () => _addPages(context),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.add_a_photo_outlined, color: Colors.white, size: 16),
+                            const SizedBox(width: 6),
+                            Text('Add', style: GoogleFonts.nunito(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // ─── Pages ────────────────────────────────────────────────────
+                Expanded(
+                  child: _pages == null
+                      ? const Center(child: CircularProgressIndicator())
+                      : _pages!.isEmpty
+                          ? Center(
+                              child: Text(
+                                'No pages found.',
+                                style: TextStyle(color: theme.textSub, fontWeight: FontWeight.w700),
+                              ),
+                            )
+                          : _isReorderMode
+                              ? _buildReorderableList(theme)
+                              : _buildGrid(theme),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
-    ),
-  ),
-);
+    );
   }
 
   Widget _buildGrid(FolioThemeNotifier theme) {
@@ -377,7 +389,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                         onTap: () async {
                           final editedImage = await Navigator.push<File>(
                             context,
-                            MaterialPageRoute(builder: (_) => StudioScreen(image: File(page.imagePath))),
+                            neuRoute(StudioScreen(image: File(page.imagePath))),
                           );
                           if (editedImage != null) {
                             await widget.repository.updatePage(page.copyWith(imagePath: editedImage.path));
@@ -457,7 +469,10 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                 'Page ${index + 1}',
                 style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w800),
               ),
-              trailing: Icon(Icons.drag_handle_rounded, color: theme.textSub),
+              trailing: const MouseRegion(
+                cursor: SystemMouseCursors.grab,
+                child: Icon(Icons.drag_handle_rounded),
+              ),
             ),
           ),
         );
@@ -472,62 +487,67 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
     final source = await showModalBottomSheet<String>(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        decoration: BoxDecoration(
-          color: theme.bg,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        ),
-        child: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(top: 12),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(color: theme.textSub.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(2)),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Text('Add More Pages', style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w900, fontSize: 18)),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: NeuButton(
-                        borderRadius: 18,
-                        padding: const EdgeInsets.all(20),
-                        onTap: () => Navigator.pop(ctx, 'camera'),
-                        child: Column(
-                          children: [
-                            Icon(Icons.camera_alt_outlined, color: theme.accent, size: 28),
-                            const SizedBox(height: 8),
-                            Text('Camera', style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w700)),
-                          ],
+      builder: (ctx) => Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: Container(
+            decoration: BoxDecoration(
+              color: theme.bg,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 12),
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(color: theme.textSub.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(2)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Text('Add More Pages', style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w900, fontSize: 18)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: NeuButton(
+                            borderRadius: 18,
+                            padding: const EdgeInsets.all(20),
+                            onTap: () => Navigator.pop(ctx, 'camera'),
+                            child: Column(
+                              children: [
+                                Icon(Icons.camera_alt_outlined, color: theme.accent, size: 28),
+                                const SizedBox(height: 8),
+                                Text('Camera', style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w700)),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: NeuButton(
-                        borderRadius: 18,
-                        padding: const EdgeInsets.all(20),
-                        onTap: () => Navigator.pop(ctx, 'gallery'),
-                        child: Column(
-                          children: [
-                            Icon(Icons.photo_library_outlined, color: theme.accent, size: 28),
-                            const SizedBox(height: 8),
-                            Text('Gallery', style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w700)),
-                          ],
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: NeuButton(
+                            borderRadius: 18,
+                            padding: const EdgeInsets.all(20),
+                            onTap: () => Navigator.pop(ctx, 'gallery'),
+                            child: Column(
+                              children: [
+                                Icon(Icons.photo_library_outlined, color: theme.accent, size: 28),
+                                const SizedBox(height: 8),
+                                Text('Gallery', style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w700)),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -578,19 +598,22 @@ class _PageActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          color: danger ? Colors.redAccent : Colors.white,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 6, offset: const Offset(0, 2)),
-          ],
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: danger ? Colors.redAccent : Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 6, offset: const Offset(0, 2)),
+            ],
+          ),
+          child: Icon(icon, size: 16, color: danger ? Colors.white : Colors.black87),
         ),
-        child: Icon(icon, size: 16, color: danger ? Colors.white : Colors.black87),
       ),
     );
   }

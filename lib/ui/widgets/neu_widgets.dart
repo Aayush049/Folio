@@ -9,8 +9,8 @@ class NeuBox extends StatelessWidget {
   final double borderRadius;
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
-  final bool pressed;  // inset/pressed style
-  final bool flat;     // no shadows (for selected tabs, etc.)
+  final bool pressed; // inset/pressed style
+  final bool flat; // no shadows (for selected tabs, etc.)
   final double? width;
   final double? height;
   final VoidCallback? onTap;
@@ -57,14 +57,17 @@ class NeuBox extends StatelessWidget {
     );
 
     if (onTap != null) {
-      return GestureDetector(onTap: onTap, child: box);
+      return MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(onTap: onTap, child: box),
+      );
     }
     return box;
   }
 }
 
 // ─── NeuButton ────────────────────────────────────────────────────────────────
-/// Animated neumorphic button with press-down effect.
+/// Animated neumorphic button with press-down and mouse hover effects for desktop & web.
 class NeuButton extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
@@ -89,6 +92,7 @@ class _NeuButtonState extends State<NeuButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
   late Animation<double> _scale;
+  bool _isHovered = false;
 
   @override
   void initState() {
@@ -115,45 +119,73 @@ class _NeuButtonState extends State<NeuButton>
     _ctrl.reverse();
     widget.onTap?.call();
   }
+
   void _onTapCancel() => _ctrl.reverse();
 
   @override
   Widget build(BuildContext context) {
     final theme = context.watch<FolioThemeNotifier>();
 
-    return GestureDetector(
-      onTapDown: _onTapDown,
-      onTapUp: _onTapUp,
-      onTapCancel: _onTapCancel,
-      child: ScaleTransition(
-        scale: _scale,
-        child: AnimatedBuilder(
-          animation: _ctrl,
-          builder: (context, child) {
-            final isPressed = _ctrl.value > 0.5;
-            return Container(
-              padding: widget.padding,
-              decoration: BoxDecoration(
-                color: widget.filled ? theme.accent : theme.bg,
-                borderRadius: BorderRadius.circular(widget.borderRadius),
-                boxShadow: isPressed
-                    ? theme.pressedShadow
-                    : theme.raisedShadow,
-                gradient: widget.filled
-                    ? LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    theme.accent.withValues(alpha: 0.9),
-                    theme.accent,
-                  ],
-                )
-                    : null,
-              ),
-              child: child,
-            );
-          },
-          child: widget.child,
+    return MouseRegion(
+      cursor: widget.onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTapDown: _onTapDown,
+        onTapUp: _onTapUp,
+        onTapCancel: _onTapCancel,
+        child: ScaleTransition(
+          scale: _scale,
+          child: AnimatedBuilder(
+            animation: _ctrl,
+            builder: (context, child) {
+              final isPressed = _ctrl.value > 0.5;
+
+              Color bgColor;
+              if (widget.filled) {
+                bgColor = _isHovered
+                    ? theme.accent.withValues(alpha: 0.92)
+                    : theme.accent;
+              } else {
+                bgColor = _isHovered
+                    ? Color.lerp(theme.bg, theme.accent, 0.06)!
+                    : theme.bg;
+              }
+
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                padding: widget.padding,
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  borderRadius: BorderRadius.circular(widget.borderRadius),
+                  boxShadow: isPressed
+                      ? theme.pressedShadow
+                      : (_isHovered
+                          ? [
+                              ...theme.raisedShadow,
+                              BoxShadow(
+                                color: theme.accent.withValues(alpha: 0.15),
+                                blurRadius: 10,
+                                spreadRadius: 1,
+                              ),
+                            ]
+                          : theme.raisedShadow),
+                  gradient: widget.filled
+                      ? LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            theme.accent.withValues(alpha: _isHovered ? 0.95 : 0.9),
+                            theme.accent,
+                          ],
+                        )
+                      : null,
+                ),
+                child: child,
+              );
+            },
+            child: widget.child,
+          ),
         ),
       ),
     );
@@ -184,6 +216,7 @@ class NeuIconButton extends StatefulWidget {
 class _NeuIconButtonState extends State<NeuIconButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
+  bool _isHovered = false;
 
   @override
   void initState() {
@@ -204,34 +237,53 @@ class _NeuIconButtonState extends State<NeuIconButton>
   Widget build(BuildContext context) {
     final theme = context.watch<FolioThemeNotifier>();
 
-    final btn = GestureDetector(
-      onTapDown: (_) => _ctrl.forward(),
-      onTapUp: (_) {
-        _ctrl.reverse();
-        widget.onTap?.call();
-      },
-      onTapCancel: () => _ctrl.reverse(),
-      child: AnimatedBuilder(
-        animation: _ctrl,
-        builder: (context, _) {
-          final pressed = _ctrl.value > 0.5;
-          return Container(
-            width: widget.size,
-            height: widget.size,
-            decoration: BoxDecoration(
-              color: widget.active ? theme.accentSoft : theme.bg,
-              shape: BoxShape.circle,
-              boxShadow: pressed || widget.active
-                  ? theme.pressedShadow
-                  : theme.subtleShadow,
-            ),
-            child: Icon(
-              widget.icon,
-              color: widget.active ? theme.accent : theme.textSub,
-              size: widget.size * 0.44,
-            ),
-          );
+    final btn = MouseRegion(
+      cursor: widget.onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTapDown: (_) => _ctrl.forward(),
+        onTapUp: (_) {
+          _ctrl.reverse();
+          widget.onTap?.call();
         },
+        onTapCancel: () => _ctrl.reverse(),
+        child: AnimatedBuilder(
+          animation: _ctrl,
+          builder: (context, _) {
+            final pressed = _ctrl.value > 0.5;
+
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              width: widget.size,
+              height: widget.size,
+              decoration: BoxDecoration(
+                color: widget.active
+                    ? theme.accentSoft
+                    : (_isHovered
+                        ? Color.lerp(theme.bg, theme.accent, 0.08)!
+                        : theme.bg),
+                shape: BoxShape.circle,
+                boxShadow: pressed || widget.active
+                    ? theme.pressedShadow
+                    : (_isHovered
+                        ? [
+                            ...theme.subtleShadow,
+                            BoxShadow(
+                              color: theme.accent.withValues(alpha: 0.16),
+                              blurRadius: 8,
+                            ),
+                          ]
+                        : theme.subtleShadow),
+              ),
+              child: Icon(
+                widget.icon,
+                color: (widget.active || _isHovered) ? theme.accent : theme.textSub,
+                size: widget.size * 0.44,
+              ),
+            );
+          },
+        ),
       ),
     );
 
@@ -304,22 +356,25 @@ class NeuChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.watch<FolioThemeNotifier>();
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: selected ? theme.accent : theme.bg,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: selected ? theme.pressedShadow : theme.subtleShadow,
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: selected ? Colors.white : theme.textSub,
-            fontWeight: FontWeight.w700,
-            fontSize: 13,
+    return MouseRegion(
+      cursor: onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: selected ? theme.accent : theme.bg,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: selected ? theme.pressedShadow : theme.subtleShadow,
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: selected ? Colors.white : theme.textSub,
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+            ),
           ),
         ),
       ),

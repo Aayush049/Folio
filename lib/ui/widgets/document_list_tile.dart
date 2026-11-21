@@ -35,59 +35,62 @@ class DocumentListTile extends StatelessWidget {
       ),
       confirmDismiss: (_) => _confirmDelete(context, theme),
       onDismissed: (_) => onDelete(),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            color: theme.bg,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: theme.raisedShadow,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            child: Row(
-              children: [
-                // Icon container
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: theme.accentSoft,
-                    borderRadius: BorderRadius.circular(14),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: onTap,
+          child: Container(
+            decoration: BoxDecoration(
+              color: theme.bg,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: theme.raisedShadow,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Row(
+                children: [
+                  // Icon container
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: theme.accentSoft,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Icon(Icons.description_rounded, color: theme.accent, size: 24),
                   ),
-                  child: Icon(Icons.description_rounded, color: theme.accent, size: 24),
-                ),
-                const SizedBox(width: 14),
-                // Text
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        doc.name,
-                        style: GoogleFonts.nunito(
-                          color: theme.text,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 15,
+                  const SizedBox(width: 14),
+                  // Text
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          doc.name,
+                          style: GoogleFonts.nunito(
+                            color: theme.text,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 15,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        DateFormat.yMMMd().format(doc.createdAt),
-                        style: GoogleFonts.nunito(
-                          color: theme.textSub,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
+                        const SizedBox(height: 3),
+                        Text(
+                          DateFormat.yMMMd().format(doc.createdAt),
+                          style: GoogleFonts.nunito(
+                            color: theme.textSub,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                // Arrow
-                Icon(Icons.chevron_right_rounded, color: theme.textSub, size: 22),
-              ],
+                  // Arrow
+                  Icon(Icons.chevron_right_rounded, color: theme.textSub, size: 22),
+                ],
+              ),
             ),
           ),
         ),

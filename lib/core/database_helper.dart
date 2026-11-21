@@ -22,7 +22,9 @@ class DatabaseHelper {
       return await openDatabase(
         filePath,
         version: 1,
+        onConfigure: _onConfigureDB,
         onCreate: _createDB,
+        onUpgrade: _onUpgradeDB,
       );
     }
 
@@ -32,8 +34,24 @@ class DatabaseHelper {
     return await openDatabase(
       path,
       version: 1,
+      onConfigure: _onConfigureDB,
       onCreate: _createDB,
+      onUpgrade: _onUpgradeDB,
     );
+  }
+
+  Future _onConfigureDB(Database db) async {
+    // Explicitly enforce SQLite foreign keys for cascade deletions
+    await db.execute('PRAGMA foreign_keys = ON');
+  }
+
+  Future _onUpgradeDB(Database db, int oldVersion, int newVersion) async {
+    // Structured database migration pipeline
+    // When schema changes in future versions (e.g. trash, tags, syncStatus),
+    // sequential migration blocks run here safely.
+    if (oldVersion < 2) {
+      // Version 2 migrations (e.g. trash, tags) will go here
+    }
   }
 
   Future _createDB(Database db, int version) async {
@@ -166,8 +184,11 @@ class DatabaseHelper {
     );
   }
 
-  Future close() async {
-    final db = await instance.database;
-    db.close();
+  Future<void> close() async {
+    final db = _database;
+    if (db != null && db.isOpen) {
+      await db.close();
+    }
+    _database = null;
   }
 }

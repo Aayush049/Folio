@@ -6,7 +6,7 @@
 
 ### Universal Offline Document Studio, Scanner & Vault
 
-[![Flutter CI](https://github.com/Aayush049/Folio/actions/workflows/ci.yml/badge.svg)](https://github.com/Aayush049/Folio/actions/workflows/ci.yml)
+[![Flutter CI](https://img.shields.io/github/actions/workflow/status/Aayush049/Folio/ci.yml?branch=main&style=for-the-badge&logo=github&label=Flutter%20CI)](https://github.com/Aayush049/Folio/actions/workflows/ci.yml)
 [![Live Web Demo](https://img.shields.io/badge/Live_Demo-Firebase_Hosting-FFA611?style=for-the-badge&logo=firebase&logoColor=white)](https://folio-doc-studio.web.app)
 [![Vercel Mirror](https://img.shields.io/badge/Mirror-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://folio-nine-omega-50.vercel.app)
 [![Android APK](https://img.shields.io/badge/Android-Release_APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Aayush049/Folio/releases/download/v2.0.0/folio.apk)

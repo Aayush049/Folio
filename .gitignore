@@ -50,3 +50,13 @@ app.*.map.json
 
 # Firebase Cache
 .firebase/
+
+# Secrets and Credentials Protection
+*.env
+*.env.*
+*.key
+*.keystore
+*.jks
+*.pem
+*service-account*.json
+secrets/

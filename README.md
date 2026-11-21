@@ -95,12 +95,11 @@ graph TD
 - Declarative security rules (`firestore.rules` and `storage.rules`) enforcing strict user-level isolation (`request.auth.uid == userId`).
 - 100% resilient: The app functions seamlessly when offline or without internet connectivity.
 
-### 📱 5. Responsive Cross-Platform Design System
-- Adaptive Neumorphic UI with ambient Day/Night lighting transitions.
-- Responsive breakpoints (`FolioBreakpoints`): Smooth adaptation across mobile (<600dp), tablet (600–1024dp), and desktop/web (>1024dp).
-- Desktop keyboard shortcuts (`Ctrl/Cmd+N` for new scan, `Ctrl/Cmd+S` to save, `Esc` to cancel).
-- Tactile haptic feedback on key user actions.
-
+### 📱 5. Responsive Cross-Platform Design & Modern Navigation
+- **Neumorphic Bottom Navigation Bar:** Dedicated fluid navigation between Documents and Settings.
+- **Dedicated Settings Hub:** Integrated Google account profile management, cloud sync controls, security toggles, theme switcher (Auto/Light/Dark), and recycle bin access.
+- **Adaptive Breakpoints (FolioBreakpoints):** Seamless adaptation across mobile (<600dp), tablet (600–1024dp), and desktop/web (>1024dp) with Master-Detail support.
+- **Ergonomics & Shortcuts:** Streamlined top-bar scanner trigger, tactile haptic feedback, and desktop keyboard shortcuts (Ctrl/Cmd+N to scan, Ctrl/Cmd+S to save, Esc to dismiss).
 ---
 
 ## Tech Stack
@@ -136,8 +135,8 @@ folio/
 │   ├── repositories/            # IDocumentRepository interface & implementation
 │   ├── services/                # Scanner, PDF, Auth, Sync, and Security services
 │   ├── ui/
-│   │   ├── screens/             # Dashboard, Studio, Scanner, Detail, Search, Trash screens
-│   │   └── widgets/             # Neumorphic components, shimmer loaders, privacy shield
+│   │   ├── screens/             # Dashboard, Settings, Studio, Scanner, Detail, Search, Trash
+│   │   └── widgets/             # Bottom nav bar, Neumorphic components, shimmer loaders, privacy shield
 │   └── main.dart                # Application bootstrap & dependency locator
 ├── test/                        # Automated unit, widget, and architecture test suite
 ├── firestore.rules              # User-isolated Cloud Firestore security rules

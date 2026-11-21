@@ -81,11 +81,7 @@ class _VaultLockScreen extends StatelessWidget {
             NeuBox(
               borderRadius: 30,
               padding: const EdgeInsets.all(22),
-              child: Icon(
-                Icons.lock_rounded,
-                size: 44,
-                color: theme.accent,
-              ),
+              child: Icon(Icons.lock_rounded, size: 44, color: theme.accent),
             ),
             const SizedBox(height: 24),
             Text(
@@ -117,7 +113,9 @@ class _VaultLockScreen extends StatelessWidget {
                   ? null
                   : () {
                       HapticFeedback.lightImpact();
-                      context.read<SecurityBloc>().add(const AuthenticateVault());
+                      context.read<SecurityBloc>().add(
+                        const AuthenticateVault(),
+                      );
                     },
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -126,13 +124,22 @@ class _VaultLockScreen extends StatelessWidget {
                     const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.2),
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2.2,
+                      ),
                     )
                   else
-                    const Icon(Icons.fingerprint_rounded, color: Colors.white, size: 24),
+                    const Icon(
+                      Icons.fingerprint_rounded,
+                      color: Colors.white,
+                      size: 24,
+                    ),
                   const SizedBox(width: 10),
                   Text(
-                    state.isAuthenticating ? 'Authenticating...' : 'Unlock Vault',
+                    state.isAuthenticating
+                        ? 'Authenticating...'
+                        : 'Unlock Vault',
                     style: GoogleFonts.nunito(
                       color: Colors.white,
                       fontSize: 16,
@@ -171,7 +178,10 @@ class _VaultSecuritySettingsSheet extends StatelessWidget {
             listener: (context, state) {
               if (state.errorMessage != null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.errorMessage!), backgroundColor: theme.danger),
+                  SnackBar(
+                    content: Text(state.errorMessage!),
+                    backgroundColor: theme.danger,
+                  ),
                 );
               }
             },
@@ -199,7 +209,11 @@ class _VaultSecuritySettingsSheet extends StatelessWidget {
                           color: theme.accentSoft,
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        child: Icon(Icons.security_rounded, color: theme.accent, size: 24),
+                        child: Icon(
+                          Icons.security_rounded,
+                          color: theme.accent,
+                          size: 24,
+                        ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -268,7 +282,9 @@ class _VaultSecuritySettingsSheet extends StatelessWidget {
                           activeTrackColor: theme.accent,
                           onChanged: (val) {
                             HapticFeedback.lightImpact();
-                            context.read<SecurityBloc>().add(ToggleAppLock(val));
+                            context.read<SecurityBloc>().add(
+                              ToggleAppLock(val),
+                            );
                           },
                         ),
                       ],
@@ -286,7 +302,11 @@ class _VaultSecuritySettingsSheet extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.shield_rounded, size: 18, color: theme.accent),
+                            Icon(
+                              Icons.shield_rounded,
+                              size: 18,
+                              color: theme.accent,
+                            ),
                             const SizedBox(width: 8),
                             Text(
                               'Privacy Shield Protection',

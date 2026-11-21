@@ -49,14 +49,19 @@ class FolioImage extends StatelessWidget {
             height: height,
             color: Colors.grey.withValues(alpha: 0.12),
             child: const Center(
-              child: Icon(Icons.broken_image_rounded, color: Colors.grey, size: 28),
+              child: Icon(
+                Icons.broken_image_rounded,
+                color: Colors.grey,
+                size: 28,
+              ),
             ),
           ),
         );
       } catch (_) {}
     }
 
-    final isWebOrUrl = kIsWeb ||
+    final isWebOrUrl =
+        kIsWeb ||
         path.startsWith('blob:') ||
         path.startsWith('http://') ||
         path.startsWith('https://');
@@ -87,7 +92,11 @@ class FolioImage extends StatelessWidget {
           height: height,
           color: Colors.grey.withValues(alpha: 0.12),
           child: const Center(
-            child: Icon(Icons.broken_image_rounded, color: Colors.grey, size: 28),
+            child: Icon(
+              Icons.broken_image_rounded,
+              color: Colors.grey,
+              size: 28,
+            ),
           ),
         ),
       );

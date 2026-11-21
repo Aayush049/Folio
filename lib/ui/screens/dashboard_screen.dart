@@ -50,10 +50,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void _navigateToScanner() {
     HapticFeedback.lightImpact();
     context.read<ScannerBloc>().add(ResetScanner());
-    Navigator.push(
-      context,
-      neuRoute(const ScannerScreen()),
-    );
+    Navigator.push(context, neuRoute(const ScannerScreen()));
   }
 
   String _greeting() {
@@ -140,12 +137,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               NeuButton(
                                 filled: true,
                                 borderRadius: 20,
-                                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 18,
+                                  vertical: 12,
+                                ),
                                 onTap: _navigateToScanner,
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.document_scanner_rounded, color: Colors.white, size: 18),
+                                    const Icon(
+                                      Icons.document_scanner_rounded,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
                                     const SizedBox(width: 6),
                                     Text(
                                       isCompact ? 'Scan' : 'New Scan (Ctrl+N)',
@@ -172,20 +176,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               Expanded(
                                 child: NeuBox(
                                   borderRadius: 18,
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
                                   onTap: () {
                                     HapticFeedback.lightImpact();
-                                    Navigator.push(context, neuRoute(const SearchScreen()));
+                                    Navigator.push(
+                                      context,
+                                      neuRoute(const SearchScreen()),
+                                    );
                                   },
                                   child: Row(
                                     children: [
-                                      Icon(Icons.search_rounded, color: theme.accent, size: 20),
+                                      Icon(
+                                        Icons.search_rounded,
+                                        color: theme.accent,
+                                        size: 20,
+                                      ),
                                       const SizedBox(width: 10),
                                       Expanded(
                                         child: Text(
                                           'Search scans & OCR text contents...',
                                           style: GoogleFonts.nunito(
-                                            color: theme.textSub.withValues(alpha: 0.8),
+                                            color: theme.textSub.withValues(
+                                              alpha: 0.8,
+                                            ),
                                             fontSize: 14,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -195,10 +211,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       ),
                                       const SizedBox(width: 8),
                                       Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 6,
+                                          vertical: 2,
+                                        ),
                                         decoration: BoxDecoration(
                                           color: theme.accentSoft,
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                         ),
                                         child: Text(
                                           'FTS5',
@@ -223,29 +244,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       const SliverToBoxAdapter(child: SizedBox(height: 12)),
 
                       // ─── Body ─────────────────────────────────────────────────────
-                      if (state is DashboardInitial || state is DashboardLoading)
+                      if (state is DashboardInitial ||
+                          state is DashboardLoading)
                         const SliverFillRemaining(
                           child: Center(child: CircularProgressIndicator()),
                         )
                       else if (state is DashboardError)
                         SliverFillRemaining(child: _buildError(context, state))
                       else if (state is DashboardLoaded) ...[
-                          _buildSectionHeader(
-                            context,
-                            'Folders',
-                            count: state.folders.length,
-                            onAdd: () => _showAddFolderDialog(context),
-                          ),
-                          _buildFolderSection(context, state, isCompact),
-                          const SliverToBoxAdapter(child: SizedBox(height: 12)),
-                          _buildSectionHeader(
-                            context,
-                            'Recent Scans',
-                            count: state.recentDocuments.length,
-                          ),
-                          _buildRecentSection(context, state, isCompact),
-                          const SliverToBoxAdapter(child: SizedBox(height: 36)),
-                        ],
+                        _buildSectionHeader(
+                          context,
+                          'Folders',
+                          count: state.folders.length,
+                          onAdd: () => _showAddFolderDialog(context),
+                        ),
+                        _buildFolderSection(context, state, isCompact),
+                        const SliverToBoxAdapter(child: SizedBox(height: 12)),
+                        _buildSectionHeader(
+                          context,
+                          'Recent Scans',
+                          count: state.recentDocuments.length,
+                        ),
+                        _buildRecentSection(context, state, isCompact),
+                        const SliverToBoxAdapter(child: SizedBox(height: 36)),
+                      ],
                     ],
                   );
                 },
@@ -264,11 +286,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
       children: [
         Icon(Icons.error_outline, size: 56, color: theme.textSub),
         const SizedBox(height: 16),
-        Text(state.message, style: TextStyle(color: theme.text, fontWeight: FontWeight.bold)),
+        Text(
+          state.message,
+          style: TextStyle(color: theme.text, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 12),
         NeuButton(
           onTap: () => context.read<DashboardBloc>().add(const LoadDashboard()),
-          child: Text('Retry', style: TextStyle(color: context.watch<FolioThemeNotifier>().accent, fontWeight: FontWeight.w800)),
+          child: Text(
+            'Retry',
+            style: TextStyle(
+              color: context.watch<FolioThemeNotifier>().accent,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
         ),
       ],
     );
@@ -327,7 +358,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildFolderSection(BuildContext context, DashboardLoaded state, bool isCompact) {
+  Widget _buildFolderSection(
+    BuildContext context,
+    DashboardLoaded state,
+    bool isCompact,
+  ) {
     final theme = context.watch<FolioThemeNotifier>();
     if (state.folders.isEmpty) {
       return SliverToBoxAdapter(
@@ -342,7 +377,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(width: 12),
                 Text(
                   'No folders yet. Create one above.',
-                  style: TextStyle(color: theme.textSub, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    color: theme.textSub,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ],
             ),
@@ -366,8 +404,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
               return FolderListTile(
                 folder: folder,
                 width: 124,
-                onTap: () => Navigator.push(context, neuRoute(DocumentsByFolderScreen(folder: folder))),
-                onDelete: () => context.read<DashboardBloc>().add(DeleteFolder(folder.id!)),
+                onTap: () => Navigator.push(
+                  context,
+                  neuRoute(DocumentsByFolderScreen(folder: folder)),
+                ),
+                onDelete: () =>
+                    context.read<DashboardBloc>().add(DeleteFolder(folder.id!)),
               );
             },
           ),
@@ -384,22 +426,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
           crossAxisSpacing: 14,
           mainAxisSpacing: 14,
         ),
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final folder = state.folders[index];
-            return FolderListTile(
-              folder: folder,
-              onTap: () => Navigator.push(context, neuRoute(DocumentsByFolderScreen(folder: folder))),
-              onDelete: () => context.read<DashboardBloc>().add(DeleteFolder(folder.id!)),
-            );
-          },
-          childCount: state.folders.length,
-        ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final folder = state.folders[index];
+          return FolderListTile(
+            folder: folder,
+            onTap: () => Navigator.push(
+              context,
+              neuRoute(DocumentsByFolderScreen(folder: folder)),
+            ),
+            onDelete: () =>
+                context.read<DashboardBloc>().add(DeleteFolder(folder.id!)),
+          );
+        }, childCount: state.folders.length),
       ),
     );
   }
 
-  Widget _buildRecentSection(BuildContext context, DashboardLoaded state, bool isCompact) {
+  Widget _buildRecentSection(
+    BuildContext context,
+    DashboardLoaded state,
+    bool isCompact,
+  ) {
     final theme = context.watch<FolioThemeNotifier>();
     if (state.recentDocuments.isEmpty) {
       return SliverToBoxAdapter(
@@ -410,16 +457,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
             padding: const EdgeInsets.all(32),
             child: Column(
               children: [
-                Icon(Icons.document_scanner_outlined, size: 56, color: theme.textSub.withValues(alpha: 0.4)),
+                Icon(
+                  Icons.document_scanner_outlined,
+                  size: 56,
+                  color: theme.textSub.withValues(alpha: 0.4),
+                ),
                 const SizedBox(height: 12),
                 Text(
                   'No scans yet',
-                  style: TextStyle(color: theme.text, fontWeight: FontWeight.w800, fontSize: 16),
+                  style: TextStyle(
+                    color: theme.text,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 16,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Tap Scan (or press Ctrl+N) to get started',
-                  style: TextStyle(color: theme.textSub, fontWeight: FontWeight.w600, fontSize: 13),
+                  style: TextStyle(
+                    color: theme.textSub,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
                 ),
               ],
             ),
@@ -437,43 +496,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
           crossAxisSpacing: 16,
           mainAxisSpacing: 14,
         ),
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final doc = state.recentDocuments[index];
-            return Hero(
-              tag: 'doc_${doc.id}',
-              child: DocumentListTile(
-                doc: doc,
-                onTap: () => Navigator.push(
-                  context,
-                  neuRoute(DocumentDetailScreen(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final doc = state.recentDocuments[index];
+          return Hero(
+            tag: 'doc_${doc.id}',
+            child: DocumentListTile(
+              doc: doc,
+              onTap: () => Navigator.push(
+                context,
+                neuRoute(
+                  DocumentDetailScreen(
                     document: doc,
                     repository: context.read<DocumentRepository>(),
-                  )),
+                  ),
                 ),
-                onDelete: () {
-                  HapticFeedback.lightImpact();
-                  context.read<DashboardBloc>().add(DeleteDocument(doc.id!));
-                  context.read<TrashBloc>().add(const LoadTrash());
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Moved "${doc.name}" to Trash'),
-                      action: SnackBarAction(
-                        label: 'Undo',
-                        textColor: theme.accent,
-                        onPressed: () {
-                          context.read<TrashBloc>().add(RestoreDocumentFromTrash(doc.id!));
-                          context.read<DashboardBloc>().add(const LoadDashboard());
-                        },
-                      ),
-                    ),
-                  );
-                },
               ),
-            );
-          },
-          childCount: state.recentDocuments.length,
-        ),
+              onDelete: () {
+                HapticFeedback.lightImpact();
+                context.read<DashboardBloc>().add(DeleteDocument(doc.id!));
+                context.read<TrashBloc>().add(const LoadTrash());
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Moved "${doc.name}" to Trash'),
+                    action: SnackBarAction(
+                      label: 'Undo',
+                      textColor: theme.accent,
+                      onPressed: () {
+                        context.read<TrashBloc>().add(
+                          RestoreDocumentFromTrash(doc.id!),
+                        );
+                        context.read<DashboardBloc>().add(
+                          const LoadDashboard(),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        }, childCount: state.recentDocuments.length),
       ),
     );
   }
@@ -499,7 +561,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel', style: TextStyle(color: theme.textSub, fontWeight: FontWeight.w700)),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: theme.textSub,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
           NeuButton(
             filled: true,
@@ -512,7 +580,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Navigator.pop(ctx);
               }
             },
-            child: Text('Create', style: GoogleFonts.nunito(color: Colors.white, fontWeight: FontWeight.w800)),
+            child: Text(
+              'Create',
+              style: GoogleFonts.nunito(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
           ),
         ],
       ),
@@ -636,7 +710,9 @@ class _ThemeToggleButton extends StatelessWidget {
       child: NeuIconButton(
         icon: theme.isDark ? Icons.nightlight_round : Icons.wb_sunny_rounded,
         active: !theme.isAuto,
-        tooltip: theme.isAuto ? 'Auto (long-press to reset)' : 'Manual override',
+        tooltip: theme.isAuto
+            ? 'Auto (long-press to reset)'
+            : 'Manual override',
         onTap: () => theme.isDark ? theme.setDark(false) : theme.setDark(true),
         size: 44,
       ),

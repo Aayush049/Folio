@@ -74,7 +74,9 @@ class _StudioScreenState extends State<StudioScreen> {
     if (_isSaving) return;
     setState(() => _isSaving = true);
     try {
-      final boundary = _renderKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      final boundary =
+          _renderKey.currentContext!.findRenderObject()
+              as RenderRepaintBoundary;
       final image = await boundary.toImage(pixelRatio: 3.0);
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       final bytes = byteData!.buffer.asUint8List();
@@ -90,7 +92,8 @@ class _StudioScreenState extends State<StudioScreen> {
       }
 
       final dir = await getApplicationDocumentsDirectory();
-      final path = '${dir.path}/edited_${DateTime.now().millisecondsSinceEpoch}.png';
+      final path =
+          '${dir.path}/edited_${DateTime.now().millisecondsSinceEpoch}.png';
       final file = File(path);
       await file.writeAsBytes(bytes);
 
@@ -98,7 +101,9 @@ class _StudioScreenState extends State<StudioScreen> {
     } catch (e) {
       setState(() => _isSaving = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error saving: $e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error saving: $e')));
       }
     }
   }
@@ -147,19 +152,29 @@ class _StudioScreenState extends State<StudioScreen> {
                                 child: SizedBox(
                                   width: 22,
                                   height: 22,
-                                  child: CircularProgressIndicator(strokeWidth: 2, color: theme.accent),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: theme.accent,
+                                  ),
                                 ),
                               ),
                             )
                           : NeuButton(
                               filled: true,
                               borderRadius: 14,
-                              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 18,
+                                vertical: 10,
+                              ),
                               onTap: _saveAndReturn,
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.check_rounded, color: Colors.white, size: 16),
+                                  const Icon(
+                                    Icons.check_rounded,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
                                   const SizedBox(width: 6),
                                   Text(
                                     isCompact ? 'Done' : 'Done (Ctrl+S)',
@@ -194,7 +209,9 @@ class _StudioScreenState extends State<StudioScreen> {
                             alignment: Alignment.center,
                             children: [
                               ColorFiltered(
-                                colorFilter: ColorFilter.matrix(_selectedFilter),
+                                colorFilter: ColorFilter.matrix(
+                                  _selectedFilter,
+                                ),
                                 child: FolioImage.file(
                                   _currentImage,
                                   fit: BoxFit.contain,
@@ -262,8 +279,12 @@ class _StudioScreenState extends State<StudioScreen> {
                 decoration: BoxDecoration(
                   color: theme.bg,
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: isSelected ? theme.pressedShadow : theme.subtleShadow,
-                  border: isSelected ? Border.all(color: theme.accent, width: 2) : null,
+                  boxShadow: isSelected
+                      ? theme.pressedShadow
+                      : theme.subtleShadow,
+                  border: isSelected
+                      ? Border.all(color: theme.accent, width: 2)
+                      : null,
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(4, 6, 4, 6),
@@ -275,7 +296,10 @@ class _StudioScreenState extends State<StudioScreen> {
                           borderRadius: BorderRadius.circular(10),
                           child: ColorFiltered(
                             colorFilter: ColorFilter.matrix(filter),
-                            child: FolioImage.file(_currentImage, fit: BoxFit.cover),
+                            child: FolioImage.file(
+                              _currentImage,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
@@ -285,7 +309,9 @@ class _StudioScreenState extends State<StudioScreen> {
                         style: GoogleFonts.nunito(
                           color: isSelected ? theme.accent : theme.textSub,
                           fontSize: 10,
-                          fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                          fontWeight: isSelected
+                              ? FontWeight.w800
+                              : FontWeight.w600,
                         ),
                       ),
                     ],
@@ -317,11 +343,7 @@ class _StudioScreenState extends State<StudioScreen> {
         label: 'Clear',
         onTap: () => _signatureController.clear(),
       ),
-      _ToolItem(
-        icon: Icons.crop_rounded,
-        label: 'Crop',
-        onTap: _cropImage,
-      ),
+      _ToolItem(icon: Icons.crop_rounded, label: 'Crop', onTap: _cropImage),
     ];
 
     return Padding(
@@ -357,7 +379,9 @@ class _StudioScreenState extends State<StudioScreen> {
               decoration: BoxDecoration(
                 color: item.active ? theme.accentSoft : theme.bg,
                 shape: BoxShape.circle,
-                boxShadow: item.active ? theme.pressedShadow : theme.subtleShadow,
+                boxShadow: item.active
+                    ? theme.pressedShadow
+                    : theme.subtleShadow,
               ),
               child: Icon(
                 item.icon,
@@ -386,5 +410,10 @@ class _ToolItem {
   final String label;
   final VoidCallback onTap;
   final bool active;
-  _ToolItem({required this.icon, required this.label, required this.onTap, this.active = false});
+  _ToolItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.active = false,
+  });
 }

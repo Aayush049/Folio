@@ -61,11 +61,11 @@ class Document extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        folderId,
-        name,
-        createdAt,
-        isDeleted,
-        deletedAt,
-      ];
+    id,
+    folderId,
+    name,
+    createdAt,
+    isDeleted,
+    deletedAt,
+  ];
 }

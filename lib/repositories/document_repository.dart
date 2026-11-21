@@ -28,7 +28,11 @@ abstract class IDocumentRepository {
 
   // Full-Text OCR Search
   Future<List<SearchResult>> searchDocuments(String query);
-  Future<void> indexDocumentText(int documentId, String docName, String ocrContent);
+  Future<void> indexDocumentText(
+    int documentId,
+    String docName,
+    String ocrContent,
+  );
 
   Future<List<PageModel>> getAllPages();
   Future<List<PageModel>> getPages(int documentId);
@@ -43,7 +47,7 @@ class DocumentRepository implements IDocumentRepository {
   final DatabaseHelper _dbHelper;
 
   DocumentRepository({DatabaseHelper? dbHelper})
-      : _dbHelper = dbHelper ?? DatabaseHelper.instance;
+    : _dbHelper = dbHelper ?? DatabaseHelper.instance;
 
   @override
   Future<List<Folder>> getFolders() => _dbHelper.getAllFolders();
@@ -115,8 +119,7 @@ class DocumentRepository implements IDocumentRepository {
     int documentId,
     String docName,
     String ocrContent,
-  ) =>
-      _dbHelper.indexDocumentText(documentId, docName, ocrContent);
+  ) => _dbHelper.indexDocumentText(documentId, docName, ocrContent);
 
   @override
   Future<List<PageModel>> getAllPages() => _dbHelper.getAllPages();

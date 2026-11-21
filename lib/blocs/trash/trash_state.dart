@@ -16,10 +16,7 @@ class TrashLoaded extends TrashState {
   final List<Document> documents;
   final String? message;
 
-  const TrashLoaded({
-    required this.documents,
-    this.message,
-  });
+  const TrashLoaded({required this.documents, this.message});
 
   @override
   List<Object?> get props => [documents, message];

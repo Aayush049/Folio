@@ -8,8 +8,8 @@ class SecurityBloc extends Bloc<SecurityEvent, SecurityState> {
   final SecurityService _securityService;
 
   SecurityBloc({required SecurityService securityService})
-      : _securityService = securityService,
-        super(const SecurityState()) {
+    : _securityService = securityService,
+      super(const SecurityState()) {
     on<CheckSecurityStatus>(_onCheckStatus);
     on<ToggleAppLock>(_onToggleAppLock);
     on<AuthenticateVault>(_onAuthenticateVault);
@@ -23,11 +23,13 @@ class SecurityBloc extends Bloc<SecurityEvent, SecurityState> {
     final isSupported = await _securityService.isBiometricsSupported();
     final isEnabled = await _securityService.isAppLockEnabled();
 
-    emit(state.copyWith(
-      isDeviceSupported: isSupported,
-      isAppLockEnabled: isEnabled,
-      isUnlocked: !isEnabled,
-    ));
+    emit(
+      state.copyWith(
+        isDeviceSupported: isSupported,
+        isAppLockEnabled: isEnabled,
+        isUnlocked: !isEnabled,
+      ),
+    );
 
     if (isEnabled) {
       add(const AuthenticateVault());
@@ -45,15 +47,19 @@ class SecurityBloc extends Bloc<SecurityEvent, SecurityState> {
       );
       if (success) {
         await _securityService.setAppLockEnabled(true);
-        emit(state.copyWith(
-          isAppLockEnabled: true,
-          isUnlocked: true,
-          clearError: true,
-        ));
+        emit(
+          state.copyWith(
+            isAppLockEnabled: true,
+            isUnlocked: true,
+            clearError: true,
+          ),
+        );
       } else {
-        emit(state.copyWith(
-          errorMessage: 'Authentication failed. Vault lock was not enabled.',
-        ));
+        emit(
+          state.copyWith(
+            errorMessage: 'Authentication failed. Vault lock was not enabled.',
+          ),
+        );
       }
     } else {
       // Verify before disabling
@@ -62,15 +68,19 @@ class SecurityBloc extends Bloc<SecurityEvent, SecurityState> {
       );
       if (success) {
         await _securityService.setAppLockEnabled(false);
-        emit(state.copyWith(
-          isAppLockEnabled: false,
-          isUnlocked: true,
-          clearError: true,
-        ));
+        emit(
+          state.copyWith(
+            isAppLockEnabled: false,
+            isUnlocked: true,
+            clearError: true,
+          ),
+        );
       } else {
-        emit(state.copyWith(
-          errorMessage: 'Authentication failed. Vault lock remains enabled.',
-        ));
+        emit(
+          state.copyWith(
+            errorMessage: 'Authentication failed. Vault lock remains enabled.',
+          ),
+        );
       }
     }
   }
@@ -89,11 +99,15 @@ class SecurityBloc extends Bloc<SecurityEvent, SecurityState> {
       reason: 'Scan fingerprint or Face ID to unlock your documents',
     );
 
-    emit(state.copyWith(
-      isAuthenticating: false,
-      isUnlocked: authenticated,
-      errorMessage: authenticated ? null : 'Authentication required to access documents.',
-    ));
+    emit(
+      state.copyWith(
+        isAuthenticating: false,
+        isUnlocked: authenticated,
+        errorMessage: authenticated
+            ? null
+            : 'Authentication required to access documents.',
+      ),
+    );
   }
 
   void _onLifecycleChanged(
@@ -105,10 +119,7 @@ class SecurityBloc extends Bloc<SecurityEvent, SecurityState> {
     if (event.state == AppLifecycleState.inactive ||
         event.state == AppLifecycleState.paused) {
       // Activate task switcher privacy shield & lock vault
-      emit(state.copyWith(
-        isShieldActive: true,
-        isUnlocked: false,
-      ));
+      emit(state.copyWith(isShieldActive: true, isUnlocked: false));
     } else if (event.state == AppLifecycleState.resumed) {
       // Deactivate shield when returning and prompt for auth
       emit(state.copyWith(isShieldActive: false));

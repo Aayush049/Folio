@@ -13,9 +13,9 @@ class AuthSyncBloc extends Bloc<AuthSyncEvent, AuthSyncState> {
   AuthSyncBloc({
     required AuthService authService,
     required SyncService syncService,
-  })  : _authService = authService,
-        _syncService = syncService,
-        super(AuthSyncState(user: authService.currentUser)) {
+  }) : _authService = authService,
+       _syncService = syncService,
+       super(AuthSyncState(user: authService.currentUser)) {
     on<CheckAuthSyncStatus>(_onCheckStatus);
     on<SignInWithGoogleRequested>(_onSignInWithGoogle);
     on<SignOutRequested>(_onSignOut);
@@ -42,41 +42,50 @@ class AuthSyncBloc extends Bloc<AuthSyncEvent, AuthSyncState> {
     if (user != null) {
       lastSync = await _syncService.getLastSyncTime();
     }
-    emit(state.copyWith(
-      user: user,
-      clearUser: user == null,
-      lastSyncedAt: lastSync,
-    ));
+    emit(
+      state.copyWith(
+        user: user,
+        clearUser: user == null,
+        lastSyncedAt: lastSync,
+      ),
+    );
   }
 
   Future<void> _onSignInWithGoogle(
     SignInWithGoogleRequested event,
     Emitter<AuthSyncState> emit,
   ) async {
-    emit(state.copyWith(
-      isAuthenticating: true,
-      clearErrorMessage: true,
-      clearStatusMessage: true,
-    ));
+    emit(
+      state.copyWith(
+        isAuthenticating: true,
+        clearErrorMessage: true,
+        clearStatusMessage: true,
+      ),
+    );
     try {
       final user = await _authService.signInWithGoogle();
       DateTime? lastSync;
       if (user != null) {
         lastSync = await _syncService.getLastSyncTime();
       }
-      emit(state.copyWith(
-        user: user,
-        clearUser: user == null,
-        isAuthenticating: false,
-        lastSyncedAt: lastSync,
-        statusMessage:
-            user != null ? 'Signed in as ${user.displayName ?? user.email}' : null,
-      ));
+      emit(
+        state.copyWith(
+          user: user,
+          clearUser: user == null,
+          isAuthenticating: false,
+          lastSyncedAt: lastSync,
+          statusMessage: user != null
+              ? 'Signed in as ${user.displayName ?? user.email}'
+              : null,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        isAuthenticating: false,
-        errorMessage: 'Sign in failed: ${e.toString()}',
-      ));
+      emit(
+        state.copyWith(
+          isAuthenticating: false,
+          errorMessage: 'Sign in failed: ${e.toString()}',
+        ),
+      );
     }
   }
 
@@ -84,21 +93,23 @@ class AuthSyncBloc extends Bloc<AuthSyncEvent, AuthSyncState> {
     SignOutRequested event,
     Emitter<AuthSyncState> emit,
   ) async {
-    emit(state.copyWith(
-      isAuthenticating: true,
-      clearErrorMessage: true,
-      clearStatusMessage: true,
-    ));
+    emit(
+      state.copyWith(
+        isAuthenticating: true,
+        clearErrorMessage: true,
+        clearStatusMessage: true,
+      ),
+    );
     try {
       await _authService.signOut();
-      emit(const AuthSyncState(
-        statusMessage: 'Signed out successfully.',
-      ));
+      emit(const AuthSyncState(statusMessage: 'Signed out successfully.'));
     } catch (e) {
-      emit(state.copyWith(
-        isAuthenticating: false,
-        errorMessage: 'Sign out failed: ${e.toString()}',
-      ));
+      emit(
+        state.copyWith(
+          isAuthenticating: false,
+          errorMessage: 'Sign out failed: ${e.toString()}',
+        ),
+      );
     }
   }
 
@@ -110,23 +121,24 @@ class AuthSyncBloc extends Bloc<AuthSyncEvent, AuthSyncState> {
       emit(state.copyWith(errorMessage: 'Please sign in to back up data.'));
       return;
     }
-    emit(state.copyWith(
-      isSyncing: true,
-      clearErrorMessage: true,
-      clearStatusMessage: true,
-    ));
+    emit(
+      state.copyWith(
+        isSyncing: true,
+        clearErrorMessage: true,
+        clearStatusMessage: true,
+      ),
+    );
     try {
       final result = await _syncService.backupAllToCloud();
-      emit(state.copyWith(
-        isSyncing: false,
-        lastSyncedAt: result.timestamp,
-        statusMessage: result.message,
-      ));
+      emit(
+        state.copyWith(
+          isSyncing: false,
+          lastSyncedAt: result.timestamp,
+          statusMessage: result.message,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        isSyncing: false,
-        errorMessage: e.toString(),
-      ));
+      emit(state.copyWith(isSyncing: false, errorMessage: e.toString()));
     }
   }
 
@@ -138,23 +150,24 @@ class AuthSyncBloc extends Bloc<AuthSyncEvent, AuthSyncState> {
       emit(state.copyWith(errorMessage: 'Please sign in to restore data.'));
       return;
     }
-    emit(state.copyWith(
-      isRestoring: true,
-      clearErrorMessage: true,
-      clearStatusMessage: true,
-    ));
+    emit(
+      state.copyWith(
+        isRestoring: true,
+        clearErrorMessage: true,
+        clearStatusMessage: true,
+      ),
+    );
     try {
       final result = await _syncService.restoreAllFromCloud();
-      emit(state.copyWith(
-        isRestoring: false,
-        lastSyncedAt: result.timestamp,
-        statusMessage: result.message,
-      ));
+      emit(
+        state.copyWith(
+          isRestoring: false,
+          lastSyncedAt: result.timestamp,
+          statusMessage: result.message,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        isRestoring: false,
-        errorMessage: e.toString(),
-      ));
+      emit(state.copyWith(isRestoring: false, errorMessage: e.toString()));
     }
   }
 }

@@ -34,8 +34,12 @@ class CloudSyncModal extends StatelessWidget {
         maxWidth: 600,
       ),
       margin: EdgeInsets.only(
-        left: mediaQuery.size.width > 600 ? (mediaQuery.size.width - 600) / 2 : 0,
-        right: mediaQuery.size.width > 600 ? (mediaQuery.size.width - 600) / 2 : 0,
+        left: mediaQuery.size.width > 600
+            ? (mediaQuery.size.width - 600) / 2
+            : 0,
+        right: mediaQuery.size.width > 600
+            ? (mediaQuery.size.width - 600) / 2
+            : 0,
         bottom: mediaQuery.viewInsets.bottom,
       ),
       decoration: BoxDecoration(
@@ -227,7 +231,9 @@ class CloudSyncModal extends StatelessWidget {
                 onPressed: state.isBusy
                     ? null
                     : () {
-                        context.read<AuthSyncBloc>().add(const SignOutRequested());
+                        context.read<AuthSyncBloc>().add(
+                          const SignOutRequested(),
+                        );
                       },
                 icon: Icon(Icons.logout_rounded, color: theme.danger, size: 20),
                 tooltip: 'Sign Out',
@@ -270,7 +276,10 @@ class CloudSyncModal extends StatelessWidget {
               ),
               if (state.lastSyncedAt != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.green.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
@@ -297,7 +306,9 @@ class CloudSyncModal extends StatelessWidget {
           onTap: state.isBusy
               ? null
               : () {
-                  context.read<AuthSyncBloc>().add(const BackupToCloudRequested());
+                  context.read<AuthSyncBloc>().add(
+                    const BackupToCloudRequested(),
+                  );
                 },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -312,10 +323,16 @@ class CloudSyncModal extends StatelessWidget {
                   ),
                 )
               else
-                const Icon(Icons.cloud_upload_rounded, color: Colors.white, size: 20),
+                const Icon(
+                  Icons.cloud_upload_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
               const SizedBox(width: 10),
               Text(
-                state.isSyncing ? 'Backing up to Cloud...' : 'Back Up All Documents Now',
+                state.isSyncing
+                    ? 'Backing up to Cloud...'
+                    : 'Back Up All Documents Now',
                 style: GoogleFonts.nunito(
                   color: Colors.white,
                   fontWeight: FontWeight.w800,
@@ -331,9 +348,7 @@ class CloudSyncModal extends StatelessWidget {
           filled: false,
           borderRadius: 16,
           padding: const EdgeInsets.symmetric(vertical: 16),
-          onTap: state.isBusy
-              ? null
-              : () => _confirmAndRestore(context),
+          onTap: state.isBusy ? null : () => _confirmAndRestore(context),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -347,10 +362,16 @@ class CloudSyncModal extends StatelessWidget {
                   ),
                 )
               else
-                Icon(Icons.cloud_download_rounded, color: theme.accent, size: 20),
+                Icon(
+                  Icons.cloud_download_rounded,
+                  color: theme.accent,
+                  size: 20,
+                ),
               const SizedBox(width: 10),
               Text(
-                state.isRestoring ? 'Restoring Documents...' : 'Restore from Cloud Backup',
+                state.isRestoring
+                    ? 'Restoring Documents...'
+                    : 'Restore from Cloud Backup',
                 style: GoogleFonts.nunito(
                   color: theme.accent,
                   fontWeight: FontWeight.w800,
@@ -386,7 +407,11 @@ class CloudSyncModal extends StatelessWidget {
                       color: Colors.green.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.offline_pin_rounded, color: Colors.green, size: 20),
+                    child: const Icon(
+                      Icons.offline_pin_rounded,
+                      color: Colors.green,
+                      size: 20,
+                    ),
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -410,11 +435,23 @@ class CloudSyncModal extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              _buildFeatureItem(Icons.security_rounded, 'End-to-end user isolation with Firestore Rules', theme),
+              _buildFeatureItem(
+                Icons.security_rounded,
+                'End-to-end user isolation with Firestore Rules',
+                theme,
+              ),
               const SizedBox(height: 8),
-              _buildFeatureItem(Icons.sync_rounded, 'Sync across phones, tablets, desktop & web', theme),
+              _buildFeatureItem(
+                Icons.sync_rounded,
+                'Sync across phones, tablets, desktop & web',
+                theme,
+              ),
               const SizedBox(height: 8),
-              _buildFeatureItem(Icons.restore_page_rounded, 'Restore documents & high-res scans anytime', theme),
+              _buildFeatureItem(
+                Icons.restore_page_rounded,
+                'Restore documents & high-res scans anytime',
+                theme,
+              ),
             ],
           ),
         ),
@@ -427,7 +464,9 @@ class CloudSyncModal extends StatelessWidget {
           onTap: state.isAuthenticating
               ? null
               : () {
-                  context.read<AuthSyncBloc>().add(const SignInWithGoogleRequested());
+                  context.read<AuthSyncBloc>().add(
+                    const SignInWithGoogleRequested(),
+                  );
                 },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -456,7 +495,9 @@ class CloudSyncModal extends StatelessWidget {
                 ),
               const SizedBox(width: 10),
               Text(
-                state.isAuthenticating ? 'Signing in with Google...' : 'Sign in with Google',
+                state.isAuthenticating
+                    ? 'Signing in with Google...'
+                    : 'Sign in with Google',
                 style: GoogleFonts.nunito(
                   color: Colors.white,
                   fontWeight: FontWeight.w800,
@@ -470,7 +511,11 @@ class CloudSyncModal extends StatelessWidget {
     );
   }
 
-  Widget _buildFeatureItem(IconData icon, String text, FolioThemeNotifier theme) {
+  Widget _buildFeatureItem(
+    IconData icon,
+    String text,
+    FolioThemeNotifier theme,
+  ) {
     return Row(
       children: [
         Icon(icon, size: 16, color: theme.accent),
@@ -516,7 +561,10 @@ class CloudSyncModal extends StatelessWidget {
             onPressed: () => Navigator.pop(dlgCtx),
             child: Text(
               'Cancel',
-              style: TextStyle(color: theme.textSub, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: theme.textSub,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           NeuButton(
@@ -525,7 +573,9 @@ class CloudSyncModal extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             onTap: () {
               Navigator.pop(dlgCtx);
-              context.read<AuthSyncBloc>().add(const RestoreFromCloudRequested());
+              context.read<AuthSyncBloc>().add(
+                const RestoreFromCloudRequested(),
+              );
               // Refresh the dashboard after restore completes
               Future.delayed(const Duration(seconds: 3), () {
                 if (context.mounted) {

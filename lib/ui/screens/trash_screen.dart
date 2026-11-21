@@ -77,18 +77,27 @@ class _TrashScreenState extends State<TrashScreen> {
                     ),
                     BlocBuilder<TrashBloc, TrashState>(
                       builder: (context, state) {
-                        final count = (state is TrashLoaded) ? state.documents.length : 0;
+                        final count = (state is TrashLoaded)
+                            ? state.documents.length
+                            : 0;
                         if (count == 0) return const SizedBox.shrink();
 
                         return NeuButton(
                           filled: false,
                           borderRadius: 14,
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
                           onTap: () => _confirmEmptyTrash(context, theme),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.delete_sweep_rounded, color: theme.danger, size: 18),
+                              Icon(
+                                Icons.delete_sweep_rounded,
+                                color: theme.danger,
+                                size: 18,
+                              ),
                               const SizedBox(width: 6),
                               Text(
                                 'Empty',
@@ -114,9 +123,9 @@ class _TrashScreenState extends State<TrashScreen> {
                 child: BlocConsumer<TrashBloc, TrashState>(
                   listener: (context, state) {
                     if (state is TrashLoaded && state.message != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.message!)),
-                      );
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(state.message!)));
                       // Refresh dashboard in background
                       context.read<DashboardBloc>().add(const LoadDashboard());
                     }
@@ -138,7 +147,9 @@ class _TrashScreenState extends State<TrashScreen> {
                         itemBuilder: (context, index) {
                           final doc = state.documents[index];
                           final deletedDate = doc.deletedAt != null
-                              ? DateFormat('MMM d, y • h:mm a').format(doc.deletedAt!)
+                              ? DateFormat(
+                                  'MMM d, y • h:mm a',
+                                ).format(doc.deletedAt!)
                               : 'Recently deleted';
 
                           return NeuBox(
@@ -152,12 +163,17 @@ class _TrashScreenState extends State<TrashScreen> {
                                     color: theme.danger.withValues(alpha: 0.12),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  child: Icon(Icons.delete_outline_rounded, color: theme.danger, size: 22),
+                                  child: Icon(
+                                    Icons.delete_outline_rounded,
+                                    color: theme.danger,
+                                    size: 22,
+                                  ),
                                 ),
                                 const SizedBox(width: 14),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         doc.name,
@@ -185,18 +201,33 @@ class _TrashScreenState extends State<TrashScreen> {
                                 IconButton(
                                   onPressed: () {
                                     HapticFeedback.lightImpact();
-                                    context.read<TrashBloc>().add(RestoreDocumentFromTrash(doc.id!));
+                                    context.read<TrashBloc>().add(
+                                      RestoreDocumentFromTrash(doc.id!),
+                                    );
                                   },
-                                  icon: Icon(Icons.restore_from_trash_rounded, color: theme.accent, size: 22),
+                                  icon: Icon(
+                                    Icons.restore_from_trash_rounded,
+                                    color: theme.accent,
+                                    size: 22,
+                                  ),
                                   tooltip: 'Restore Document',
                                 ),
                                 // Permanent delete action
                                 IconButton(
                                   onPressed: () {
                                     HapticFeedback.lightImpact();
-                                    _confirmPermanentDelete(context, doc.id!, doc.name, theme);
+                                    _confirmPermanentDelete(
+                                      context,
+                                      doc.id!,
+                                      doc.name,
+                                      theme,
+                                    );
                                   },
-                                  icon: Icon(Icons.delete_forever_rounded, color: theme.danger, size: 22),
+                                  icon: Icon(
+                                    Icons.delete_forever_rounded,
+                                    color: theme.danger,
+                                    size: 22,
+                                  ),
                                   tooltip: 'Delete Forever',
                                 ),
                               ],
@@ -227,7 +258,11 @@ class _TrashScreenState extends State<TrashScreen> {
             NeuBox(
               borderRadius: 30,
               padding: const EdgeInsets.all(24),
-              child: Icon(Icons.delete_outline_rounded, size: 48, color: theme.textSub.withValues(alpha: 0.6)),
+              child: Icon(
+                Icons.delete_outline_rounded,
+                size: 48,
+                color: theme.textSub.withValues(alpha: 0.6),
+              ),
             ),
             const SizedBox(height: 24),
             Text(
@@ -255,7 +290,12 @@ class _TrashScreenState extends State<TrashScreen> {
     );
   }
 
-  void _confirmPermanentDelete(BuildContext context, int docId, String name, FolioThemeNotifier theme) {
+  void _confirmPermanentDelete(
+    BuildContext context,
+    int docId,
+    String name,
+    FolioThemeNotifier theme,
+  ) {
     showDialog(
       context: context,
       builder: (dlgCtx) => AlertDialog(
@@ -263,7 +303,10 @@ class _TrashScreenState extends State<TrashScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           'Delete Forever?',
-          style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w800),
+          style: GoogleFonts.nunito(
+            color: theme.text,
+            fontWeight: FontWeight.w800,
+          ),
         ),
         content: Text(
           'Are you sure you want to permanently erase "$name"? This cannot be undone.',
@@ -272,7 +315,13 @@ class _TrashScreenState extends State<TrashScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dlgCtx),
-            child: Text('Cancel', style: TextStyle(color: theme.textSub, fontWeight: FontWeight.bold)),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: theme.textSub,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           NeuButton(
             filled: true,
@@ -284,7 +333,10 @@ class _TrashScreenState extends State<TrashScreen> {
             },
             child: Text(
               'Delete Forever',
-              style: GoogleFonts.nunito(color: Colors.white, fontWeight: FontWeight.w800),
+              style: GoogleFonts.nunito(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
         ],
@@ -300,7 +352,10 @@ class _TrashScreenState extends State<TrashScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           'Empty Trash?',
-          style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w800),
+          style: GoogleFonts.nunito(
+            color: theme.text,
+            fontWeight: FontWeight.w800,
+          ),
         ),
         content: Text(
           'This will permanently delete all documents currently in the recycle bin.',
@@ -309,7 +364,13 @@ class _TrashScreenState extends State<TrashScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dlgCtx),
-            child: Text('Cancel', style: TextStyle(color: theme.textSub, fontWeight: FontWeight.bold)),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: theme.textSub,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           NeuButton(
             filled: true,
@@ -321,7 +382,10 @@ class _TrashScreenState extends State<TrashScreen> {
             },
             child: Text(
               'Empty Trash',
-              style: GoogleFonts.nunito(color: Colors.white, fontWeight: FontWeight.w800),
+              style: GoogleFonts.nunito(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
         ],

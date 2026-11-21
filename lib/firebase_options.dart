@@ -66,7 +66,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '392762109338',
     projectId: 'folio-doc-studio',
     storageBucket: 'folio-doc-studio.firebasestorage.app',
-    iosClientId: '392762109338-n741d4efc25ut70ivp9jcnop5gr62ipb.apps.googleusercontent.com',
+    iosClientId:
+        '392762109338-n741d4efc25ut70ivp9jcnop5gr62ipb.apps.googleusercontent.com',
     iosBundleId: 'com.example.folio',
   );
 

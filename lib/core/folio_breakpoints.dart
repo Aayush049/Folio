@@ -28,11 +28,7 @@ extension FolioResponsiveX on BuildContext {
   bool get isExpanded => screenSize == FolioScreenSize.expanded;
 
   /// Helper to pick a value based on the current screen size.
-  T responsive<T>({
-    required T compact,
-    T? medium,
-    T? expanded,
-  }) {
+  T responsive<T>({required T compact, T? medium, T? expanded}) {
     switch (screenSize) {
       case FolioScreenSize.compact:
         return compact;
@@ -67,7 +63,9 @@ class ResponsiveContainer extends StatelessWidget {
     return Center(
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: maxWidth),
-        child: padding != null ? Padding(padding: padding!, child: child) : child,
+        child: padding != null
+            ? Padding(padding: padding!, child: child)
+            : child,
       ),
     );
   }

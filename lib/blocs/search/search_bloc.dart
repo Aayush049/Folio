@@ -9,8 +9,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   Timer? _debounceTimer;
 
   SearchBloc({required IDocumentRepository repository})
-      : _repository = repository,
-        super(const SearchState()) {
+    : _repository = repository,
+      super(const SearchState()) {
     on<SearchQueryChanged>(_onQueryChanged);
     on<ClearSearch>(_onClearSearch);
   }
@@ -28,7 +28,14 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     final query = event.query;
     if (query.trim().isEmpty) {
       _debounceTimer?.cancel();
-      emit(state.copyWith(query: '', results: const [], isLoading: false, clearError: true));
+      emit(
+        state.copyWith(
+          query: '',
+          results: const [],
+          isLoading: false,
+          clearError: true,
+        ),
+      );
       return;
     }
 
@@ -40,17 +47,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       try {
         final results = await _repository.searchDocuments(query);
         if (!isClosed) {
-          emit(state.copyWith(
-            results: results,
-            isLoading: false,
-          ));
+          emit(state.copyWith(results: results, isLoading: false));
         }
       } catch (e) {
         if (!isClosed) {
-          emit(state.copyWith(
-            isLoading: false,
-            errorMessage: 'Search failed: $e',
-          ));
+          emit(
+            state.copyWith(isLoading: false, errorMessage: 'Search failed: $e'),
+          );
         }
       } finally {
         completer.complete();

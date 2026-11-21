@@ -10,10 +10,8 @@ class ScannerBloc extends Bloc<ScannerEvent, ScannerState> {
   final ScannerService scannerService;
   final IDocumentRepository repository;
 
-  ScannerBloc({
-    required this.scannerService,
-    required this.repository,
-  }) : super(ScannerInitial()) {
+  ScannerBloc({required this.scannerService, required this.repository})
+    : super(ScannerInitial()) {
     on<PickImages>(_onPickImages);
     on<TakePhoto>(_onTakePhoto);
     on<ResetScanner>(_onResetScanner);
@@ -23,8 +21,13 @@ class ScannerBloc extends Bloc<ScannerEvent, ScannerState> {
     on<SaveDocument>(_onSaveDocument);
   }
 
-  Future<void> _onPickImages(PickImages event, Emitter<ScannerState> emit) async {
-    final List<File> currentImages = state is ScannerImagesPicked ? (state as ScannerImagesPicked).images : [];
+  Future<void> _onPickImages(
+    PickImages event,
+    Emitter<ScannerState> emit,
+  ) async {
+    final List<File> currentImages = state is ScannerImagesPicked
+        ? (state as ScannerImagesPicked).images
+        : [];
     emit(ScannerLoading());
     try {
       final images = await scannerService.pickImages();
@@ -40,14 +43,21 @@ class ScannerBloc extends Bloc<ScannerEvent, ScannerState> {
         suggestedName = await scannerService.getSmartName(updatedImages.first);
       }
 
-      emit(ScannerImagesPicked(images: updatedImages, suggestedName: suggestedName));
+      emit(
+        ScannerImagesPicked(
+          images: updatedImages,
+          suggestedName: suggestedName,
+        ),
+      );
     } catch (e) {
       emit(ScannerError(e.toString()));
     }
   }
 
   Future<void> _onTakePhoto(TakePhoto event, Emitter<ScannerState> emit) async {
-    final List<File> currentImages = state is ScannerImagesPicked ? (state as ScannerImagesPicked).images : [];
+    final List<File> currentImages = state is ScannerImagesPicked
+        ? (state as ScannerImagesPicked).images
+        : [];
     try {
       final image = await scannerService.pickImageFromCamera();
       if (image == null) return;
@@ -59,7 +69,12 @@ class ScannerBloc extends Bloc<ScannerEvent, ScannerState> {
         suggestedName = await scannerService.getSmartName(updatedImages.first);
       }
 
-      emit(ScannerImagesPicked(images: updatedImages, suggestedName: suggestedName));
+      emit(
+        ScannerImagesPicked(
+          images: updatedImages,
+          suggestedName: suggestedName,
+        ),
+      );
     } catch (e) {
       emit(ScannerError(e.toString()));
     }
@@ -72,14 +87,17 @@ class ScannerBloc extends Bloc<ScannerEvent, ScannerState> {
   void _onRemoveImage(RemoveImage event, Emitter<ScannerState> emit) {
     if (state is ScannerImagesPicked) {
       final currentState = state as ScannerImagesPicked;
-      final updatedImages = List<File>.from(currentState.images)..removeAt(event.index);
+      final updatedImages = List<File>.from(currentState.images)
+        ..removeAt(event.index);
       if (updatedImages.isEmpty) {
         emit(ScannerInitial());
       } else {
-        emit(ScannerImagesPicked(
-          images: updatedImages,
-          suggestedName: currentState.suggestedName,
-        ));
+        emit(
+          ScannerImagesPicked(
+            images: updatedImages,
+            suggestedName: currentState.suggestedName,
+          ),
+        );
       }
     }
   }
@@ -96,10 +114,12 @@ class ScannerBloc extends Bloc<ScannerEvent, ScannerState> {
       final File image = updatedImages.removeAt(event.oldIndex);
       updatedImages.insert(newIndex, image);
 
-      emit(ScannerImagesPicked(
-        images: updatedImages,
-        suggestedName: currentState.suggestedName,
-      ));
+      emit(
+        ScannerImagesPicked(
+          images: updatedImages,
+          suggestedName: currentState.suggestedName,
+        ),
+      );
     }
   }
 
@@ -109,27 +129,38 @@ class ScannerBloc extends Bloc<ScannerEvent, ScannerState> {
       final updatedImages = List<File>.from(currentState.images);
       updatedImages[event.index] = event.newImage;
 
-      emit(ScannerImagesPicked(
-        images: updatedImages,
-        suggestedName: currentState.suggestedName,
-      ));
+      emit(
+        ScannerImagesPicked(
+          images: updatedImages,
+          suggestedName: currentState.suggestedName,
+        ),
+      );
     }
   }
 
-  Future<void> _onSaveDocument(SaveDocument event, Emitter<ScannerState> emit) async {
+  Future<void> _onSaveDocument(
+    SaveDocument event,
+    Emitter<ScannerState> emit,
+  ) async {
     if (state is ScannerImagesPicked) {
       final currentState = state as ScannerImagesPicked;
       emit(ScannerLoading());
       try {
-        final docId = await repository.createDocument(event.folderId, event.name);
+        final docId = await repository.createDocument(
+          event.folderId,
+          event.name,
+        );
 
         for (int i = 0; i < currentState.images.length; i++) {
-          final permanentFile = await scannerService.saveImageToPermanentStorage(currentState.images[i]);
-          await repository.addPage(PageModel(
-            documentId: docId,
-            imagePath: permanentFile.path,
-            pageOrder: i,
-          ));
+          final permanentFile = await scannerService
+              .saveImageToPermanentStorage(currentState.images[i]);
+          await repository.addPage(
+            PageModel(
+              documentId: docId,
+              imagePath: permanentFile.path,
+              pageOrder: i,
+            ),
+          );
         }
 
         emit(ScannerSaved());

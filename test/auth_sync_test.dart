@@ -59,11 +59,16 @@ class _FakeRepo implements IDocumentRepository {
   @override
   Future<List<SearchResult>> searchDocuments(String query) async => [];
   @override
-  Future<void> indexDocumentText(int documentId, String docName, String ocrContent) async {}
+  Future<void> indexDocumentText(
+    int documentId,
+    String docName,
+    String ocrContent,
+  ) async {}
 }
 
 class FakeAuthService extends AuthService {
-  final StreamController<User?> _controller = StreamController<User?>.broadcast();
+  final StreamController<User?> _controller =
+      StreamController<User?>.broadcast();
   User? _mockUser;
 
   FakeAuthService() : super(auth: null);
@@ -197,7 +202,11 @@ void main() {
       await expectLater(
         bloc.stream,
         emitsInOrder([
-          isA<AuthSyncState>().having((s) => s.isAuthenticating, 'isAuthenticating', isTrue),
+          isA<AuthSyncState>().having(
+            (s) => s.isAuthenticating,
+            'isAuthenticating',
+            isTrue,
+          ),
           isA<AuthSyncState>().having((s) => s.user, 'user', isNull),
         ]),
       );

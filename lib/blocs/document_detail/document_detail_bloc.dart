@@ -6,7 +6,8 @@ import '../../models/page_model.dart';
 import 'document_detail_event.dart';
 import 'document_detail_state.dart';
 
-class DocumentDetailBloc extends Bloc<DocumentDetailEvent, DocumentDetailState> {
+class DocumentDetailBloc
+    extends Bloc<DocumentDetailEvent, DocumentDetailState> {
   final IDocumentRepository repository;
   final ScannerService scannerService;
   final int documentId;
@@ -107,13 +108,15 @@ class DocumentDetailBloc extends Bloc<DocumentDetailEvent, DocumentDetailState> 
       try {
         final startOrder = currentState.pages.length;
         for (int i = 0; i < event.images.length; i++) {
-          final permanentFile =
-              await scannerService.saveImageToPermanentStorage(event.images[i]);
-          await repository.addPage(PageModel(
-            documentId: documentId,
-            imagePath: permanentFile.path,
-            pageOrder: startOrder + i,
-          ));
+          final permanentFile = await scannerService
+              .saveImageToPermanentStorage(event.images[i]);
+          await repository.addPage(
+            PageModel(
+              documentId: documentId,
+              imagePath: permanentFile.path,
+              pageOrder: startOrder + i,
+            ),
+          );
         }
         final pages = await repository.getPages(documentId);
         emit(DocumentDetailLoaded(pages: pages));
@@ -146,10 +149,14 @@ class DocumentDetailBloc extends Bloc<DocumentDetailEvent, DocumentDetailState> 
           }
         }
         final result = buffer.toString().trim();
-        emit(currentState.copyWith(
-          isExtractingOcr: false,
-          extractedOcrText: result.isEmpty ? 'No text found in this document.' : result,
-        ));
+        emit(
+          currentState.copyWith(
+            isExtractingOcr: false,
+            extractedOcrText: result.isEmpty
+                ? 'No text found in this document.'
+                : result,
+          ),
+        );
       } catch (e) {
         emit(currentState.copyWith(isExtractingOcr: false));
         emit(DocumentDetailError('OCR Extraction failed: $e'));

@@ -36,7 +36,12 @@ class FakeDocumentRepository implements IDocumentRepository {
 
   @override
   Future<int> createDocument(int folderId, String name) async {
-    final doc = Document(id: documents.length + 1, folderId: folderId, name: name, createdAt: DateTime.now());
+    final doc = Document(
+      id: documents.length + 1,
+      folderId: folderId,
+      name: name,
+      createdAt: DateTime.now(),
+    );
     documents.add(doc);
     return doc.id!;
   }
@@ -54,7 +59,11 @@ class FakeDocumentRepository implements IDocumentRepository {
 
   @override
   Future<int> createFolder(String name) async {
-    final folder = Folder(id: folders.length + 1, name: name, createdAt: DateTime.now());
+    final folder = Folder(
+      id: folders.length + 1,
+      name: name,
+      createdAt: DateTime.now(),
+    );
     folders.add(folder);
     return folder.id!;
   }
@@ -97,7 +106,9 @@ class FakeDocumentRepository implements IDocumentRepository {
 
   @override
   Future<List<Document>> getDocumentsInFolder(int folderId) async {
-    return documents.where((d) => d.folderId == folderId && !d.isDeleted).toList();
+    return documents
+        .where((d) => d.folderId == folderId && !d.isDeleted)
+        .toList();
   }
 
   @override
@@ -123,7 +134,10 @@ class FakeDocumentRepository implements IDocumentRepository {
   Future<int> softDeleteDocument(int id) async {
     final idx = documents.indexWhere((d) => d.id == id);
     if (idx != -1) {
-      documents[idx] = documents[idx].copyWith(isDeleted: true, deletedAt: DateTime.now());
+      documents[idx] = documents[idx].copyWith(
+        isDeleted: true,
+        deletedAt: DateTime.now(),
+      );
     }
     return 1;
   }
@@ -132,7 +146,10 @@ class FakeDocumentRepository implements IDocumentRepository {
   Future<int> restoreDocument(int id) async {
     final idx = documents.indexWhere((d) => d.id == id);
     if (idx != -1) {
-      documents[idx] = documents[idx].copyWith(isDeleted: false, deletedAt: null);
+      documents[idx] = documents[idx].copyWith(
+        isDeleted: false,
+        deletedAt: null,
+      );
     }
     return 1;
   }
@@ -158,18 +175,28 @@ class FakeDocumentRepository implements IDocumentRepository {
   @override
   Future<List<SearchResult>> searchDocuments(String query) async {
     return documents
-        .where((d) => !d.isDeleted && d.name.toLowerCase().contains(query.toLowerCase()))
-        .map((d) => SearchResult(
-              document: d,
-              folderName: 'Uncategorized',
-              snippet: 'Matched name',
-              isTitleMatch: true,
-            ))
+        .where(
+          (d) =>
+              !d.isDeleted &&
+              d.name.toLowerCase().contains(query.toLowerCase()),
+        )
+        .map(
+          (d) => SearchResult(
+            document: d,
+            folderName: 'Uncategorized',
+            snippet: 'Matched name',
+            isTitleMatch: true,
+          ),
+        )
         .toList();
   }
 
   @override
-  Future<void> indexDocumentText(int documentId, String docName, String ocrContent) async {}
+  Future<void> indexDocumentText(
+    int documentId,
+    String docName,
+    String ocrContent,
+  ) async {}
 }
 
 class FakeScannerService extends ScannerService {
@@ -208,8 +235,18 @@ void main() {
       fakeRepo = FakeDocumentRepository();
       fakeScanner = FakeScannerService();
       fakeRepo.pages.addAll([
-        const PageModel(id: 1, documentId: 10, imagePath: '/path/1.png', pageOrder: 0),
-        const PageModel(id: 2, documentId: 10, imagePath: '/path/2.png', pageOrder: 1),
+        const PageModel(
+          id: 1,
+          documentId: 10,
+          imagePath: '/path/1.png',
+          pageOrder: 0,
+        ),
+        const PageModel(
+          id: 2,
+          documentId: 10,
+          imagePath: '/path/2.png',
+          pageOrder: 1,
+        ),
       ]);
 
       bloc = DocumentDetailBloc(
@@ -234,7 +271,11 @@ void main() {
         bloc.stream,
         emitsInOrder([
           isA<DocumentDetailLoading>(),
-          isA<DocumentDetailLoaded>().having((s) => s.pages.length, 'pages count', 2),
+          isA<DocumentDetailLoaded>().having(
+            (s) => s.pages.length,
+            'pages count',
+            2,
+          ),
         ]),
       );
     });
@@ -248,7 +289,11 @@ void main() {
       await expectLater(
         bloc.stream,
         emits(
-          isA<DocumentDetailLoaded>().having((s) => s.pages.first.id, 'first page id', 2),
+          isA<DocumentDetailLoaded>().having(
+            (s) => s.pages.first.id,
+            'first page id',
+            2,
+          ),
         ),
       );
     });
@@ -262,7 +307,11 @@ void main() {
       await expectLater(
         bloc.stream,
         emits(
-          isA<DocumentDetailLoaded>().having((s) => s.pages.length, 'remaining count', 1),
+          isA<DocumentDetailLoaded>().having(
+            (s) => s.pages.length,
+            'remaining count',
+            1,
+          ),
         ),
       );
     });

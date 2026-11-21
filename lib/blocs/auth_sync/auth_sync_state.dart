@@ -44,19 +44,20 @@ class AuthSyncState extends Equatable {
       statusMessage: clearStatusMessage == true
           ? null
           : (statusMessage ?? this.statusMessage),
-      errorMessage:
-          clearErrorMessage == true ? null : (errorMessage ?? this.errorMessage),
+      errorMessage: clearErrorMessage == true
+          ? null
+          : (errorMessage ?? this.errorMessage),
     );
   }
 
   @override
   List<Object?> get props => [
-        user,
-        isAuthenticating,
-        isSyncing,
-        isRestoring,
-        lastSyncedAt,
-        statusMessage,
-        errorMessage,
-      ];
+    user,
+    isAuthenticating,
+    isSyncing,
+    isRestoring,
+    lastSyncedAt,
+    statusMessage,
+    errorMessage,
+  ];
 }

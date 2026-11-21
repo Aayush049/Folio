@@ -45,21 +45,32 @@ void main() {
       expect(bloc.state.isShieldActive, isFalse);
     });
 
-    test('checks status and enables vault protection when configured', () async {
-      service._appLock = true;
-      bloc.add(const CheckSecurityStatus());
+    test(
+      'checks status and enables vault protection when configured',
+      () async {
+        service._appLock = true;
+        bloc.add(const CheckSecurityStatus());
 
-      await expectLater(
-        bloc.stream,
-        emitsInOrder([
-          isA<SecurityState>()
-              .having((s) => s.isAppLockEnabled, 'isAppLockEnabled', isTrue)
-              .having((s) => s.isUnlocked, 'isUnlocked', isFalse),
-          isA<SecurityState>().having((s) => s.isAuthenticating, 'isAuthenticating', isTrue),
-          isA<SecurityState>().having((s) => s.isUnlocked, 'isUnlocked', isTrue),
-        ]),
-      );
-    });
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([
+            isA<SecurityState>()
+                .having((s) => s.isAppLockEnabled, 'isAppLockEnabled', isTrue)
+                .having((s) => s.isUnlocked, 'isUnlocked', isFalse),
+            isA<SecurityState>().having(
+              (s) => s.isAuthenticating,
+              'isAuthenticating',
+              isTrue,
+            ),
+            isA<SecurityState>().having(
+              (s) => s.isUnlocked,
+              'isUnlocked',
+              isTrue,
+            ),
+          ]),
+        );
+      },
+    );
 
     test('activates privacy shield when app is sent to background', () async {
       service._appLock = true;
@@ -84,7 +95,11 @@ void main() {
       await expectLater(
         bloc.stream,
         emits(
-          isA<SecurityState>().having((s) => s.isAppLockEnabled, 'isAppLockEnabled', isTrue),
+          isA<SecurityState>().having(
+            (s) => s.isAppLockEnabled,
+            'isAppLockEnabled',
+            isTrue,
+          ),
         ),
       );
     });

@@ -72,7 +72,9 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
             builder: (_, controller) => Container(
               decoration: BoxDecoration(
                 color: theme.bg,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(28),
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: theme.darkShadow.withValues(alpha: 0.4),
@@ -98,7 +100,11 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Row(
                       children: [
-                        Icon(Icons.text_fields_rounded, color: theme.accent, size: 22),
+                        Icon(
+                          Icons.text_fields_rounded,
+                          color: theme.accent,
+                          size: 22,
+                        ),
                         const SizedBox(width: 10),
                         Text(
                           'Extracted Text',
@@ -111,19 +117,35 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
                         const Spacer(),
                         NeuButton(
                           borderRadius: 12,
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
                           onTap: () {
                             Clipboard.setData(ClipboardData(text: text));
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Copied to clipboard')),
+                              const SnackBar(
+                                content: Text('Copied to clipboard'),
+                              ),
                             );
                           },
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.copy_rounded, color: theme.accent, size: 16),
+                              Icon(
+                                Icons.copy_rounded,
+                                color: theme.accent,
+                                size: 16,
+                              ),
                               const SizedBox(width: 6),
-                              Text('Copy', style: GoogleFonts.nunito(color: theme.accent, fontWeight: FontWeight.w800, fontSize: 13)),
+                              Text(
+                                'Copy',
+                                style: GoogleFonts.nunito(
+                                  color: theme.accent,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 13,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -164,16 +186,20 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
     if (pages.isEmpty) return;
     try {
       final images = pages.map((p) => File(p.imagePath)).toList();
-      final pdfFile = await _pdfService.generatePdf(images, widget.document.name);
+      final pdfFile = await _pdfService.generatePdf(
+        images,
+        widget.document.name,
+      );
       if (!mounted) return;
       await SharePlus.instance.share(
-        ShareParams(
-          files: [XFile(pdfFile.path)],
-          text: 'Document from Folio',
-        ),
+        ShareParams(files: [XFile(pdfFile.path)], text: 'Document from Folio'),
       );
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
     }
   }
 
@@ -181,10 +207,17 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
     if (pages.isEmpty) return;
     try {
       final images = pages.map((p) => File(p.imagePath)).toList();
-      final pdfFile = await _pdfService.generatePdf(images, widget.document.name);
+      final pdfFile = await _pdfService.generatePdf(
+        images,
+        widget.document.name,
+      );
       await OpenFilex.open(pdfFile.path);
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
     }
   }
 
@@ -201,18 +234,22 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
             maxWidth: 1080,
             child: BlocConsumer<DocumentDetailBloc, DocumentDetailState>(
               listener: (context, state) {
-                if (state is DocumentDetailLoaded && state.extractedOcrText != null) {
+                if (state is DocumentDetailLoaded &&
+                    state.extractedOcrText != null) {
                   _showExtractedText(context, state.extractedOcrText!);
                 }
                 if (state is DocumentDetailError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.message)),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(state.message)));
                 }
               },
               builder: (context, state) {
-                final pages = state is DocumentDetailLoaded ? state.pages : <PageModel>[];
-                final isExtracting = state is DocumentDetailLoaded && state.isExtractingOcr;
+                final pages = state is DocumentDetailLoaded
+                    ? state.pages
+                    : <PageModel>[];
+                final isExtracting =
+                    state is DocumentDetailLoaded && state.isExtractingOcr;
 
                 return Column(
                   children: [
@@ -250,8 +287,12 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
                       child: Row(
                         children: [
                           NeuIconButton(
-                            icon: _isReorderMode ? Icons.grid_view_rounded : Icons.reorder_rounded,
-                            onTap: () => setState(() => _isReorderMode = !_isReorderMode),
+                            icon: _isReorderMode
+                                ? Icons.grid_view_rounded
+                                : Icons.reorder_rounded,
+                            onTap: () => setState(
+                              () => _isReorderMode = !_isReorderMode,
+                            ),
                             active: _isReorderMode,
                             tooltip: _isReorderMode ? 'Grid View' : 'Reorder',
                             size: 44,
@@ -280,13 +321,18 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
                                     child: SizedBox(
                                       width: 20,
                                       height: 20,
-                                      child: CircularProgressIndicator(strokeWidth: 2, color: theme.accent),
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: theme.accent,
+                                      ),
                                     ),
                                   ),
                                 )
                               : NeuIconButton(
                                   icon: Icons.text_fields_rounded,
-                                  onTap: () => context.read<DocumentDetailBloc>().add(const ExtractDocumentOcrText()),
+                                  onTap: () => context
+                                      .read<DocumentDetailBloc>()
+                                      .add(const ExtractDocumentOcrText()),
                                   size: 44,
                                   tooltip: 'Extract Text (OCR)',
                                 ),
@@ -295,14 +341,28 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
                           NeuButton(
                             filled: true,
                             borderRadius: 14,
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
                             onTap: () => _addPages(context),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(Icons.add_a_photo_outlined, color: Colors.white, size: 16),
+                                const Icon(
+                                  Icons.add_a_photo_outlined,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
                                 const SizedBox(width: 6),
-                                Text('Add', style: GoogleFonts.nunito(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13)),
+                                Text(
+                                  'Add',
+                                  style: GoogleFonts.nunito(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 13,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -315,15 +375,18 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
                       child: state is DocumentDetailLoading
                           ? const Center(child: CircularProgressIndicator())
                           : pages.isEmpty
-                              ? Center(
-                                  child: Text(
-                                    'No pages found.',
-                                    style: TextStyle(color: theme.textSub, fontWeight: FontWeight.w700),
-                                  ),
-                                )
-                              : _isReorderMode
-                                  ? _buildReorderableList(context, theme, pages)
-                                  : _buildGrid(context, theme, pages),
+                          ? Center(
+                              child: Text(
+                                'No pages found.',
+                                style: TextStyle(
+                                  color: theme.textSub,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            )
+                          : _isReorderMode
+                          ? _buildReorderableList(context, theme, pages)
+                          : _buildGrid(context, theme, pages),
                     ),
                   ],
                 );
@@ -335,7 +398,11 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
     );
   }
 
-  Widget _buildGrid(BuildContext context, FolioThemeNotifier theme, List<PageModel> pages) {
+  Widget _buildGrid(
+    BuildContext context,
+    FolioThemeNotifier theme,
+    List<PageModel> pages,
+  ) {
     return GridView.builder(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
       physics: const BouncingScrollPhysics(),
@@ -382,7 +449,9 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
                           );
                           if (editedImage != null && context.mounted) {
                             context.read<DocumentDetailBloc>().add(
-                              UpdateDocumentPage(page.copyWith(imagePath: editedImage.path)),
+                              UpdateDocumentPage(
+                                page.copyWith(imagePath: editedImage.path),
+                              ),
                             );
                           }
                         },
@@ -392,7 +461,9 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
                         icon: Icons.delete_outline_rounded,
                         danger: true,
                         onTap: () {
-                          context.read<DocumentDetailBloc>().add(DeleteDocumentPage(page.id!));
+                          context.read<DocumentDetailBloc>().add(
+                            DeleteDocumentPage(page.id!),
+                          );
                         },
                       ),
                     ],
@@ -403,14 +474,21 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
                   bottom: 8,
                   left: 8,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.55),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
                       'Page ${index + 1}',
-                      style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                   ),
                 ),
@@ -422,13 +500,19 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
     );
   }
 
-  Widget _buildReorderableList(BuildContext context, FolioThemeNotifier theme, List<PageModel> pages) {
+  Widget _buildReorderableList(
+    BuildContext context,
+    FolioThemeNotifier theme,
+    List<PageModel> pages,
+  ) {
     return ReorderableListView.builder(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
       physics: const BouncingScrollPhysics(),
       itemCount: pages.length,
       onReorder: (oldIndex, newIndex) {
-        context.read<DocumentDetailBloc>().add(ReorderDocumentPages(oldIndex, newIndex));
+        context.read<DocumentDetailBloc>().add(
+          ReorderDocumentPages(oldIndex, newIndex),
+        );
       },
       itemBuilder: (context, index) {
         final page = pages[index];
@@ -442,14 +526,25 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
               boxShadow: theme.subtleShadow,
             ),
             child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 6,
+              ),
               leading: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: FolioImage(path: page.imagePath, width: 52, height: 52, fit: BoxFit.cover),
+                child: FolioImage(
+                  path: page.imagePath,
+                  width: 52,
+                  height: 52,
+                  fit: BoxFit.cover,
+                ),
               ),
               title: Text(
                 'Page ${index + 1}',
-                style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w800),
+                style: GoogleFonts.nunito(
+                  color: theme.text,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
               trailing: const MouseRegion(
                 cursor: SystemMouseCursors.grab,
@@ -475,7 +570,9 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
           child: Container(
             decoration: BoxDecoration(
               color: theme.bg,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(28),
+              ),
             ),
             child: SafeArea(
               child: Column(
@@ -485,11 +582,21 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
                     margin: const EdgeInsets.only(top: 12),
                     width: 40,
                     height: 4,
-                    decoration: BoxDecoration(color: theme.textSub.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(2)),
+                    decoration: BoxDecoration(
+                      color: theme.textSub.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(20),
-                    child: Text('Add More Pages', style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w900, fontSize: 18)),
+                    child: Text(
+                      'Add More Pages',
+                      style: GoogleFonts.nunito(
+                        color: theme.text,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 18,
+                      ),
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
@@ -502,9 +609,19 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
                             onTap: () => Navigator.pop(ctx, 'camera'),
                             child: Column(
                               children: [
-                                Icon(Icons.camera_alt_outlined, color: theme.accent, size: 28),
+                                Icon(
+                                  Icons.camera_alt_outlined,
+                                  color: theme.accent,
+                                  size: 28,
+                                ),
                                 const SizedBox(height: 8),
-                                Text('Camera', style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w700)),
+                                Text(
+                                  'Camera',
+                                  style: GoogleFonts.nunito(
+                                    color: theme.text,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -517,9 +634,19 @@ class _DocumentDetailViewState extends State<_DocumentDetailView> {
                             onTap: () => Navigator.pop(ctx, 'gallery'),
                             child: Column(
                               children: [
-                                Icon(Icons.photo_library_outlined, color: theme.accent, size: 28),
+                                Icon(
+                                  Icons.photo_library_outlined,
+                                  color: theme.accent,
+                                  size: 28,
+                                ),
                                 const SizedBox(height: 8),
-                                Text('Gallery', style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w700)),
+                                Text(
+                                  'Gallery',
+                                  style: GoogleFonts.nunito(
+                                    color: theme.text,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -557,7 +684,11 @@ class _PageActionButton extends StatelessWidget {
   final VoidCallback onTap;
   final bool danger;
 
-  const _PageActionButton({required this.icon, required this.onTap, this.danger = false});
+  const _PageActionButton({
+    required this.icon,
+    required this.onTap,
+    this.danger = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -572,10 +703,18 @@ class _PageActionButton extends StatelessWidget {
             color: danger ? Colors.redAccent : Colors.white,
             shape: BoxShape.circle,
             boxShadow: [
-              BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 6, offset: const Offset(0, 2)),
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.2),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
             ],
           ),
-          child: Icon(icon, size: 16, color: danger ? Colors.white : Colors.black87),
+          child: Icon(
+            icon,
+            size: 16,
+            color: danger ? Colors.white : Colors.black87,
+          ),
         ),
       ),
     );

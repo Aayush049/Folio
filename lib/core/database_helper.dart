@@ -53,9 +53,7 @@ class DatabaseHelper {
         await db.execute(
           'ALTER TABLE documents ADD COLUMN isDeleted INTEGER NOT NULL DEFAULT 0',
         );
-        await db.execute(
-          'ALTER TABLE documents ADD COLUMN deletedAt TEXT',
-        );
+        await db.execute('ALTER TABLE documents ADD COLUMN deletedAt TEXT');
       } catch (e) {
         debugPrint('DB migration column notice: $e');
       }
@@ -102,15 +100,11 @@ class DatabaseHelper {
             .where((text) => text.isNotEmpty)
             .join(' ');
 
-        await db.insert(
-          'document_fts',
-          {
-            'documentId': id,
-            'docName': name,
-            'ocrContent': ocrText,
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
+        await db.insert('document_fts', {
+          'documentId': id,
+          'docName': name,
+          'ocrContent': ocrText,
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
       }
     } catch (e) {
       debugPrint('FTS population notice: $e');
@@ -182,11 +176,7 @@ class DatabaseHelper {
 
   Future<int> deleteFolder(int id) async {
     final db = await instance.database;
-    return await db.delete(
-      'folders',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('folders', where: 'id = ?', whereArgs: [id]);
   }
 
   // ─── Document CRUD ──────────────────────────────────────────────────────────
@@ -248,10 +238,7 @@ class DatabaseHelper {
     final db = await instance.database;
     return await db.update(
       'documents',
-      {
-        'isDeleted': 1,
-        'deletedAt': DateTime.now().toIso8601String(),
-      },
+      {'isDeleted': 1, 'deletedAt': DateTime.now().toIso8601String()},
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -261,10 +248,7 @@ class DatabaseHelper {
     final db = await instance.database;
     return await db.update(
       'documents',
-      {
-        'isDeleted': 0,
-        'deletedAt': null,
-      },
+      {'isDeleted': 0, 'deletedAt': null},
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -285,11 +269,7 @@ class DatabaseHelper {
     try {
       await db.delete('document_fts', where: 'documentId = ?', whereArgs: [id]);
     } catch (_) {}
-    return await db.delete(
-      'documents',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('documents', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<int> emptyTrash() async {
@@ -361,11 +341,7 @@ class DatabaseHelper {
         ? pageQuery.first['documentId'] as int?
         : null;
 
-    final count = await db.delete(
-      'pages',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    final count = await db.delete('pages', where: 'id = ?', whereArgs: [id]);
 
     if (documentId != null) {
       await _refreshDocumentIndex(documentId);
@@ -464,7 +440,8 @@ class DatabaseHelper {
       if (matchIdx != -1) {
         final start = (matchIdx - 30).clamp(0, ocrContent.length);
         final end = (matchIdx + lowerQ.length + 50).clamp(0, ocrContent.length);
-        snippet = '...${ocrContent.substring(start, end).replaceAll('\n', ' ')}...';
+        snippet =
+            '...${ocrContent.substring(start, end).replaceAll('\n', ' ')}...';
       } else if (ocrContent.isNotEmpty) {
         final end = 70.clamp(0, ocrContent.length);
         snippet = '${ocrContent.substring(0, end).replaceAll('\n', ' ')}...';

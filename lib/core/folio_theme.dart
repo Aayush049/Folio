@@ -32,8 +32,12 @@ class FolioColors {
 
 class NeuShadows {
   static List<BoxShadow> raised(bool isDark, {double intensity = 1.0}) {
-    final dark = isDark ? FolioColors.nightDarkShadow : FolioColors.dayDarkShadow;
-    final light = isDark ? FolioColors.nightLightShadow : FolioColors.dayLightShadow;
+    final dark = isDark
+        ? FolioColors.nightDarkShadow
+        : FolioColors.dayDarkShadow;
+    final light = isDark
+        ? FolioColors.nightLightShadow
+        : FolioColors.dayLightShadow;
     final blur = 12.0 * intensity;
     final dist = 6.0 * intensity;
     return [
@@ -45,21 +49,49 @@ class NeuShadows {
   static List<BoxShadow> subtle(bool isDark) => raised(isDark, intensity: 0.5);
 
   static List<BoxShadow> pressed(bool isDark) {
-    final dark = isDark ? FolioColors.nightDarkShadow : FolioColors.dayDarkShadow;
-    final light = isDark ? FolioColors.nightLightShadow : FolioColors.dayLightShadow;
+    final dark = isDark
+        ? FolioColors.nightDarkShadow
+        : FolioColors.dayDarkShadow;
+    final light = isDark
+        ? FolioColors.nightLightShadow
+        : FolioColors.dayLightShadow;
     return [
-      BoxShadow(color: dark, offset: const Offset(3, 3), blurRadius: 6, spreadRadius: 1),
-      BoxShadow(color: light, offset: const Offset(-3, -3), blurRadius: 6, spreadRadius: 1),
+      BoxShadow(
+        color: dark,
+        offset: const Offset(3, 3),
+        blurRadius: 6,
+        spreadRadius: 1,
+      ),
+      BoxShadow(
+        color: light,
+        offset: const Offset(-3, -3),
+        blurRadius: 6,
+        spreadRadius: 1,
+      ),
     ];
   }
 
   // Concave inset for active/selected states
   static List<BoxShadow> inset(bool isDark) {
-    final dark = isDark ? FolioColors.nightDarkShadow : FolioColors.dayDarkShadow;
-    final light = isDark ? FolioColors.nightLightShadow : FolioColors.dayLightShadow;
+    final dark = isDark
+        ? FolioColors.nightDarkShadow
+        : FolioColors.dayDarkShadow;
+    final light = isDark
+        ? FolioColors.nightLightShadow
+        : FolioColors.dayLightShadow;
     return [
-      BoxShadow(color: dark, offset: const Offset(4, 4), blurRadius: 8, spreadRadius: 0),
-      BoxShadow(color: light, offset: const Offset(-4, -4), blurRadius: 8, spreadRadius: 0),
+      BoxShadow(
+        color: dark,
+        offset: const Offset(4, 4),
+        blurRadius: 8,
+        spreadRadius: 0,
+      ),
+      BoxShadow(
+        color: light,
+        offset: const Offset(-4, -4),
+        blurRadius: 8,
+        spreadRadius: 0,
+      ),
     ];
   }
 }
@@ -94,11 +126,15 @@ class FolioThemeNotifier extends ChangeNotifier {
   Color get bg => isDark ? FolioColors.nightBg : FolioColors.dayBg;
   Color get cardBg => isDark ? FolioColors.nightCard : FolioColors.dayCard;
   Color get text => isDark ? FolioColors.nightText : FolioColors.dayText;
-  Color get textSub => isDark ? FolioColors.nightTextSub : FolioColors.dayTextSub;
+  Color get textSub =>
+      isDark ? FolioColors.nightTextSub : FolioColors.dayTextSub;
   Color get accent => isDark ? FolioColors.nightAccent : FolioColors.dayAccent;
-  Color get accentSoft => isDark ? FolioColors.nightAccentSoft : FolioColors.dayAccentSoft;
-  Color get darkShadow => isDark ? FolioColors.nightDarkShadow : FolioColors.dayDarkShadow;
-  Color get lightShadow => isDark ? FolioColors.nightLightShadow : FolioColors.dayLightShadow;
+  Color get accentSoft =>
+      isDark ? FolioColors.nightAccentSoft : FolioColors.dayAccentSoft;
+  Color get darkShadow =>
+      isDark ? FolioColors.nightDarkShadow : FolioColors.dayDarkShadow;
+  Color get lightShadow =>
+      isDark ? FolioColors.nightLightShadow : FolioColors.dayLightShadow;
   Color get danger => FolioColors.danger;
 
   // ─── Shadow shortcuts ─────────────────────────────────────────────────────

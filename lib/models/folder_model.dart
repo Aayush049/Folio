@@ -5,17 +5,9 @@ class Folder extends Equatable {
   final String name;
   final DateTime createdAt;
 
-  const Folder({
-    this.id,
-    required this.name,
-    required this.createdAt,
-  });
+  const Folder({this.id, required this.name, required this.createdAt});
 
-  Folder copyWith({
-    int? id,
-    String? name,
-    DateTime? createdAt,
-  }) {
+  Folder copyWith({int? id, String? name, DateTime? createdAt}) {
     return Folder(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -24,11 +16,7 @@ class Folder extends Equatable {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'createdAt': createdAt.toIso8601String(),
-    };
+    return {'id': id, 'name': name, 'createdAt': createdAt.toIso8601String()};
   }
 
   factory Folder.fromMap(Map<String, dynamic> map) {

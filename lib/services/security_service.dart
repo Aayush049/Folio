@@ -7,7 +7,7 @@ class SecurityService {
   static const String _appLockPrefKey = 'folio_security_app_lock_enabled';
 
   SecurityService({LocalAuthentication? localAuth})
-      : _localAuth = localAuth ?? LocalAuthentication();
+    : _localAuth = localAuth ?? LocalAuthentication();
 
   Future<bool> isBiometricsSupported() async {
     try {

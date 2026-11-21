@@ -54,7 +54,9 @@ class ScannerService {
 
     final String fileName =
         'IMG_${DateTime.now().millisecondsSinceEpoch}${p.extension(image.path)}';
-    final File permanentImage = await image.copy(p.join(folioDir.path, fileName));
+    final File permanentImage = await image.copy(
+      p.join(folioDir.path, fileName),
+    );
     return permanentImage;
   }
 
@@ -64,8 +66,9 @@ class ScannerService {
 
     try {
       final inputImage = InputImage.fromFile(image);
-      final RecognizedText recognizedText =
-          await _recognizer.processImage(inputImage);
+      final RecognizedText recognizedText = await _recognizer.processImage(
+        inputImage,
+      );
 
       final text = recognizedText.text.toLowerCase();
 
@@ -74,11 +77,21 @@ class ScannerService {
         if (text.contains('google')) return 'Google_Bill';
         return 'Invoice';
       }
-      if (text.contains('passport')) return 'Passport_Scan';
-      if (text.contains('id card') || text.contains('identification')) return 'ID_Card';
-      if (text.contains('receipt')) return 'Receipt';
-      if (text.contains('contract') || text.contains('agreement')) return 'Contract';
-      if (text.contains('certificate')) return 'Certificate';
+      if (text.contains('passport')) {
+        return 'Passport_Scan';
+      }
+      if (text.contains('id card') || text.contains('identification')) {
+        return 'ID_Card';
+      }
+      if (text.contains('receipt')) {
+        return 'Receipt';
+      }
+      if (text.contains('contract') || text.contains('agreement')) {
+        return 'Contract';
+      }
+      if (text.contains('certificate')) {
+        return 'Certificate';
+      }
 
       return 'New_Document';
     } catch (e) {
@@ -93,8 +106,9 @@ class ScannerService {
 
     try {
       final inputImage = InputImage.fromFile(image);
-      final RecognizedText recognizedText =
-          await _recognizer.processImage(inputImage);
+      final RecognizedText recognizedText = await _recognizer.processImage(
+        inputImage,
+      );
       return recognizedText.text.trim();
     } catch (e) {
       return '';

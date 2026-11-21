@@ -58,15 +58,13 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    _textSlide = Tween<Offset>(
-      begin: const Offset(0, 0.25),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _entranceController,
-        curve: const Interval(0.40, 0.85, curve: Curves.easeOutCubic),
-      ),
-    );
+    _textSlide = Tween<Offset>(begin: const Offset(0, 0.25), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _entranceController,
+            curve: const Interval(0.40, 0.85, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _badgeFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -81,7 +79,10 @@ class _SplashScreenState extends State<SplashScreen>
     context.read<DashboardBloc>().add(const LoadDashboard());
 
     // Navigate to dashboard after animation completes (tap to skip enabled)
-    _navigationTimer = Timer(const Duration(milliseconds: 2300), _proceedToDashboard);
+    _navigationTimer = Timer(
+      const Duration(milliseconds: 2300),
+      _proceedToDashboard,
+    );
   }
 
   void _proceedToDashboard() {

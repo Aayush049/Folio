@@ -44,7 +44,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
         }
         if (state is ScannerImagesPicked) {
           // Preserve user-entered names across page reorders, additions, or edits
-          if (_nameController.text.trim().isEmpty || _nameController.text.trim() == 'New Document') {
+          if (_nameController.text.trim().isEmpty ||
+              _nameController.text.trim() == 'New Document') {
             _nameController.text = state.suggestedName;
           }
         }
@@ -56,7 +57,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
           );
         }
         if (state is ScannerError) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
       builder: (context, state) {
@@ -96,8 +99,12 @@ class _ScannerScreenState extends State<ScannerScreen> {
                           ),
                           if (hasPicked) ...[
                             NeuIconButton(
-                              icon: _isReorderMode ? Icons.grid_view_rounded : Icons.reorder_rounded,
-                              onTap: () => setState(() => _isReorderMode = !_isReorderMode),
+                              icon: _isReorderMode
+                                  ? Icons.grid_view_rounded
+                                  : Icons.reorder_rounded,
+                              onTap: () => setState(
+                                () => _isReorderMode = !_isReorderMode,
+                              ),
                               active: _isReorderMode,
                               size: 44,
                             ),
@@ -105,12 +112,19 @@ class _ScannerScreenState extends State<ScannerScreen> {
                             NeuButton(
                               filled: true,
                               borderRadius: 14,
-                              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 18,
+                                vertical: 10,
+                              ),
                               onTap: () => _showFolderSelection(context),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.save_outlined, color: Colors.white, size: 16),
+                                  const Icon(
+                                    Icons.save_outlined,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
                                   const SizedBox(width: 6),
                                   Text(
                                     isCompact ? 'Save' : 'Save (Ctrl+S)',
@@ -142,9 +156,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                     const SizedBox(height: 16),
 
                     // ─── Body ─────────────────────────────────────────────────
-                    Expanded(
-                      child: _buildBody(context, state, theme),
-                    ),
+                    Expanded(child: _buildBody(context, state, theme)),
 
                     // ─── Bottom Action Buttons ────────────────────────────────
                     if (state is ScannerInitial || state is ScannerImagesPicked)
@@ -159,8 +171,14 @@ class _ScannerScreenState extends State<ScannerScreen> {
     );
   }
 
-  Widget _buildBody(BuildContext context, ScannerState state, FolioThemeNotifier theme) {
-    if (state is ScannerLoading) return const Center(child: CircularProgressIndicator());
+  Widget _buildBody(
+    BuildContext context,
+    ScannerState state,
+    FolioThemeNotifier theme,
+  ) {
+    if (state is ScannerLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     if (state is ScannerImagesPicked) {
       return _isReorderMode
@@ -179,16 +197,28 @@ class _ScannerScreenState extends State<ScannerScreen> {
             margin: const EdgeInsets.symmetric(horizontal: 48),
             child: Column(
               children: [
-                Icon(Icons.document_scanner_outlined, size: 64, color: theme.textSub.withValues(alpha: 0.4)),
+                Icon(
+                  Icons.document_scanner_outlined,
+                  size: 64,
+                  color: theme.textSub.withValues(alpha: 0.4),
+                ),
                 const SizedBox(height: 16),
                 Text(
                   'Ready to Scan',
-                  style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w900, fontSize: 18),
+                  style: GoogleFonts.nunito(
+                    color: theme.text,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 18,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   'Use camera or gallery below',
-                  style: GoogleFonts.nunito(color: theme.textSub, fontWeight: FontWeight.w600, fontSize: 13),
+                  style: GoogleFonts.nunito(
+                    color: theme.textSub,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -215,9 +245,20 @@ class _ScannerScreenState extends State<ScannerScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.photo_library_outlined, color: theme.accent, size: 20),
+                      Icon(
+                        Icons.photo_library_outlined,
+                        color: theme.accent,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
-                      Text('Gallery', style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w800, fontSize: 15)),
+                      Text(
+                        'Gallery',
+                        style: GoogleFonts.nunito(
+                          color: theme.text,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 15,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -232,9 +273,20 @@ class _ScannerScreenState extends State<ScannerScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.camera_alt_outlined, color: Colors.white, size: 20),
+                      const Icon(
+                        Icons.camera_alt_outlined,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
-                      Text('Camera', style: GoogleFonts.nunito(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 15)),
+                      Text(
+                        'Camera',
+                        style: GoogleFonts.nunito(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 15,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -256,10 +308,14 @@ class _ScannerScreenState extends State<ScannerScreen> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 600),
           child: Container(
-            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.6),
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.6,
+            ),
             decoration: BoxDecoration(
               color: theme.bg,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(28),
+              ),
             ),
             child: SafeArea(
               child: Column(
@@ -276,26 +332,43 @@ class _ScannerScreenState extends State<ScannerScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(20),
-                    child: Text('Save to Folder', style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w900, fontSize: 18)),
+                    child: Text(
+                      'Save to Folder',
+                      style: GoogleFonts.nunito(
+                        color: theme.text,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 18,
+                      ),
+                    ),
                   ),
                   Expanded(
                     child: BlocBuilder<DashboardBloc, DashboardState>(
                       builder: (context, state) {
-                        if (state is! DashboardLoaded) return const Center(child: CircularProgressIndicator());
+                        if (state is! DashboardLoaded) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
                         return ListView.separated(
                           padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
                           itemCount: state.folders.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 10),
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 10),
                           itemBuilder: (ctx, index) {
                             final folder = state.folders[index];
                             return NeuButton(
                               borderRadius: 16,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
                               onTap: () {
-                                context.read<ScannerBloc>().add(SaveDocument(
-                                  name: _nameController.text,
-                                  folderId: folder.id!,
-                                ));
+                                context.read<ScannerBloc>().add(
+                                  SaveDocument(
+                                    name: _nameController.text,
+                                    folderId: folder.id!,
+                                  ),
+                                );
                                 Navigator.pop(ctx);
                               },
                               child: Row(
@@ -303,13 +376,31 @@ class _ScannerScreenState extends State<ScannerScreen> {
                                   Container(
                                     width: 36,
                                     height: 36,
-                                    decoration: BoxDecoration(color: theme.accentSoft, borderRadius: BorderRadius.circular(10)),
-                                    child: Icon(Icons.folder_rounded, color: theme.accent, size: 20),
+                                    decoration: BoxDecoration(
+                                      color: theme.accentSoft,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Icon(
+                                      Icons.folder_rounded,
+                                      color: theme.accent,
+                                      size: 20,
+                                    ),
                                   ),
                                   const SizedBox(width: 12),
-                                  Text(folder.name, style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w700, fontSize: 15)),
+                                  Text(
+                                    folder.name,
+                                    style: GoogleFonts.nunito(
+                                      color: theme.text,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15,
+                                    ),
+                                  ),
                                   const Spacer(),
-                                  Icon(Icons.chevron_right_rounded, color: theme.textSub, size: 20),
+                                  Icon(
+                                    Icons.chevron_right_rounded,
+                                    color: theme.textSub,
+                                    size: 20,
+                                  ),
                                 ],
                               ),
                             );
@@ -352,7 +443,9 @@ class _ImageGrid extends StatelessWidget {
           onTap: () async {
             final edited = await Navigator.push<File>(
               context,
-              MaterialPageRoute(builder: (_) => StudioScreen(image: images[index])),
+              MaterialPageRoute(
+                builder: (_) => StudioScreen(image: images[index]),
+              ),
             );
             if (edited != null && context.mounted) {
               context.read<ScannerBloc>().add(UpdateImage(index, edited));
@@ -381,7 +474,8 @@ class _ImageGrid extends StatelessWidget {
                   child: MouseRegion(
                     cursor: SystemMouseCursors.click,
                     child: GestureDetector(
-                      onTap: () => context.read<ScannerBloc>().add(RemoveImage(index)),
+                      onTap: () =>
+                          context.read<ScannerBloc>().add(RemoveImage(index)),
                       child: Container(
                         width: 28,
                         height: 28,
@@ -389,7 +483,11 @@ class _ImageGrid extends StatelessWidget {
                           color: Colors.black.withValues(alpha: 0.55),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.close, size: 16, color: Colors.white),
+                        child: const Icon(
+                          Icons.close,
+                          size: 16,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -398,9 +496,22 @@ class _ImageGrid extends StatelessWidget {
                   bottom: 8,
                   left: 8,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(10)),
-                    child: Text('Page ${index + 1}', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      'Page ${index + 1}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -435,12 +546,26 @@ class _ReorderList extends StatelessWidget {
             boxShadow: theme.subtleShadow,
           ),
           child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 6,
+            ),
             leading: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: FolioImage.file(images[index], width: 52, height: 52, fit: BoxFit.cover),
+              child: FolioImage.file(
+                images[index],
+                width: 52,
+                height: 52,
+                fit: BoxFit.cover,
+              ),
             ),
-            title: Text('Page ${index + 1}', style: GoogleFonts.nunito(color: theme.text, fontWeight: FontWeight.w800)),
+            title: Text(
+              'Page ${index + 1}',
+              style: GoogleFonts.nunito(
+                color: theme.text,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
             trailing: const MouseRegion(
               cursor: SystemMouseCursors.grab,
               child: Icon(Icons.drag_handle_rounded),

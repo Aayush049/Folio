@@ -17,10 +17,7 @@ class DashboardLoaded extends DashboardState {
   final List<Folder> folders;
   final List<Document> recentDocuments;
 
-  const DashboardLoaded({
-    required this.folders,
-    required this.recentDocuments,
-  });
+  const DashboardLoaded({required this.folders, required this.recentDocuments});
 
   @override
   List<Object> get props => [folders, recentDocuments];

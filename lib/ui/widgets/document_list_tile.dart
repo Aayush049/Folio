@@ -31,7 +31,11 @@ class DocumentListTile extends StatelessWidget {
           color: Colors.redAccent.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(20),
         ),
-        child: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent, size: 26),
+        child: const Icon(
+          Icons.delete_outline_rounded,
+          color: Colors.redAccent,
+          size: 26,
+        ),
       ),
       confirmDismiss: (_) => _confirmDelete(context, theme),
       onDismissed: (_) => onDelete(),
@@ -57,7 +61,11 @@ class DocumentListTile extends StatelessWidget {
                       color: theme.accentSoft,
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: Icon(Icons.description_rounded, color: theme.accent, size: 24),
+                    child: Icon(
+                      Icons.description_rounded,
+                      color: theme.accent,
+                      size: 24,
+                    ),
                   ),
                   const SizedBox(width: 14),
                   // Text
@@ -88,7 +96,11 @@ class DocumentListTile extends StatelessWidget {
                     ),
                   ),
                   // Arrow
-                  Icon(Icons.chevron_right_rounded, color: theme.textSub, size: 22),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: theme.textSub,
+                    size: 22,
+                  ),
                 ],
               ),
             ),
@@ -104,7 +116,10 @@ class DocumentListTile extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         backgroundColor: theme.bg,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text('Delete Document?', style: TextStyle(color: theme.text, fontWeight: FontWeight.w900)),
+        title: Text(
+          'Delete Document?',
+          style: TextStyle(color: theme.text, fontWeight: FontWeight.w900),
+        ),
         content: Text(
           'Delete "${doc.name}"? This cannot be undone.',
           style: TextStyle(color: theme.textSub, fontWeight: FontWeight.w600),
@@ -112,11 +127,23 @@ class DocumentListTile extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text('Cancel', style: TextStyle(color: theme.textSub, fontWeight: FontWeight.w700)),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: theme.textSub,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w800)),
+            child: const Text(
+              'Delete',
+              style: TextStyle(
+                color: Colors.redAccent,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
           ),
         ],
       ),

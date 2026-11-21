@@ -39,10 +39,7 @@ class _FolioLogoState extends State<FolioLogo>
       )..repeat(reverse: true);
 
       _scanAnimation = Tween<double>(begin: 0.15, end: 0.85).animate(
-        CurvedAnimation(
-          parent: _animController!,
-          curve: Curves.easeInOutSine,
-        ),
+        CurvedAnimation(parent: _animController!, curve: Curves.easeInOutSine),
       );
     }
   }
@@ -145,10 +142,7 @@ class _FolioLogoPainter extends CustomPainter {
       ..color = Colors.black.withValues(alpha: isDark ? 0.35 : 0.12)
       ..maskFilter = MaskFilter.blur(BlurStyle.normal, w * 0.08);
     canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        docRect.translate(w * 0.02, h * 0.04),
-        docRadius,
-      ),
+      RRect.fromRectAndRadius(docRect.translate(w * 0.02, h * 0.04), docRadius),
       shadowPaint,
     );
 
@@ -158,14 +152,8 @@ class _FolioLogoPainter extends CustomPainter {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: isDark
-            ? [
-                Color.lerp(cardBg, Colors.white, 0.08)!,
-                cardBg,
-              ]
-            : [
-                Colors.white,
-                Color.lerp(cardBg, Colors.white, 0.6)!,
-              ],
+            ? [Color.lerp(cardBg, Colors.white, 0.08)!, cardBg]
+            : [Colors.white, Color.lerp(cardBg, Colors.white, 0.6)!],
       ).createShader(docRect);
 
     final docRRect = RRect.fromRectAndRadius(docRect, docRadius);
@@ -199,10 +187,7 @@ class _FolioLogoPainter extends CustomPainter {
       ..shader = LinearGradient(
         begin: Alignment.topRight,
         end: Alignment.bottomLeft,
-        colors: [
-          accentColor,
-          accentColor.withValues(alpha: 0.7),
-        ],
+        colors: [accentColor, accentColor.withValues(alpha: 0.7)],
       ).createShader(Rect.fromLTWH(foldLeft, foldTop, foldSize, foldSize));
     canvas.drawPath(foldPath, foldPaint);
 
@@ -245,7 +230,10 @@ class _FolioLogoPainter extends CustomPainter {
     canvas.drawRRect(line3, linePaint);
 
     // ─── 5. Signature / Stamp Accent at Bottom ───────────────────────────────
-    final stampCenter = Offset(docRect.right - w * 0.20, docRect.bottom - h * 0.15);
+    final stampCenter = Offset(
+      docRect.right - w * 0.20,
+      docRect.bottom - h * 0.15,
+    );
     final stampRadius = w * 0.09;
     final stampPaint = Paint()
       ..color = accentColor.withValues(alpha: isDark ? 0.35 : 0.22)
@@ -260,8 +248,14 @@ class _FolioLogoPainter extends CustomPainter {
 
     final checkPath = Path()
       ..moveTo(stampCenter.dx - stampRadius * 0.45, stampCenter.dy)
-      ..lineTo(stampCenter.dx - stampRadius * 0.1, stampCenter.dy + stampRadius * 0.35)
-      ..lineTo(stampCenter.dx + stampRadius * 0.45, stampCenter.dy - stampRadius * 0.35);
+      ..lineTo(
+        stampCenter.dx - stampRadius * 0.1,
+        stampCenter.dy + stampRadius * 0.35,
+      )
+      ..lineTo(
+        stampCenter.dx + stampRadius * 0.45,
+        stampCenter.dy - stampRadius * 0.35,
+      );
 
     final checkPaint = Paint()
       ..color = accentColor

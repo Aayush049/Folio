@@ -34,22 +34,25 @@ class AuthService {
         final GoogleAuthProvider googleProvider = GoogleAuthProvider();
         googleProvider.addScope('email');
         googleProvider.addScope('profile');
-        final UserCredential userCredential =
-            await _auth.signInWithPopup(googleProvider);
+        final UserCredential userCredential = await _auth.signInWithPopup(
+          googleProvider,
+        );
         return userCredential.user;
       }
 
       await _ensureGoogleSignInInitialized();
-      final GoogleSignInAccount googleAccount =
-          await GoogleSignIn.instance.authenticate();
+      final GoogleSignInAccount googleAccount = await GoogleSignIn.instance
+          .authenticate();
 
-      final GoogleSignInAuthentication googleAuth = googleAccount.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          googleAccount.authentication;
       final OAuthCredential credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
       );
 
-      final UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
+      final UserCredential userCredential = await _auth.signInWithCredential(
+        credential,
+      );
       return userCredential.user;
     } on GoogleSignInException catch (e) {
       if (e.code == GoogleSignInExceptionCode.canceled) {

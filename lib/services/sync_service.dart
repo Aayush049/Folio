@@ -41,13 +41,14 @@ class SyncService {
     FirebaseFirestore? firestore,
     FirebaseStorage? storage,
     required IDocumentRepository repository,
-  })  : _customAuth = auth,
-        _customFirestore = firestore,
-        _customStorage = storage,
-        _repository = repository;
+  }) : _customAuth = auth,
+       _customFirestore = firestore,
+       _customStorage = storage,
+       _repository = repository;
 
   FirebaseAuth get _auth => _customAuth ?? FirebaseAuth.instance;
-  FirebaseFirestore get _firestore => _customFirestore ?? FirebaseFirestore.instance;
+  FirebaseFirestore get _firestore =>
+      _customFirestore ?? FirebaseFirestore.instance;
   FirebaseStorage get _storage => _customStorage ?? FirebaseStorage.instance;
 
   /// Retrieves the last recorded backup timestamp from Firestore
@@ -93,8 +94,8 @@ class SyncService {
               final base64Content = page.imagePath.split(',').last;
               final bytes = base64Decode(base64Content);
               final targetRef = _storage.ref().child(
-                    'users/${user.uid}/pages/${page.id ?? 'p'}_${DateTime.now().millisecondsSinceEpoch}.png',
-                  );
+                'users/${user.uid}/pages/${page.id ?? 'p'}_${DateTime.now().millisecondsSinceEpoch}.png',
+              );
               await targetRef.putData(
                 bytes,
                 SettableMetadata(contentType: 'image/png'),
@@ -107,8 +108,8 @@ class SyncService {
             if (await localFile.exists()) {
               final fileName = p.basename(localFile.path);
               final targetRef = _storage.ref().child(
-                    'users/${user.uid}/pages/${page.id ?? 'p'}_$fileName',
-                  );
+                'users/${user.uid}/pages/${page.id ?? 'p'}_$fileName',
+              );
               await targetRef.putFile(
                 localFile,
                 SettableMetadata(contentType: 'image/png'),
@@ -137,7 +138,9 @@ class SyncService {
       final userRef = _firestore.collection('users').doc(user.uid);
 
       for (final folder in folders) {
-        final folderRef = userRef.collection('folders').doc(folder.id.toString());
+        final folderRef = userRef
+            .collection('folders')
+            .doc(folder.id.toString());
         batch.set(folderRef, {
           'id': folder.id,
           'name': folder.name,
@@ -158,23 +161,21 @@ class SyncService {
       }
 
       for (final pageData in uploadedPages) {
-        final pageRef = userRef.collection('pages').doc(pageData['id'].toString());
+        final pageRef = userRef
+            .collection('pages')
+            .doc(pageData['id'].toString());
         batch.set(pageRef, pageData);
       }
 
       // Update sync status on root user document
-      batch.set(
-        userRef,
-        {
-          'email': user.email,
-          'displayName': user.displayName,
-          'lastBackupAt': FieldValue.serverTimestamp(),
-          'totalFolders': folders.length,
-          'totalDocuments': documents.length,
-          'totalPages': pages.length,
-        },
-        SetOptions(merge: true),
-      );
+      batch.set(userRef, {
+        'email': user.email,
+        'displayName': user.displayName,
+        'lastBackupAt': FieldValue.serverTimestamp(),
+        'totalFolders': folders.length,
+        'totalDocuments': documents.length,
+        'totalPages': pages.length,
+      }, SetOptions(merge: true));
 
       await batch.commit();
 
@@ -183,10 +184,13 @@ class SyncService {
         foldersCount: folders.length,
         documentsCount: documents.length,
         pagesCount: pages.length,
-        message: 'Successfully backed up ${documents.length} document(s) & ${pages.length} page(s) to cloud.',
+        message:
+            'Successfully backed up ${documents.length} document(s) & ${pages.length} page(s) to cloud.',
       );
     } on FirebaseException catch (e) {
-      throw SyncFailure(e.message ?? 'Cloud backup failed due to a network or Firebase error.');
+      throw SyncFailure(
+        e.message ?? 'Cloud backup failed due to a network or Firebase error.',
+      );
     } catch (e) {
       throw SyncFailure('Failed to backup: $e');
     }
@@ -268,10 +272,12 @@ class SyncService {
               if (!await scansDir.exists()) {
                 await scansDir.create(recursive: true);
               }
-              final localFile = File(p.join(
-                scansDir.path,
-                'restored_${pageId ?? 'p'}_${DateTime.now().millisecondsSinceEpoch}.png',
-              ));
+              final localFile = File(
+                p.join(
+                  scansDir.path,
+                  'restored_${pageId ?? 'p'}_${DateTime.now().millisecondsSinceEpoch}.png',
+                ),
+              );
               await _storage.ref(storagePath).writeToFile(localFile);
               localImagePath = localFile.path;
             }
@@ -298,10 +304,13 @@ class SyncService {
         foldersCount: foldersSnap.docs.length,
         documentsCount: docsSnap.docs.length,
         pagesCount: pagesSnap.docs.length,
-        message: 'Successfully restored ${docsSnap.docs.length} document(s) & ${pagesSnap.docs.length} page(s) from cloud.',
+        message:
+            'Successfully restored ${docsSnap.docs.length} document(s) & ${pagesSnap.docs.length} page(s) from cloud.',
       );
     } on FirebaseException catch (e) {
-      throw SyncFailure(e.message ?? 'Cloud restore failed due to a network or Firebase error.');
+      throw SyncFailure(
+        e.message ?? 'Cloud restore failed due to a network or Firebase error.',
+      );
     } catch (e) {
       throw SyncFailure('Failed to restore from cloud: $e');
     }

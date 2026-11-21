@@ -103,9 +103,10 @@ class _NeuButtonState extends State<NeuButton>
       lowerBound: 0.0,
       upperBound: 1.0,
     );
-    _scale = Tween<double>(begin: 1.0, end: 0.96).animate(
-      CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut),
-    );
+    _scale = Tween<double>(
+      begin: 1.0,
+      end: 0.96,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -127,7 +128,9 @@ class _NeuButtonState extends State<NeuButton>
     final theme = context.watch<FolioThemeNotifier>();
 
     return MouseRegion(
-      cursor: widget.onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      cursor: widget.onTap != null
+          ? SystemMouseCursors.click
+          : SystemMouseCursors.basic,
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: GestureDetector(
@@ -161,21 +164,23 @@ class _NeuButtonState extends State<NeuButton>
                   boxShadow: isPressed
                       ? theme.pressedShadow
                       : (_isHovered
-                          ? [
-                              ...theme.raisedShadow,
-                              BoxShadow(
-                                color: theme.accent.withValues(alpha: 0.15),
-                                blurRadius: 10,
-                                spreadRadius: 1,
-                              ),
-                            ]
-                          : theme.raisedShadow),
+                            ? [
+                                ...theme.raisedShadow,
+                                BoxShadow(
+                                  color: theme.accent.withValues(alpha: 0.15),
+                                  blurRadius: 10,
+                                  spreadRadius: 1,
+                                ),
+                              ]
+                            : theme.raisedShadow),
                   gradient: widget.filled
                       ? LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            theme.accent.withValues(alpha: _isHovered ? 0.95 : 0.9),
+                            theme.accent.withValues(
+                              alpha: _isHovered ? 0.95 : 0.9,
+                            ),
                             theme.accent,
                           ],
                         )
@@ -238,7 +243,9 @@ class _NeuIconButtonState extends State<NeuIconButton>
     final theme = context.watch<FolioThemeNotifier>();
 
     final btn = MouseRegion(
-      cursor: widget.onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      cursor: widget.onTap != null
+          ? SystemMouseCursors.click
+          : SystemMouseCursors.basic,
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: GestureDetector(
@@ -261,24 +268,26 @@ class _NeuIconButtonState extends State<NeuIconButton>
                 color: widget.active
                     ? theme.accentSoft
                     : (_isHovered
-                        ? Color.lerp(theme.bg, theme.accent, 0.08)!
-                        : theme.bg),
+                          ? Color.lerp(theme.bg, theme.accent, 0.08)!
+                          : theme.bg),
                 shape: BoxShape.circle,
                 boxShadow: pressed || widget.active
                     ? theme.pressedShadow
                     : (_isHovered
-                        ? [
-                            ...theme.subtleShadow,
-                            BoxShadow(
-                              color: theme.accent.withValues(alpha: 0.16),
-                              blurRadius: 8,
-                            ),
-                          ]
-                        : theme.subtleShadow),
+                          ? [
+                              ...theme.subtleShadow,
+                              BoxShadow(
+                                color: theme.accent.withValues(alpha: 0.16),
+                                blurRadius: 8,
+                              ),
+                            ]
+                          : theme.subtleShadow),
               ),
               child: Icon(
                 widget.icon,
-                color: (widget.active || _isHovered) ? theme.accent : theme.textSub,
+                color: (widget.active || _isHovered)
+                    ? theme.accent
+                    : theme.textSub,
                 size: widget.size * 0.44,
               ),
             );
@@ -328,12 +337,18 @@ class NeuTextField extends StatelessWidget {
         ),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: theme.textSub, fontWeight: FontWeight.w600),
+          labelStyle: TextStyle(
+            color: theme.textSub,
+            fontWeight: FontWeight.w600,
+          ),
           prefixIcon: prefixIcon != null
               ? Icon(prefixIcon, color: theme.textSub)
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
       ),
     );
@@ -357,7 +372,9 @@ class NeuChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.watch<FolioThemeNotifier>();
     return MouseRegion(
-      cursor: onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      cursor: onTap != null
+          ? SystemMouseCursors.click
+          : SystemMouseCursors.basic,
       child: GestureDetector(
         onTap: onTap,
         child: AnimatedContainer(

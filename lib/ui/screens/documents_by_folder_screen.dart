@@ -21,7 +21,8 @@ class DocumentsByFolderScreen extends StatefulWidget {
   const DocumentsByFolderScreen({super.key, required this.folder});
 
   @override
-  State<DocumentsByFolderScreen> createState() => _DocumentsByFolderScreenState();
+  State<DocumentsByFolderScreen> createState() =>
+      _DocumentsByFolderScreenState();
 }
 
 class _DocumentsByFolderScreenState extends State<DocumentsByFolderScreen> {
@@ -84,7 +85,11 @@ class _DocumentsByFolderScreenState extends State<DocumentsByFolderScreen> {
                           color: theme.accentSoft,
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        child: Icon(Icons.folder_rounded, color: theme.accent, size: 24),
+                        child: Icon(
+                          Icons.folder_rounded,
+                          color: theme.accent,
+                          size: 24,
+                        ),
                       ),
                     ],
                   ),
@@ -107,7 +112,11 @@ class _DocumentsByFolderScreenState extends State<DocumentsByFolderScreen> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.insert_drive_file_outlined, size: 52, color: theme.textSub.withValues(alpha: 0.4)),
+                                Icon(
+                                  Icons.insert_drive_file_outlined,
+                                  size: 52,
+                                  color: theme.textSub.withValues(alpha: 0.4),
+                                ),
                                 const SizedBox(height: 12),
                                 Text(
                                   'Folder is empty',
@@ -152,13 +161,17 @@ class _DocumentsByFolderScreenState extends State<DocumentsByFolderScreen> {
                               doc: doc,
                               onTap: () => Navigator.push(
                                 context,
-                                neuRoute(DocumentDetailScreen(
-                                  document: doc,
-                                  repository: repository,
-                                )),
+                                neuRoute(
+                                  DocumentDetailScreen(
+                                    document: doc,
+                                    repository: repository,
+                                  ),
+                                ),
                               ),
                               onDelete: () {
-                                context.read<DashboardBloc>().add(DeleteDocument(doc.id!));
+                                context.read<DashboardBloc>().add(
+                                  DeleteDocument(doc.id!),
+                                );
                                 setState(() {});
                               },
                             ),

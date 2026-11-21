@@ -62,10 +62,17 @@ class _SearchScreenState extends State<SearchScreen> {
                     Expanded(
                       child: NeuBox(
                         borderRadius: 18,
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 4,
+                        ),
                         child: Row(
                           children: [
-                            Icon(Icons.search_rounded, color: theme.accent, size: 22),
+                            Icon(
+                              Icons.search_rounded,
+                              color: theme.accent,
+                              size: 22,
+                            ),
                             const SizedBox(width: 10),
                             Expanded(
                               child: TextField(
@@ -88,7 +95,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                   isDense: true,
                                 ),
                                 onChanged: (val) {
-                                  context.read<SearchBloc>().add(SearchQueryChanged(val));
+                                  context.read<SearchBloc>().add(
+                                    SearchQueryChanged(val),
+                                  );
                                 },
                               ),
                             ),
@@ -96,11 +105,17 @@ class _SearchScreenState extends State<SearchScreen> {
                               GestureDetector(
                                 onTap: () {
                                   _searchController.clear();
-                                  context.read<SearchBloc>().add(const ClearSearch());
+                                  context.read<SearchBloc>().add(
+                                    const ClearSearch(),
+                                  );
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(4),
-                                  child: Icon(Icons.clear_rounded, size: 18, color: theme.textSub),
+                                  child: Icon(
+                                    Icons.clear_rounded,
+                                    size: 18,
+                                    color: theme.textSub,
+                                  ),
                                 ),
                               ),
                           ],
@@ -146,7 +161,10 @@ class _SearchScreenState extends State<SearchScreen> {
                               ),
                               const Spacer(),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 3,
+                                ),
                                 decoration: BoxDecoration(
                                   color: theme.accentSoft,
                                   borderRadius: BorderRadius.circular(12),
@@ -167,10 +185,16 @@ class _SearchScreenState extends State<SearchScreen> {
                           child: ListView.separated(
                             padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                             itemCount: state.results.length,
-                            separatorBuilder: (_, __) => const SizedBox(height: 12),
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 12),
                             itemBuilder: (context, index) {
                               final item = state.results[index];
-                              return _buildSearchResultTile(context, item, theme, isCompact);
+                              return _buildSearchResultTile(
+                                context,
+                                item,
+                                theme,
+                                isCompact,
+                              );
                             },
                           ),
                         ),
@@ -202,10 +226,12 @@ class _SearchScreenState extends State<SearchScreen> {
         HapticFeedback.lightImpact();
         Navigator.push(
           context,
-          neuRoute(DocumentDetailScreen(
-            document: doc,
-            repository: context.read<DocumentRepository>(),
-          )),
+          neuRoute(
+            DocumentDetailScreen(
+              document: doc,
+              repository: context.read<DocumentRepository>(),
+            ),
+          ),
         );
       },
       child: Column(
@@ -382,7 +408,11 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_off_rounded, size: 56, color: theme.textSub.withValues(alpha: 0.5)),
+            Icon(
+              Icons.search_off_rounded,
+              size: 56,
+              color: theme.textSub.withValues(alpha: 0.5),
+            ),
             const SizedBox(height: 16),
             Text(
               'No matches found for "$query"',
@@ -413,7 +443,11 @@ class _SearchScreenState extends State<SearchScreen> {
       padding: const EdgeInsets.all(20),
       itemCount: 4,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (_, __) => const NeuShimmer(width: double.infinity, height: 100, borderRadius: 18),
+      itemBuilder: (_, __) => const NeuShimmer(
+        width: double.infinity,
+        height: 100,
+        borderRadius: 18,
+      ),
     );
   }
 }

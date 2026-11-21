@@ -67,7 +67,11 @@ class _FakeTrashRepo implements IDocumentRepository {
   @override
   Future<List<Document>> getRecentDocuments() async => [];
   @override
-  Future<void> indexDocumentText(int documentId, String docName, String ocrContent) async {}
+  Future<void> indexDocumentText(
+    int documentId,
+    String docName,
+    String ocrContent,
+  ) async {}
   @override
   Future<int> insertOrUpdateDocument(Document doc) async => 1;
   @override
@@ -129,7 +133,11 @@ void main() {
         emits(
           isA<TrashLoaded>()
               .having((s) => s.documents, 'documents', isEmpty)
-              .having((s) => s.message, 'message', contains('permanently deleted')),
+              .having(
+                (s) => s.message,
+                'message',
+                contains('permanently deleted'),
+              ),
         ),
       );
     });

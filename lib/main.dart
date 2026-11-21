@@ -58,9 +58,8 @@ class _FolioAppState extends State<FolioApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _securityBloc = SecurityBloc(
-      securityService: sl<SecurityService>(),
-    )..add(const CheckSecurityStatus());
+    _securityBloc = SecurityBloc(securityService: sl<SecurityService>())
+      ..add(const CheckSecurityStatus());
   }
 
   @override
@@ -82,31 +81,17 @@ class _FolioAppState extends State<FolioApp> with WidgetsBindingObserver {
         ChangeNotifierProvider<FolioThemeNotifier>.value(
           value: sl<FolioThemeNotifier>(),
         ),
-        Provider<ScannerService>.value(
-          value: sl<ScannerService>(),
-        ),
-        Provider<IDocumentRepository>.value(
-          value: sl<IDocumentRepository>(),
-        ),
-        Provider<DocumentRepository>.value(
-          value: sl<DocumentRepository>(),
-        ),
-        Provider<AuthService>.value(
-          value: sl<AuthService>(),
-        ),
-        Provider<SyncService>.value(
-          value: sl<SyncService>(),
-        ),
-        Provider<SecurityService>.value(
-          value: sl<SecurityService>(),
-        ),
+        Provider<ScannerService>.value(value: sl<ScannerService>()),
+        Provider<IDocumentRepository>.value(value: sl<IDocumentRepository>()),
+        Provider<DocumentRepository>.value(value: sl<DocumentRepository>()),
+        Provider<AuthService>.value(value: sl<AuthService>()),
+        Provider<SyncService>.value(value: sl<SyncService>()),
+        Provider<SecurityService>.value(value: sl<SecurityService>()),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider<DashboardBloc>(
-            create: (_) => DashboardBloc(
-              repository: sl<IDocumentRepository>(),
-            ),
+            create: (_) => DashboardBloc(repository: sl<IDocumentRepository>()),
           ),
           BlocProvider<ScannerBloc>(
             create: (_) => ScannerBloc(
@@ -121,18 +106,14 @@ class _FolioAppState extends State<FolioApp> with WidgetsBindingObserver {
             )..add(const CheckAuthSyncStatus()),
           ),
           BlocProvider<SearchBloc>(
-            create: (_) => SearchBloc(
-              repository: sl<IDocumentRepository>(),
-            ),
+            create: (_) => SearchBloc(repository: sl<IDocumentRepository>()),
           ),
           BlocProvider<TrashBloc>(
-            create: (_) => TrashBloc(
-              repository: sl<IDocumentRepository>(),
-            )..add(const LoadTrash()),
+            create: (_) =>
+                TrashBloc(repository: sl<IDocumentRepository>())
+                  ..add(const LoadTrash()),
           ),
-          BlocProvider<SecurityBloc>.value(
-            value: _securityBloc,
-          ),
+          BlocProvider<SecurityBloc>.value(value: _securityBloc),
         ],
         child: Consumer<FolioThemeNotifier>(
           builder: (context, theme, _) => MaterialApp(
@@ -141,9 +122,7 @@ class _FolioAppState extends State<FolioApp> with WidgetsBindingObserver {
             theme: theme.themeData,
             home: const SplashScreen(),
             builder: (context, child) {
-              return VaultLockOverlay(
-                child: child ?? const SizedBox.shrink(),
-              );
+              return VaultLockOverlay(child: child ?? const SizedBox.shrink());
             },
           ),
         ),

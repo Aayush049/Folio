@@ -29,12 +29,14 @@ class _FakeSearchRepo implements IDocumentRepository {
     final q = query.toLowerCase();
     return docs
         .where((d) => d.name.toLowerCase().contains(q))
-        .map((d) => SearchResult(
-              document: d,
-              folderName: 'Personal',
-              snippet: 'Matched name in search',
-              isTitleMatch: true,
-            ))
+        .map(
+          (d) => SearchResult(
+            document: d,
+            folderName: 'Personal',
+            snippet: 'Matched name in search',
+            isTitleMatch: true,
+          ),
+        )
         .toList();
   }
 
@@ -67,7 +69,11 @@ class _FakeSearchRepo implements IDocumentRepository {
   @override
   Future<List<Document>> getTrashDocuments() async => [];
   @override
-  Future<void> indexDocumentText(int documentId, String docName, String ocrContent) async {}
+  Future<void> indexDocumentText(
+    int documentId,
+    String docName,
+    String ocrContent,
+  ) async {}
   @override
   Future<int> insertOrUpdateDocument(Document doc) async => 1;
   @override
@@ -114,7 +120,11 @@ void main() {
           isA<SearchState>()
               .having((s) => s.isLoading, 'isLoading', isFalse)
               .having((s) => s.results.length, 'results count', 1)
-              .having((s) => s.results.first.document.name, 'doc name', 'Passport Scan'),
+              .having(
+                (s) => s.results.first.document.name,
+                'doc name',
+                'Passport Scan',
+              ),
         ]),
       );
     });
@@ -125,10 +135,7 @@ void main() {
 
       bloc.add(const ClearSearch());
 
-      await expectLater(
-        bloc.stream,
-        emits(const SearchState()),
-      );
+      await expectLater(bloc.stream, emits(const SearchState()));
     });
   });
 }

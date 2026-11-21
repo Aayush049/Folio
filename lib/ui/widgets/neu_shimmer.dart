@@ -60,11 +60,7 @@ class _NeuShimmerState extends State<NeuShimmer>
             gradient: LinearGradient(
               begin: Alignment(-1.5 + (_controller.value * 3), -0.3),
               end: Alignment(0.5 + (_controller.value * 3), 0.3),
-              colors: [
-                baseColor,
-                highlightColor,
-                baseColor,
-              ],
+              colors: [baseColor, highlightColor, baseColor],
               stops: const [0.1, 0.5, 0.9],
             ),
             boxShadow: theme.subtleShadow,

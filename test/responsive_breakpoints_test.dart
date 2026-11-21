@@ -29,7 +29,9 @@ void main() {
       expect(isCompact, isTrue);
     });
 
-    testWidgets('identifies medium screen size between 600dp and 1024dp', (tester) async {
+    testWidgets('identifies medium screen size between 600dp and 1024dp', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(768, 1024);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -77,7 +79,9 @@ void main() {
       expect(isExpanded, isTrue);
     });
 
-    testWidgets('ResponsiveContainer respects maxWidth constraint', (tester) async {
+    testWidgets('ResponsiveContainer respects maxWidth constraint', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -87,13 +91,19 @@ void main() {
           home: Scaffold(
             body: ResponsiveContainer(
               maxWidth: 800,
-              child: SizedBox(key: Key('content'), width: double.infinity, height: 100),
+              child: SizedBox(
+                key: Key('content'),
+                width: double.infinity,
+                height: 100,
+              ),
             ),
           ),
         ),
       );
 
-      final renderBox = tester.renderObject<RenderBox>(find.byKey(const Key('content')));
+      final renderBox = tester.renderObject<RenderBox>(
+        find.byKey(const Key('content')),
+      );
       expect(renderBox.size.width, equals(800));
     });
   });

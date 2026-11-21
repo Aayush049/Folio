@@ -40,11 +40,11 @@ class SecurityState extends Equatable {
 
   @override
   List<Object?> get props => [
-        isAppLockEnabled,
-        isUnlocked,
-        isAuthenticating,
-        isShieldActive,
-        isDeviceSupported,
-        errorMessage,
-      ];
+    isAppLockEnabled,
+    isUnlocked,
+    isAuthenticating,
+    isShieldActive,
+    isDeviceSupported,
+    errorMessage,
+  ];
 }

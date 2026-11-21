@@ -7,18 +7,15 @@ class TrashBloc extends Bloc<TrashEvent, TrashState> {
   final IDocumentRepository _repository;
 
   TrashBloc({required IDocumentRepository repository})
-      : _repository = repository,
-        super(TrashInitial()) {
+    : _repository = repository,
+      super(TrashInitial()) {
     on<LoadTrash>(_onLoadTrash);
     on<RestoreDocumentFromTrash>(_onRestoreDocument);
     on<PermanentlyDeleteFromTrash>(_onPermanentDelete);
     on<EmptyTrash>(_onEmptyTrash);
   }
 
-  Future<void> _onLoadTrash(
-    LoadTrash event,
-    Emitter<TrashState> emit,
-  ) async {
+  Future<void> _onLoadTrash(LoadTrash event, Emitter<TrashState> emit) async {
     emit(TrashLoading());
     try {
       final docs = await _repository.getTrashDocuments();
@@ -35,10 +32,9 @@ class TrashBloc extends Bloc<TrashEvent, TrashState> {
     try {
       await _repository.restoreDocument(event.documentId);
       final docs = await _repository.getTrashDocuments();
-      emit(TrashLoaded(
-        documents: docs,
-        message: 'Document restored to library.',
-      ));
+      emit(
+        TrashLoaded(documents: docs, message: 'Document restored to library.'),
+      );
     } catch (e) {
       emit(TrashError('Failed to restore document: $e'));
     }
@@ -51,25 +47,23 @@ class TrashBloc extends Bloc<TrashEvent, TrashState> {
     try {
       await _repository.permanentDeleteDocument(event.documentId);
       final docs = await _repository.getTrashDocuments();
-      emit(TrashLoaded(
-        documents: docs,
-        message: 'Document permanently deleted.',
-      ));
+      emit(
+        TrashLoaded(documents: docs, message: 'Document permanently deleted.'),
+      );
     } catch (e) {
       emit(TrashError('Failed to delete document: $e'));
     }
   }
 
-  Future<void> _onEmptyTrash(
-    EmptyTrash event,
-    Emitter<TrashState> emit,
-  ) async {
+  Future<void> _onEmptyTrash(EmptyTrash event, Emitter<TrashState> emit) async {
     try {
       final count = await _repository.emptyTrash();
-      emit(TrashLoaded(
-        documents: const [],
-        message: 'Purged $count document(s) from trash.',
-      ));
+      emit(
+        TrashLoaded(
+          documents: const [],
+          message: 'Purged $count document(s) from trash.',
+        ),
+      );
     } catch (e) {
       emit(TrashError('Failed to empty trash: $e'));
     }

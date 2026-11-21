@@ -90,7 +90,10 @@ class FolderListTile extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         backgroundColor: theme.bg,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text('Delete Folder?', style: TextStyle(color: theme.text, fontWeight: FontWeight.w900)),
+        title: Text(
+          'Delete Folder?',
+          style: TextStyle(color: theme.text, fontWeight: FontWeight.w900),
+        ),
         content: Text(
           'This will delete "${folder.name}" and all its contents.',
           style: TextStyle(color: theme.textSub, fontWeight: FontWeight.w600),
@@ -98,14 +101,26 @@ class FolderListTile extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel', style: TextStyle(color: theme.textSub, fontWeight: FontWeight.w700)),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: theme.textSub,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               onDelete();
             },
-            child: const Text('Delete', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w800)),
+            child: const Text(
+              'Delete',
+              style: TextStyle(
+                color: Colors.redAccent,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
           ),
         ],
       ),

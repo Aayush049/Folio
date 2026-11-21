@@ -9,8 +9,9 @@ void main() {
     await initServiceLocator();
   });
 
-  testWidgets('FolioApp launches with SplashScreen and FolioLogo smoke test',
-      (WidgetTester tester) async {
+  testWidgets('FolioApp launches with SplashScreen and FolioLogo smoke test', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const FolioApp());
 
     // Verify SplashScreen is rendered

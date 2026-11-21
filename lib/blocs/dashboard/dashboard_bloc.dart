@@ -4,7 +4,7 @@ import 'dashboard_state.dart';
 import '../../repositories/document_repository.dart';
 
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
-  final DocumentRepository repository;
+  final IDocumentRepository repository;
 
   DashboardBloc({required this.repository}) : super(DashboardInitial()) {
     on<LoadDashboard>(_onLoadDashboard);
@@ -14,9 +14,9 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   }
 
   Future<void> _onLoadDashboard(
-      LoadDashboard event,
-      Emitter<DashboardState> emit,
-      ) async {
+    LoadDashboard event,
+    Emitter<DashboardState> emit,
+  ) async {
     emit(DashboardLoading());
     try {
       final folders = await repository.getFolders();
@@ -32,9 +32,9 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   }
 
   Future<void> _onAddFolder(
-      AddFolder event,
-      Emitter<DashboardState> emit,
-      ) async {
+    AddFolder event,
+    Emitter<DashboardState> emit,
+  ) async {
     try {
       await repository.createFolder(event.name);
       add(LoadDashboard());
@@ -44,9 +44,9 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   }
 
   Future<void> _onDeleteDocument(
-      DeleteDocument event,
-      Emitter<DashboardState> emit,
-      ) async {
+    DeleteDocument event,
+    Emitter<DashboardState> emit,
+  ) async {
     try {
       await repository.deleteDocument(event.id);
       add(LoadDashboard());
@@ -56,9 +56,9 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   }
 
   Future<void> _onDeleteFolder(
-      DeleteFolder event,
-      Emitter<DashboardState> emit,
-      ) async {
+    DeleteFolder event,
+    Emitter<DashboardState> emit,
+  ) async {
     try {
       await repository.deleteFolder(event.id);
       add(LoadDashboard());

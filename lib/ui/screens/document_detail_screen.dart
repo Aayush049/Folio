@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:open_filex/open_filex.dart';
@@ -14,73 +14,49 @@ import '../../core/folio_theme.dart';
 import '../../core/folio_breakpoints.dart';
 import '../../core/folio_shortcuts.dart';
 import '../../core/navigation_utils.dart';
+import '../../blocs/document_detail/document_detail_bloc.dart';
+import '../../blocs/document_detail/document_detail_event.dart';
+import '../../blocs/document_detail/document_detail_state.dart';
 import '../widgets/neu_widgets.dart';
 import '../widgets/folio_image.dart';
 import 'studio_screen.dart';
 
-class DocumentDetailScreen extends StatefulWidget {
+class DocumentDetailScreen extends StatelessWidget {
   final Document document;
-  final DocumentRepository repository;
+  final IDocumentRepository? repository;
 
   const DocumentDetailScreen({
     super.key,
     required this.document,
-    required this.repository,
+    this.repository,
   });
 
   @override
-  State<DocumentDetailScreen> createState() => _DocumentDetailScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (ctx) => DocumentDetailBloc(
+        repository: repository ?? ctx.read<IDocumentRepository>(),
+        scannerService: ctx.read<ScannerService>(),
+        documentId: document.id!,
+      )..add(LoadDocumentPages(document.id!)),
+      child: _DocumentDetailView(document: document),
+    );
+  }
 }
 
-class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
-  final PdfService _pdfService = PdfService();
-  bool _isReorderMode = false;
-  bool _isExtracting = false;
-  List<PageModel>? _pages;
+class _DocumentDetailView extends StatefulWidget {
+  final Document document;
+  const _DocumentDetailView({required this.document});
 
   @override
-  void initState() {
-    super.initState();
-    _loadPages();
-  }
+  State<_DocumentDetailView> createState() => _DocumentDetailViewState();
+}
 
-  Future<void> _loadPages() async {
-    final pages = await widget.repository.getPages(widget.document.id!);
-    if (mounted) setState(() => _pages = pages);
-  }
+class _DocumentDetailViewState extends State<_DocumentDetailView> {
+  final PdfService _pdfService = PdfService();
+  bool _isReorderMode = false;
 
-  // ─── OCR Text Extraction ──────────────────────────────────────────────────
-  Future<void> _extractText() async {
-    if (_pages == null || _pages!.isEmpty) return;
-    setState(() => _isExtracting = true);
-
-    try {
-      final scannerService = context.read<ScannerService>();
-      final buffer = StringBuffer();
-      for (int i = 0; i < _pages!.length; i++) {
-        final text = await scannerService.extractTextFromImage(File(_pages![i].imagePath));
-        if (text.isNotEmpty) {
-          buffer.writeln('─── Page ${i + 1} ───');
-          buffer.writeln(text);
-          buffer.writeln();
-        }
-      }
-      final result = buffer.toString().trim();
-      if (mounted) {
-        setState(() => _isExtracting = false);
-        _showExtractedText(result.isEmpty ? 'No text found in this document.' : result);
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isExtracting = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('OCR error: $e')),
-        );
-      }
-    }
-  }
-
-  void _showExtractedText(String text) {
+  void _showExtractedText(BuildContext context, String text) {
     final theme = context.read<FolioThemeNotifier>();
     showModalBottomSheet(
       context: context,
@@ -107,7 +83,6 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
               ),
               child: Column(
                 children: [
-                  // Handle
                   Center(
                     child: Container(
                       margin: const EdgeInsets.only(top: 12, bottom: 16),
@@ -119,7 +94,6 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                       ),
                     ),
                   ),
-                  // Title row
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Row(
@@ -135,7 +109,6 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                           ),
                         ),
                         const Spacer(),
-                        // Copy button
                         NeuButton(
                           borderRadius: 12,
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -158,7 +131,6 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Text content
                   Expanded(
                     child: SingleChildScrollView(
                       controller: controller,
@@ -188,10 +160,10 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
     );
   }
 
-  Future<void> _exportAndShare() async {
-    if (_pages == null || _pages!.isEmpty) return;
+  Future<void> _exportAndShare(List<PageModel> pages) async {
+    if (pages.isEmpty) return;
     try {
-      final images = _pages!.map((p) => File(p.imagePath)).toList();
+      final images = pages.map((p) => File(p.imagePath)).toList();
       final pdfFile = await _pdfService.generatePdf(images, widget.document.name);
       if (!mounted) return;
       await SharePlus.instance.share(
@@ -205,10 +177,10 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
     }
   }
 
-  Future<void> _openPdf() async {
-    if (_pages == null || _pages!.isEmpty) return;
+  Future<void> _openPdf(List<PageModel> pages) async {
+    if (pages.isEmpty) return;
     try {
-      final images = _pages!.map((p) => File(p.imagePath)).toList();
+      final images = pages.map((p) => File(p.imagePath)).toList();
       final pdfFile = await _pdfService.generatePdf(images, widget.document.name);
       await OpenFilex.open(pdfFile.path);
     } catch (e) {
@@ -227,118 +199,135 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
         body: SafeArea(
           child: ResponsiveContainer(
             maxWidth: 1080,
-            child: Column(
-              children: [
-                // ─── Header ────────────────────────────────────────────────────
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                  child: Row(
-                    children: [
-                      NeuIconButton(
-                        icon: Icons.arrow_back_ios_new_rounded,
-                        onTap: () => Navigator.pop(context),
-                        size: 44,
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          widget.document.name,
-                          style: GoogleFonts.nunito(
-                            color: theme.text,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: -0.5,
+            child: BlocConsumer<DocumentDetailBloc, DocumentDetailState>(
+              listener: (context, state) {
+                if (state is DocumentDetailLoaded && state.extractedOcrText != null) {
+                  _showExtractedText(context, state.extractedOcrText!);
+                }
+                if (state is DocumentDetailError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message)),
+                  );
+                }
+              },
+              builder: (context, state) {
+                final pages = state is DocumentDetailLoaded ? state.pages : <PageModel>[];
+                final isExtracting = state is DocumentDetailLoaded && state.isExtractingOcr;
+
+                return Column(
+                  children: [
+                    // ─── Header ──────────────────────────────────────────────
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                      child: Row(
+                        children: [
+                          NeuIconButton(
+                            icon: Icons.arrow_back_ios_new_rounded,
+                            onTap: () => Navigator.pop(context),
+                            size: 44,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // ─── Action Row ────────────────────────────────────────────────
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-                  child: Row(
-                    children: [
-                      NeuIconButton(
-                        icon: _isReorderMode ? Icons.grid_view_rounded : Icons.reorder_rounded,
-                        onTap: () => setState(() => _isReorderMode = !_isReorderMode),
-                        active: _isReorderMode,
-                        tooltip: _isReorderMode ? 'Grid View' : 'Reorder',
-                        size: 44,
-                      ),
-                      const SizedBox(width: 10),
-                      NeuIconButton(
-                        icon: Icons.share_outlined,
-                        onTap: _exportAndShare,
-                        size: 44,
-                        tooltip: 'Share PDF',
-                      ),
-                      const SizedBox(width: 10),
-                      NeuIconButton(
-                        icon: Icons.picture_as_pdf_outlined,
-                        onTap: _openPdf,
-                        size: 44,
-                        tooltip: 'Open PDF',
-                      ),
-                      const SizedBox(width: 10),
-                      // OCR button
-                      _isExtracting
-                          ? SizedBox(
-                              width: 44,
-                              height: 44,
-                              child: Center(
-                                child: SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2, color: theme.accent),
-                                ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              widget.document.name,
+                              style: GoogleFonts.nunito(
+                                color: theme.text,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: -0.5,
                               ),
-                            )
-                          : NeuIconButton(
-                              icon: Icons.text_fields_rounded,
-                              onTap: _extractText,
-                              size: 44,
-                              tooltip: 'Extract Text (OCR)',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                      const Spacer(),
-                      // Add pages button
-                      NeuButton(
-                        filled: true,
-                        borderRadius: 14,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        onTap: () => _addPages(context),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.add_a_photo_outlined, color: Colors.white, size: 16),
-                            const SizedBox(width: 6),
-                            Text('Add', style: GoogleFonts.nunito(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13)),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
+                    ),
 
-                // ─── Pages ────────────────────────────────────────────────────
-                Expanded(
-                  child: _pages == null
-                      ? const Center(child: CircularProgressIndicator())
-                      : _pages!.isEmpty
-                          ? Center(
-                              child: Text(
-                                'No pages found.',
-                                style: TextStyle(color: theme.textSub, fontWeight: FontWeight.w700),
-                              ),
-                            )
-                          : _isReorderMode
-                              ? _buildReorderableList(theme)
-                              : _buildGrid(theme),
-                ),
-              ],
+                    // ─── Action Row ──────────────────────────────────────────
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+                      child: Row(
+                        children: [
+                          NeuIconButton(
+                            icon: _isReorderMode ? Icons.grid_view_rounded : Icons.reorder_rounded,
+                            onTap: () => setState(() => _isReorderMode = !_isReorderMode),
+                            active: _isReorderMode,
+                            tooltip: _isReorderMode ? 'Grid View' : 'Reorder',
+                            size: 44,
+                          ),
+                          const SizedBox(width: 10),
+                          NeuIconButton(
+                            icon: Icons.share_outlined,
+                            onTap: () => _exportAndShare(pages),
+                            size: 44,
+                            tooltip: 'Share PDF',
+                          ),
+                          const SizedBox(width: 10),
+                          NeuIconButton(
+                            icon: Icons.picture_as_pdf_outlined,
+                            onTap: () => _openPdf(pages),
+                            size: 44,
+                            tooltip: 'Open PDF',
+                          ),
+                          const SizedBox(width: 10),
+                          // OCR button
+                          isExtracting
+                              ? SizedBox(
+                                  width: 44,
+                                  height: 44,
+                                  child: Center(
+                                    child: SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(strokeWidth: 2, color: theme.accent),
+                                    ),
+                                  ),
+                                )
+                              : NeuIconButton(
+                                  icon: Icons.text_fields_rounded,
+                                  onTap: () => context.read<DocumentDetailBloc>().add(const ExtractDocumentOcrText()),
+                                  size: 44,
+                                  tooltip: 'Extract Text (OCR)',
+                                ),
+                          const Spacer(),
+                          // Add pages button
+                          NeuButton(
+                            filled: true,
+                            borderRadius: 14,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            onTap: () => _addPages(context),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.add_a_photo_outlined, color: Colors.white, size: 16),
+                                const SizedBox(width: 6),
+                                Text('Add', style: GoogleFonts.nunito(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // ─── Pages ──────────────────────────────────────────────
+                    Expanded(
+                      child: state is DocumentDetailLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : pages.isEmpty
+                              ? Center(
+                                  child: Text(
+                                    'No pages found.',
+                                    style: TextStyle(color: theme.textSub, fontWeight: FontWeight.w700),
+                                  ),
+                                )
+                              : _isReorderMode
+                                  ? _buildReorderableList(context, theme, pages)
+                                  : _buildGrid(context, theme, pages),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ),
@@ -346,7 +335,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
     );
   }
 
-  Widget _buildGrid(FolioThemeNotifier theme) {
+  Widget _buildGrid(BuildContext context, FolioThemeNotifier theme, List<PageModel> pages) {
     return GridView.builder(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
       physics: const BouncingScrollPhysics(),
@@ -356,9 +345,9 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
         mainAxisSpacing: 14,
         childAspectRatio: 0.72,
       ),
-      itemCount: _pages!.length,
+      itemCount: pages.length,
       itemBuilder: (context, index) {
-        final page = _pages![index];
+        final page = pages[index];
         return Hero(
           tag: 'page_${page.id}',
           child: Container(
@@ -391,9 +380,10 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                             context,
                             neuRoute(StudioScreen(image: File(page.imagePath))),
                           );
-                          if (editedImage != null) {
-                            await widget.repository.updatePage(page.copyWith(imagePath: editedImage.path));
-                            _loadPages();
+                          if (editedImage != null && context.mounted) {
+                            context.read<DocumentDetailBloc>().add(
+                              UpdateDocumentPage(page.copyWith(imagePath: editedImage.path)),
+                            );
                           }
                         },
                       ),
@@ -401,9 +391,8 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
                       _PageActionButton(
                         icon: Icons.delete_outline_rounded,
                         danger: true,
-                        onTap: () async {
-                          await widget.repository.deletePage(page.id!);
-                          _loadPages();
+                        onTap: () {
+                          context.read<DocumentDetailBloc>().add(DeleteDocumentPage(page.id!));
                         },
                       ),
                     ],
@@ -433,23 +422,16 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
     );
   }
 
-  Widget _buildReorderableList(FolioThemeNotifier theme) {
+  Widget _buildReorderableList(BuildContext context, FolioThemeNotifier theme, List<PageModel> pages) {
     return ReorderableListView.builder(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
       physics: const BouncingScrollPhysics(),
-      itemCount: _pages!.length,
-      onReorder: (oldIndex, newIndex) async {
-        setState(() {
-          if (oldIndex < newIndex) newIndex -= 1;
-          final item = _pages!.removeAt(oldIndex);
-          _pages!.insert(newIndex, item);
-        });
-        for (int i = 0; i < _pages!.length; i++) {
-          await widget.repository.updatePage(_pages![i].copyWith(pageOrder: i));
-        }
+      itemCount: pages.length,
+      onReorder: (oldIndex, newIndex) {
+        context.read<DocumentDetailBloc>().add(ReorderDocumentPages(oldIndex, newIndex));
       },
       itemBuilder: (context, index) {
-        final page = _pages![index];
+        final page = pages[index];
         return Padding(
           key: ValueKey(page.id),
           padding: const EdgeInsets.only(bottom: 12),
@@ -565,26 +547,7 @@ class _DocumentDetailScreenState extends State<DocumentDetailScreen> {
     if (newImages.isEmpty) return;
     if (!context.mounted) return;
 
-    showDialog(context: context, barrierDismissible: false, builder: (_) => const Center(child: CircularProgressIndicator()));
-
-    try {
-      final startOrder = _pages?.length ?? 0;
-      for (int i = 0; i < newImages.length; i++) {
-        final permanentFile = await scannerService.saveImageToPermanentStorage(newImages[i]);
-        await widget.repository.addPage(PageModel(
-          documentId: widget.document.id!,
-          imagePath: permanentFile.path,
-          pageOrder: startOrder + i,
-        ));
-      }
-      if (context.mounted) Navigator.pop(context);
-      _loadPages();
-    } catch (e) {
-      if (context.mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-      }
-    }
+    context.read<DocumentDetailBloc>().add(AddDocumentPages(newImages));
   }
 }
 

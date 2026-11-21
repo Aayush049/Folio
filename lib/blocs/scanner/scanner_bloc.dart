@@ -8,7 +8,7 @@ import 'dart:io';
 
 class ScannerBloc extends Bloc<ScannerEvent, ScannerState> {
   final ScannerService scannerService;
-  final DocumentRepository repository;
+  final IDocumentRepository repository;
 
   ScannerBloc({
     required this.scannerService,
@@ -48,7 +48,6 @@ class ScannerBloc extends Bloc<ScannerEvent, ScannerState> {
 
   Future<void> _onTakePhoto(TakePhoto event, Emitter<ScannerState> emit) async {
     final List<File> currentImages = state is ScannerImagesPicked ? (state as ScannerImagesPicked).images : [];
-    // Don't emit loading here to keep the current UI visible if we are adding pages
     try {
       final image = await scannerService.pickImageFromCamera();
       if (image == null) return;

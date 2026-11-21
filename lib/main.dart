@@ -10,12 +10,14 @@ import 'repositories/document_repository.dart';
 import 'services/scanner_service.dart';
 import 'ui/screens/splash_screen.dart';
 import 'core/folio_theme.dart';
+import 'core/service_locator.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
     databaseFactory = databaseFactoryFfiWeb;
   }
+  await initServiceLocator();
   runApp(const FolioApp());
 }
 
@@ -26,28 +28,30 @@ class FolioApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<FolioThemeNotifier>(
-          create: (_) => FolioThemeNotifier(),
+        ChangeNotifierProvider<FolioThemeNotifier>.value(
+          value: sl<FolioThemeNotifier>(),
         ),
-        Provider<ScannerService>(
-          create: (_) => ScannerService(),
-          dispose: (_, svc) => svc.dispose(),
+        Provider<ScannerService>.value(
+          value: sl<ScannerService>(),
         ),
-        Provider<DocumentRepository>(
-          create: (_) => DocumentRepository(),
+        Provider<IDocumentRepository>.value(
+          value: sl<IDocumentRepository>(),
+        ),
+        Provider<DocumentRepository>.value(
+          value: sl<DocumentRepository>(),
         ),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider<DashboardBloc>(
-            create: (ctx) => DashboardBloc(
-              repository: ctx.read<DocumentRepository>(),
+            create: (_) => DashboardBloc(
+              repository: sl<IDocumentRepository>(),
             ),
           ),
           BlocProvider<ScannerBloc>(
-            create: (ctx) => ScannerBloc(
-              scannerService: ctx.read<ScannerService>(),
-              repository: ctx.read<DocumentRepository>(),
+            create: (_) => ScannerBloc(
+              scannerService: sl<ScannerService>(),
+              repository: sl<IDocumentRepository>(),
             ),
           ),
         ],

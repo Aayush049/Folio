@@ -1,9 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:folio/main.dart';
+import 'package:folio/core/service_locator.dart';
 import 'package:folio/ui/widgets/folio_logo.dart';
 import 'package:folio/ui/screens/splash_screen.dart';
 
 void main() {
+  setUp(() async {
+    await initServiceLocator();
+  });
+
   testWidgets('FolioApp launches with SplashScreen and FolioLogo smoke test',
       (WidgetTester tester) async {
     await tester.pumpWidget(const FolioApp());
